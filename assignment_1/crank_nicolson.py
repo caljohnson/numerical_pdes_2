@@ -10,9 +10,7 @@
 from __future__ import division
 
 import numpy as np
-from numpy import exp
 
-import matplotlib.pyplot as plt
 import scipy.sparse as sparse
 import scipy.sparse.linalg
 
@@ -66,35 +64,14 @@ def crank_nicolson_method(del_x, del_t, u, f, D):
 		f_half = (f[t]+f[t+1])/2
 		#solve for next u
 		u = crank_nicolson_time_step(del_t, u, D*L, f_half, I)
-		plt.plot(u)
+		
+	# 	plt.plot(u)
 
+	# plt.show()
+	# plt.close()
 	return u
 
-def setup():
-	#set up the vectors and parameters for Crank-Nicolson method
-	#Numerical scheme parameters
-	del_x = 1/16
-	del_t = 0.01
-
-	#make vector of forcing function at all times 
-	Nx = int(1/del_x)-1
-	Nt = int(1/del_t)-1
-	x = [i*del_x for i in range(0, Nx+1)]
-	t = [i*del_t for i in range(0, Nt+1)]
-	
-	#f = 1-exp(-t)
-	neg_t = [-t for t in t] 
-	f = 1-exp(neg_t)
-	
-	#initial condition u(x,0)=0
-	u = np.zeros(Nx)
-
-	#diffusion coefficient
-	D = 0.01
-	u = crank_nicolson_method(del_x, del_t, u, f, D)
-	print(u)
-
 if __name__ == '__main__':
-	setup()
-
+	setup_and_run(1/16,1/100)
+	# refinement_study()
 
