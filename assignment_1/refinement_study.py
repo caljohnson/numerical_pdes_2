@@ -2,13 +2,13 @@
 #Carter Johnson
 #MAT228B Assignment 1
 
-#Refinement Study for
+#Refinement Study 
 #1-D Diffusion equation solver using Crank-Nicolson routine
 #3-pt 2nd order spatial discretization 
 #with a trapezoidal rule for time
 #for Dirichlet BC's
 
-#for the problem
+#for Problem 2
 #u_t = 0.01 u_xx + 1 - exp(-t)
 #0 < x < 1
 #u(0,t) = u(1,t) = 0
@@ -19,11 +19,13 @@ from __future__ import division
 import numpy as np
 from numpy import exp
 from numpy.linalg import norm
+import matplotlib.pyplot as plt
 
 from tabulate import tabulate
 from tqdm import tqdm
 
 from crank_nicolson import crank_nicolson_method
+from bdf2 import bdf2_method
 
 def refinement_study():
 	#perform a refinement study to demonstrate Crank-Nicolson
@@ -45,6 +47,10 @@ def refinement_study():
 
 	#get u(x,1) through Crank-Nicolson:
 	u_new = setup_and_run(del_x[0], del_t)
+	#plot u(x,1)
+	plt.plot(u_new)
+	plt.show()
+	plt.close()	
 
 	#loop over finer del_x, take successive differences
 	for i in tqdm(range(1,refine_MAX)):
@@ -57,16 +63,22 @@ def refinement_study():
 		#calculate successive difference
 		diffs[i] = abs(norm(u_old,2)- norm(u_new,2))
 
+		#plot u(x,1)
+		plt.plot(u_new)
+		plt.show()
+		plt.close()	
+
 	two_norm_table = [[del_x[i], diffs[i], diffs[i+1]/diffs[i]] for i in range(refine_MAX-1)]	
 	print(tabulate(two_norm_table, headers=['\delta x', 'diffs', 'diff ratios'], tablefmt="latex"))
 
 def setup_and_run(del_x, del_t):
 	#set up the vectors and parameters for Crank-Nicolson method and run
+	#using diffusion coefficient, initial condition, forcing function from problem 2
 
 	#make vector of forcing function at all times 
 	Nx = int(1/del_x)-1
 	Nt = int(1/del_t)-1
-	x = [i*del_x for i in range(0, Nx+1)]
+	# x = [i*del_x for i in range(0, Nx+1)]
 	t = [i*del_t for i in range(0, Nt+1)]
 	
 	#f = 1-exp(-t)

@@ -39,7 +39,8 @@ def crank_nicolson_time_step(del_t, u, L, f, I):
 	#one time step of crank-nicolson solver
 
 	#(I + del_t/2 L)u^n
-	temp_u = (I + (del_t/2) * L)*u
+	A = (I + (del_t/2) * L)
+	temp_u = A.dot(u)
 
 	#make LHS matrix, put in CSC form for solver
 	LHS_matrix = scipy.sparse.csc_matrix(I-(del_t/2)*L)
@@ -65,13 +66,10 @@ def crank_nicolson_method(del_x, del_t, u, f, D):
 		#solve for next u
 		u = crank_nicolson_time_step(del_t, u, D*L, f_half, I)
 		
-	# 	plt.plot(u)
-
-	# plt.show()
-	# plt.close()
 	return u
 
 if __name__ == '__main__':
-	setup_and_run(1/16,1/100)
+	print('does nothing alone, import as a method')
+	# setup_and_run(1/16,1/100)
 	# refinement_study()
 
