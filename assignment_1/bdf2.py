@@ -4,7 +4,7 @@
 
 #1-D Diffusion equation solver using BDF-2 routine
 #3-pt 2nd order spatial discretization 
-#with a trapezoidal rule for time
+#with a 2nd order 3-pt approximation for time derivative
 #for Dirichlet BC's
 
 from __future__ import division
