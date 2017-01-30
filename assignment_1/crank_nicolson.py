@@ -6,6 +6,7 @@
 #3-pt 2nd order spatial discretization 
 #with a trapezoidal rule for time
 #for Dirichlet BC's
+#for time t=0 to t=1
 
 from __future__ import division
 
@@ -41,7 +42,6 @@ def crank_nicolson_time_step(del_t, u, L, f, I):
 	#(I + del_t/2 L)u^n
 	A = (I + (del_t/2) * L)
 	RHS_terms = A.dot(u) + del_t*f
-	# print(RHS_terms)
 
 	#make LHS matrix, put in CSC form for solver
 	LHS_matrix = scipy.sparse.csc_matrix(I-(del_t/2)*L)
@@ -55,8 +55,6 @@ def crank_nicolson_method(del_x, del_t, u, f, D):
 
 	#create sparse matrices for crank-nicolson method
 	[L, I] = sparse_matrices(del_x)
-	#add diffusion coefficient to Laplacian
-	L = D*L
 
 	#calculate number of time points between 0 and 1
 	Nt = int(1/del_t)-1
@@ -71,6 +69,8 @@ def crank_nicolson_method(del_x, del_t, u, f, D):
 
 if __name__ == '__main__':
 	print('does nothing alone, import as a method')
-	# setup_and_run(1/16,1/100)
+	# [A,I] = sparse_matrices(0.25)
+	# print(A.toarray())
+	# setup_and_run(1/4,1/100)
 	# refinement_study()
 

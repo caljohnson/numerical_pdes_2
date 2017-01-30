@@ -36,9 +36,6 @@ def refinement_study():
 	#max number of del_x,del_t values to examine
 	refine_MAX = 10
 
-	#set time step
-	del_t = 0.1
-
 	#loop through del_x values
 	del_x = [2**(-1-i) for i in range(0,refine_MAX)]
 	del_t = [2**(-1-i) for i in range(0, refine_MAX)]
@@ -60,9 +57,9 @@ def refinement_study():
 
 		#get next u(x,1) through Crank-Nicolson
 		u_new = setup_and_run(del_x[i], del_t[i])
-
-		#calculate successive difference	
-		diffs[i] = norm(u_old - restriction(u_new, del_x[i]))
+		
+		#calculate successive difference between u(x,1) new and old	
+		diffs[i] = interpolate_diffs(u_new, u_old, del_x[i])
 
 		#plot u(x,1)
 		# plt.plot(u_new)
@@ -74,14 +71,22 @@ def refinement_study():
 	two_norm_table = [[del_x[i], del_t[i], diffs[i], diffs[i]/diffs[i+1]] for i in range(refine_MAX-1)]	
 	print(tabulate(two_norm_table, headers=['delta x', 'delta t', 'diffs', 'diff ratios'], tablefmt="latex"))
 
-def interpolation(u_c, h):
+def interpolate_diffs(u_new, u_old, h):
+	#interpolate both u_new and u_old on a finer grid
+	#and take the 2-norm difference of the interpolations
+	interpol_new = interpolate(u_new, h)
+	interpol_old = interpolate(interpolate(u_old, 2*h),h)
+	return norm(interpol_old-interpol_new)
+
+def interpolate(u_c, h):
+	#interpolate to a 2x finer mesh
 	n = int(1/h)-1
 	h2 = h/2
 	n2 = int(1/h2)-1
-	u_f = np.zeros(n2,dtype=float)
+	u_f = np.zeros(n2+1, dtype=float)
 
 	#loop over coarse mesh
-	for i in range(0,n):
+	for i in range(n):
 		u_f[2*i] = u_c[i]
 		u_f[2*i-1] += u_c[i]/2
 		u_f[2*i+1] += u_c[i]/2
@@ -89,14 +94,14 @@ def interpolation(u_c, h):
 	return u_f
 
 def restriction(u_f, h):
+	#simple restriction operation
 	h2 = 2*h
 	n2 = int(1/h2)-1
 	u_c = np.zeros(n2, dtype=float)
 
 	#loop over coarse mesh
-	u_c[0] = u_f[1]
-	for i in range(1,n2):
-		u_c[i] = 1/4*(u_f[2*i-1] + 2*u_f[2*i]+ u_f[2*i+1])
+	for i in range(0,n2):
+		u_c[i] = u_f[2*i+1]
 		
 	return u_c
 
@@ -123,4 +128,8 @@ def setup_and_run(del_x, del_t):
 	return u	
 
 if __name__ == '__main__':
+	# u = [1, 2, 3, 4, 5, 6, 7]
+	# u = restriction(u,1/8)
+	# print(u)
+	# raise
 	refinement_study()

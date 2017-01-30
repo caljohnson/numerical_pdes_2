@@ -22,7 +22,7 @@ from bdf2 import bdf2_method
 def illustrate_issue():
 	#set up the vectors and parameters for Crank-Nicolson method and run
 	#using diff coefficient, initial condition from problem 3
-	#no forcing function, but include left BC as forcing function at x=0 somehow
+	#no forcing function, but include left BC as forcing function at x=0
 	del_x = 0.02
 	del_t = 0.1
 
@@ -30,6 +30,7 @@ def illustrate_issue():
 	Nx = int(1/del_x)-1
 	Nt = int(1/del_t)-1
 	f = np.zeros((Nt+1,Nx))
+	#include RHS BC u(0,t)=1
 	f[:,0] = 1/(del_x**2)*np.ones(Nt+1)
 	
 	#initial condition u(x,0)=1 if x<0.5, 0 if x>=0.5
@@ -54,7 +55,7 @@ def illustrate_issue():
 def fix_issue():
 	#set up the vectors and parameters for BDF-2 method and run
 	#using diff coefficient, initial condition from problem 3
-	#no forcing function
+	#no forcing function, but include left BC as forcing function at x=0
 	del_x = 0.02
 	del_t = 0.1
 
@@ -62,6 +63,7 @@ def fix_issue():
 	Nx = int(1/del_x)-1
 	Nt = int(1/del_t)-1
 	f = np.zeros((Nt+1,Nx))
+	#include RHS BC u(0,t)=1
 	f[:,0] = 1/(del_x**2)*np.ones(Nt+1)
 	
 	#initial condition u(x,0)=1 if x<0.5, 0 if x>=0.5
