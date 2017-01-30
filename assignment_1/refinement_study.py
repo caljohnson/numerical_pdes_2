@@ -33,21 +33,22 @@ def refinement_study():
 
 	#SHOW 2nd order in space
 
-	#max number of del_x values to examine
-	refine_MAX = 15
+	#max number of del_x,del_t values to examine
+	refine_MAX = 10
 
 	#set time step
 	del_t = 0.1
 
 	#loop through del_x values
 	del_x = [2**(-1-i) for i in range(0,refine_MAX)]
+	del_t = [2**(-1-i) for i in range(0, refine_MAX)]
 
 	#set container for successive differences
 	diffs = np.zeros(refine_MAX)
 
 	#get u(x,1) through Crank-Nicolson:
-	u_new = setup_and_run(del_x[0], del_t)
-	#plot u(x,1)
+	u_new = setup_and_run(del_x[0], del_t[0])
+	# #plot u(x,1)
 	# plt.plot(u_new)
 	# plt.show()
 	# plt.close()	
@@ -58,18 +59,46 @@ def refinement_study():
 		u_old = u_new + 0
 
 		#get next u(x,1) through Crank-Nicolson
-		u_new = setup_and_run(del_x[i], del_t)
+		u_new = setup_and_run(del_x[i], del_t[i])
 
-		#calculate successive difference
-		diffs[i] = abs(norm(u_old,2) - norm(u_new,2))
+		#calculate successive difference	
+		diffs[i] = norm(u_old - restriction(u_new, del_x[i]))
 
 		#plot u(x,1)
 		# plt.plot(u_new)
 		# plt.show()
 		# plt.close()	
 
-	two_norm_table = [[del_x[i], diffs[i], diffs[i]/diffs[i+1]] for i in range(refine_MAX-1)]	
-	print(tabulate(two_norm_table, headers=['\delta x', 'diffs', 'diff ratios'], tablefmt="latex"))
+	print(u_new)
+
+	two_norm_table = [[del_x[i], del_t[i], diffs[i], diffs[i]/diffs[i+1]] for i in range(refine_MAX-1)]	
+	print(tabulate(two_norm_table, headers=['delta x', 'delta t', 'diffs', 'diff ratios'], tablefmt="latex"))
+
+def interpolation(u_c, h):
+	n = int(1/h)-1
+	h2 = h/2
+	n2 = int(1/h2)-1
+	u_f = np.zeros(n2,dtype=float)
+
+	#loop over coarse mesh
+	for i in range(0,n):
+		u_f[2*i] = u_c[i]
+		u_f[2*i-1] += u_c[i]/2
+		u_f[2*i+1] += u_c[i]/2
+
+	return u_f
+
+def restriction(u_f, h):
+	h2 = 2*h
+	n2 = int(1/h2)-1
+	u_c = np.zeros(n2, dtype=float)
+
+	#loop over coarse mesh
+	u_c[0] = u_f[1]
+	for i in range(1,n2):
+		u_c[i] = 1/4*(u_f[2*i-1] + 2*u_f[2*i]+ u_f[2*i+1])
+		
+	return u_c
 
 def setup_and_run(del_x, del_t):
 	#set up the vectors and parameters for Crank-Nicolson method and run
