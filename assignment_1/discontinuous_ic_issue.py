@@ -28,11 +28,11 @@ def illustrate_issue():
 
 	#make matrix of forcing function f=0 at all times and spaces
 	Nx = int(1/del_x)-1
-	Nt = int(1/del_t)-1
-	f = np.zeros((Nt+1,Nx))
+	Nt = int(1/del_t)
+	f = np.zeros((Nt,Nx))
 	#include RHS BC u(0,t)=1
-	f[:,0] = 1/(del_x**2)*np.ones(Nt+1)
-	
+	f[:,0] = 1/(del_x**2)*np.ones(Nt)
+
 	#initial condition u(x,0)=1 if x<0.5, 0 if x>=0.5
 	u = np.zeros(Nx)
 	for i in range(int(Nx/2)):
@@ -61,10 +61,10 @@ def fix_issue():
 
 	#make matrix of forcing function f=0 at all times and spaces
 	Nx = int(1/del_x)-1
-	Nt = int(1/del_t)-1
-	f = np.zeros((Nt+1,Nx))
+	Nt = int(1/del_t)
+	f = np.zeros((Nt,Nx))
 	#include RHS BC u(0,t)=1
-	f[:,0] = 1/(del_x**2)*np.ones(Nt+1)
+	f[:,0] = 1/(del_x**2)*np.ones(Nt)
 	
 	#initial condition u(x,0)=1 if x<0.5, 0 if x>=0.5
 	u = np.zeros(Nx)

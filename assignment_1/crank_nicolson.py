@@ -56,10 +56,10 @@ def crank_nicolson_method(del_x, del_t, u, f, D):
 	#create sparse matrices for crank-nicolson method
 	[L, I] = sparse_matrices(del_x)
 
-	#calculate number of time points between 0 and 1
-	Nt = int(1/del_t)-1
+	#calculate number of time points after 0 up to 1 (inclusive)
+	Nt = int(1/del_t)
 
-	for t in range(0,Nt):
+	for t in range(0,Nt-1):
 		#take half point of f for solve
 		f_half = (f[t]+f[t+1])/2
 		#solve for next u

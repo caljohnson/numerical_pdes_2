@@ -111,7 +111,7 @@ def setup_and_run(del_x, del_t):
 
 	#make vector of forcing function at all times 
 	Nx = int(1/del_x)-1
-	Nt = int(1/del_t)-1
+	Nt = int(1/del_t)
 	# x = [i*del_x for i in range(0, Nx+1)]
 	t = [i*del_t for i in range(0, Nt+1)]
 	

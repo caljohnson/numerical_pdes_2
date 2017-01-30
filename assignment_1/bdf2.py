@@ -73,14 +73,14 @@ def bdf2_method(del_x, del_t, u, f, D):
 	L = D*L
 
 	#calculate number of time points between 0 and 1
-	Nt = int(1/del_t)-1
+	Nt = int(1/del_t)
 
 	#solve for first step using Backward-Euler
 	u_old = u + 0
 	u_new = back_euler_step(del_t, u_old, D*L, f[1], I)
 	
 	#step through time looking backwards
-	for t in range(1,Nt):
+	for t in range(1,Nt-1):
 
 		#solve for next u using previous two iterates u_new and u_old
 		u = bdf2_time_step(del_t, u_new, u_old, D*L, f[t+1], I)
