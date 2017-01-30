@@ -37,7 +37,7 @@ def refinement_study():
 	refine_MAX = 15
 
 	#set time step
-	del_t = 0.01
+	del_t = 0.1
 
 	#loop through del_x values
 	del_x = [2**(-1-i) for i in range(0,refine_MAX)]
@@ -48,9 +48,9 @@ def refinement_study():
 	#get u(x,1) through Crank-Nicolson:
 	u_new = setup_and_run(del_x[0], del_t)
 	#plot u(x,1)
-	plt.plot(u_new)
-	plt.show()
-	plt.close()	
+	# plt.plot(u_new)
+	# plt.show()
+	# plt.close()	
 
 	#loop over finer del_x, take successive differences
 	for i in tqdm(range(1,refine_MAX)):
@@ -61,14 +61,14 @@ def refinement_study():
 		u_new = setup_and_run(del_x[i], del_t)
 
 		#calculate successive difference
-		diffs[i] = abs(norm(u_old,2)- norm(u_new,2))
+		diffs[i] = abs(norm(u_old,2) - norm(u_new,2))
 
 		#plot u(x,1)
-		plt.plot(u_new)
-		plt.show()
-		plt.close()	
+		# plt.plot(u_new)
+		# plt.show()
+		# plt.close()	
 
-	two_norm_table = [[del_x[i], diffs[i], diffs[i+1]/diffs[i]] for i in range(refine_MAX-1)]	
+	two_norm_table = [[del_x[i], diffs[i], diffs[i]/diffs[i+1]] for i in range(refine_MAX-1)]	
 	print(tabulate(two_norm_table, headers=['\delta x', 'diffs', 'diff ratios'], tablefmt="latex"))
 
 def setup_and_run(del_x, del_t):

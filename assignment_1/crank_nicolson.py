@@ -40,13 +40,14 @@ def crank_nicolson_time_step(del_t, u, L, f, I):
 
 	#(I + del_t/2 L)u^n
 	A = (I + (del_t/2) * L)
-	temp_u = A.dot(u)
+	RHS_terms = A.dot(u) + del_t*f
+	print(RHS_terms)
 
 	#make LHS matrix, put in CSC form for solver
 	LHS_matrix = scipy.sparse.csc_matrix(I-(del_t/2)*L)
 
 	#solve (I-del_t/2 L)u^n+1 = (I + del_t/2 L)u^n + del_t f^n+1/2
-	u_next = scipy.sparse.linalg.spsolve(LHS_matrix, temp_u + del_t*f)
+	u_next = scipy.sparse.linalg.spsolve(LHS_matrix, RHS_terms)
 
 	return u_next
 
