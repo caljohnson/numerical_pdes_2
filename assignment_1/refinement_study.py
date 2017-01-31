@@ -27,11 +27,11 @@ from tqdm import tqdm
 from crank_nicolson import crank_nicolson_method
 from bdf2 import bdf2_method
 
-def refinement_study():
+def succ_diff_refinement_study():
 	#perform a refinement study to demonstrate Crank-Nicolson
 	#is second-order accurate in space and time
-
-	#SHOW 2nd order in space
+	#using successive differences
+	#since no analytic soln
 
 	#max number of del_x,del_t values to examine
 	refine_MAX = 10
@@ -44,7 +44,7 @@ def refinement_study():
 	diffs = np.zeros(refine_MAX)
 
 	#get u(x,1) through Crank-Nicolson:
-	u_new = setup_and_run(del_x[0], del_t[0])
+	u_new = run_problem(del_x[0], del_t[0])
 
 	#loop over finer del_x, take successive differences
 	for i in tqdm(range(1,refine_MAX)):
@@ -52,20 +52,19 @@ def refinement_study():
 		u_old = u_new + 0
 
 		#get next u(x,1) through Crank-Nicolson
-		u_new = setup_and_run(del_x[i], del_t[i])
+		u_new = run_problem(del_x[i], del_t[i])
 		
 		#calculate successive difference between u(x,1) new and old	
 		diffs[i] = del_x[i-1]*norm(restriction(u_new, del_x[i]) - u_old,1)
 
-	print(u_new)
-
+	#tabulate refinement study results
 	two_norm_table = [[del_x[i], del_t[i], diffs[i], diffs[i]/diffs[i+1]] for i in range(refine_MAX-1)]	
 	print(tabulate(two_norm_table, headers=['delta x', 'delta t', 'diffs', 'diff ratios'], tablefmt="latex"))
 
-def test_refinement_study():
+def errors_refinement_study():
 	#perform a refinement study to demonstrate Crank-Nicolson
 	#is second-order accurate in space and time
-	#using test problem
+	#using error analysis with known analytic soln
 
 	#max number of del_x,del_t values to examine
 	refine_MAX = 10
@@ -80,42 +79,14 @@ def test_refinement_study():
 	#loop over finer del_x and del_t
 	for i in tqdm(range(0,refine_MAX)):
 		#get approx u(x,1) through Crank-Nicolson
-		[u_approx, u_sol] = setup_and_test(del_x[i], del_t[i])
-		#plot
-		# plt.plot(u_approx-u_sol)
-		# plt.plot(u_sol)
-		# plt.plot(u_approx)
-		# plt.show()
-		# plt.close()
+		[u_approx, u_sol] = run_test(del_x[i], del_t[i])
 		
 		#calculate error between u(x,1) approx and known solution	
 		errors[i] = del_x[i]*norm(u_approx - u_sol,1)
 
+	#tabulate refinement study results
 	two_norm_table = [[del_x[i], del_t[i], errors[i], errors[i]/errors[i+1]] for i in range(refine_MAX-1)]	
-	print(tabulate(two_norm_table, headers=['delta x', 'delta t', 'diffs', 'diff ratios'], tablefmt="latex"))
-
-
-def interpolate_diffs(u_new, u_old, h):
-	#interpolate both u_new and u_old on a finer grid
-	#and take the 2-norm difference of the interpolations
-	interpol_new = interpolate(u_new, h)
-	interpol_old = interpolate(interpolate(u_old, 2*h),h)
-	return norm(interpol_old-interpol_new)
-
-def interpolate(u_c, h):
-	#interpolate to a 2x finer mesh
-	n = int(1/h)-1
-	h2 = h/2
-	n2 = int(1/h2)-1
-	u_f = np.zeros(n2+1, dtype=float)
-
-	#loop over coarse mesh
-	for i in range(n):
-		u_f[2*i] = u_c[i]
-		u_f[2*i-1] += u_c[i]/2
-		u_f[2*i+1] += u_c[i]/2
-
-	return u_f
+	print(tabulate(two_norm_table, headers=['delta x', 'delta t', 'errors', 'error ratios'], tablefmt="latex"))
 
 def restriction(u_f, h):
 	#simple restriction operation
@@ -129,7 +100,7 @@ def restriction(u_f, h):
 		
 	return u_c
 
-def setup_and_test(del_x, del_t):
+def run_test(del_x, del_t):
 	#set up the vectors and parameters for Crank-Nicolson method and run
 	#using diffusion coefficient, initial condition of test problem
 	#u_t = u_xx
@@ -151,18 +122,13 @@ def setup_and_test(del_x, del_t):
 
 	#known solution u(x,t)=e^{-pi^2(0.01)t}sin(pi x) at t=1:
 	u_sol = [exp(-pi**2)*sin(pi*x) for x in x]
-	#plot
-	# plt.plot(u_sol)
-	# plt.show()
-	# plt.close()
-
 
 	#diffusion coefficient
 	D = 1
 	u = crank_nicolson_method(del_x, del_t, u, f, D)
 	return u, u_sol	
 
-def setup_and_run(del_x, del_t):
+def run_problem(del_x, del_t):
 	#set up the vectors and parameters for Crank-Nicolson method and run
 	#using diffusion coefficient, initial condition, forcing function from problem 2
 
@@ -185,5 +151,5 @@ def setup_and_run(del_x, del_t):
 	return u	
 
 if __name__ == '__main__':
-	test_refinement_study()
-	refinement_study()
+	errors_refinement_study()
+	succ_diff_refinement_study()
