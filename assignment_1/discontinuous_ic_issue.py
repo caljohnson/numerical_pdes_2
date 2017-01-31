@@ -30,7 +30,7 @@ def illustrate_issue():
 	Nx = int(1/del_x)-1
 	Nt = int(1/del_t)
 	f = np.zeros((Nt,Nx))
-	#include RHS BC u(0,t)=1
+	#include LHS BC u(0,t)=1
 	f[:,0] = 1/(del_x**2)*np.ones(Nt)
 
 	#initial condition u(x,0)=1 if x<0.5, 0 if x>=0.5

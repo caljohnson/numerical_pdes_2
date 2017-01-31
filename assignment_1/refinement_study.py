@@ -17,7 +17,7 @@
 from __future__ import division
 
 import numpy as np
-from numpy import exp
+from numpy import exp, sin, pi
 from numpy.linalg import norm
 import matplotlib.pyplot as plt
 
@@ -45,10 +45,6 @@ def refinement_study():
 
 	#get u(x,1) through Crank-Nicolson:
 	u_new = setup_and_run(del_x[0], del_t[0])
-	# #plot u(x,1)
-	# plt.plot(u_new)
-	# plt.show()
-	# plt.close()	
 
 	#loop over finer del_x, take successive differences
 	for i in tqdm(range(1,refine_MAX)):
@@ -61,15 +57,37 @@ def refinement_study():
 		#calculate successive difference between u(x,1) new and old	
 		diffs[i] = interpolate_diffs(u_new, u_old, del_x[i])
 
-		#plot u(x,1)
-		# plt.plot(u_new)
-		# plt.show()
-		# plt.close()	
-
 	print(u_new)
 
 	two_norm_table = [[del_x[i], del_t[i], diffs[i], diffs[i]/diffs[i+1]] for i in range(refine_MAX-1)]	
 	print(tabulate(two_norm_table, headers=['delta x', 'delta t', 'diffs', 'diff ratios'], tablefmt="latex"))
+
+def test_refinement_study():
+	#perform a refinement study to demonstrate Crank-Nicolson
+	#is second-order accurate in space and time
+	#using test problem
+
+	#max number of del_x,del_t values to examine
+	refine_MAX = 10
+
+	#loop through del_x values
+	del_x = [2**(-2-i) for i in range(0,refine_MAX)]
+	del_t = [2**(-1-i) for i in range(0, refine_MAX)]
+
+	#set container for successive differences
+	errors = np.zeros(refine_MAX)
+
+	#loop over finer del_x and del_t
+	for i in tqdm(range(0,refine_MAX)):
+		#get approx u(x,1) through Crank-Nicolson
+		[u_approx, u_sol] = setup_and_test(del_x[i], del_t[i])
+		
+		#calculate error between u(x,1) approx and known solution	
+		errors[i] = norm(u_approx - u_sol)
+
+	two_norm_table = [[del_x[i], del_t[i], errors[i], errors[i]/errors[i+1]] for i in range(refine_MAX-1)]	
+	print(tabulate(two_norm_table, headers=['delta x', 'delta t', 'diffs', 'diff ratios'], tablefmt="latex"))
+
 
 def interpolate_diffs(u_new, u_old, h):
 	#interpolate both u_new and u_old on a finer grid
@@ -105,6 +123,39 @@ def restriction(u_f, h):
 		
 	return u_c
 
+def setup_and_test(del_x, del_t):
+	#set up the vectors and parameters for Crank-Nicolson method and run
+	#using diffusion coefficient, initial condition of test problem
+	#u_t = 0.01 u_xx
+	#u(0,t)=u(1,t)=0
+	#u(x,0)=sin(pi x)
+	#which has solution u(x,t)=e^{-pi^2 (0.01 t)}sin(pi x)
+
+	#make vector of forcing function at all times 
+	Nx = int(1/del_x)-1
+	Nt = int(1/del_t)
+	x = [i*del_x for i in range(1, Nx+1)]
+	t = [i*del_t for i in range(0, Nt+1)]
+	
+	#f = 0
+	f = [0*t for t in t]
+	
+	#initial condition u(x,0)=sin(pi x)
+	u = [sin(pi*x) for x in x]
+
+	#known solution u(x,t)=e^{-pi^2(0.01)t}sin(pi x) at t=1:
+	u_sol = [exp(-0.01*pi**2)*sin(pi*x) for x in x]
+	#plot
+	plt.plot(u_sol)
+	plt.show()
+	plt.close()
+
+
+	#diffusion coefficient
+	D = 0.01
+	u = crank_nicolson_method(del_x, del_t, u, f, D)
+	return u, u_sol	
+
 def setup_and_run(del_x, del_t):
 	#set up the vectors and parameters for Crank-Nicolson method and run
 	#using diffusion coefficient, initial condition, forcing function from problem 2
@@ -128,8 +179,5 @@ def setup_and_run(del_x, del_t):
 	return u	
 
 if __name__ == '__main__':
-	# u = [1, 2, 3, 4, 5, 6, 7]
-	# u = restriction(u,1/8)
-	# print(u)
-	# raise
-	refinement_study()
+	test_refinement_study()
+	# refinement_study()
