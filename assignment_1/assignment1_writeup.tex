@@ -147,9 +147,27 @@ u(x,0) = &\begin{cases} 1, &\text{ if } x< 0.5 \\
 \begin{enumerate}[(a)]
 \item Use Crank-Nicolson with grid spacing $\Delta x = 0.02$ and time step $\Delta t = 0.1$ to solve the problem up to time $t=1$. Comment on your results.  What is wrong with this solution?
 
+The initial condition for this problem is given in the following figure:
+\begin{figure}[H]
+\centering\includegraphics[width=0.75\textwidth]{problem3_initial_condition.png}
+\end{figure}
+
+With Crank-Nicolson with grid spacing $\Delta x = 0.02$ and time step $\Delta t = 0.1$, the solution at time $t=1$ develops a noisy disturbance about the discontinuity at $x=0.5$ from the initial condition.
+
+\begin{figure}[H]
+\centering\includegraphics[width=0.75\textwidth]{problem3_crank_nicolson_issue.png}
+\end{figure}
+
 \item Give a mathematical argument to explain the unphysical behavior you observed in the numerical solution.
 
 \item Repeat the simulation using BDF2, and discuss why the unphysical behavior is not present in the numerical solution for any time step.
-
 \end{enumerate}
+
+With BDF-2 and the same grid spacing $\Delta x = 0.02$, time step $\Delta t = 0.1$, the solution at time $t=1$ looks smooth and linear as it should.
+
+\begin{figure}[H]
+\centering\includegraphics[width=0.75\textwidth]{problem3_bdf2_fixedissue.png}
+\end{figure}
+
+
 \end{document}

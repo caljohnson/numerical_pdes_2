@@ -83,10 +83,10 @@ def test_refinement_study():
 		[u_approx, u_sol] = setup_and_test(del_x[i], del_t[i])
 		#plot
 		# plt.plot(u_approx-u_sol)
-		plt.plot(u_sol)
-		plt.plot(u_approx)
-		plt.show()
-		plt.close()
+		# plt.plot(u_sol)
+		# plt.plot(u_approx)
+		# plt.show()
+		# plt.close()
 		
 		#calculate error between u(x,1) approx and known solution	
 		errors[i] = norm(u_approx - u_sol)

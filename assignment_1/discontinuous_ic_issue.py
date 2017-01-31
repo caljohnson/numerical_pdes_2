@@ -29,9 +29,9 @@ def illustrate_issue():
 	#make matrix of forcing function f=0 at all times and spaces
 	Nx = int(1/del_x)-1
 	Nt = int(1/del_t)
-	f = np.zeros((Nt,Nx))
+	f = np.zeros((Nt+1,Nx))
 	#include LHS BC u(0,t)=1
-	f[:,0] = 1/(del_x**2)*np.ones(Nt)
+	f[:,0] = 1/(del_x**2)*np.ones(Nt+1)
 
 	#initial condition u(x,0)=1 if x<0.5, 0 if x>=0.5
 	u = np.zeros(Nx)
@@ -40,6 +40,11 @@ def illustrate_issue():
 
 	#plot IC
 	plt.plot(u)
+	plt.title(r"Initial Condition", fontsize=12)
+	plt.axis([-1,50, -0.1, 1.1])
+	plt.xlabel(r"$x$")
+	plt.ylabel("$u(x,0)$")
+	plt.savefig("problem3_initial_condition.png", dpi=300)
 	plt.show()
 	plt.close()
 
@@ -49,6 +54,11 @@ def illustrate_issue():
 	
 	#plot u(x,1)
 	plt.plot(u)
+	plt.title(r"Crank-Nicolson Method Solution", fontsize=12)
+	plt.axis([-1,50, -0.1, 1.1])
+	plt.xlabel(r"$x$")
+	plt.ylabel("$u(x,1)$")
+	plt.savefig("problem3_crank_nicolson_issue.png", dpi=300)
 	plt.show()
 	plt.close()
 
@@ -62,9 +72,9 @@ def fix_issue():
 	#make matrix of forcing function f=0 at all times and spaces
 	Nx = int(1/del_x)-1
 	Nt = int(1/del_t)
-	f = np.zeros((Nt,Nx))
+	f = np.zeros((Nt+1,Nx))
 	#include RHS BC u(0,t)=1
-	f[:,0] = 1/(del_x**2)*np.ones(Nt)
+	f[:,0] = 1/(del_x**2)*np.ones(Nt+1)
 	
 	#initial condition u(x,0)=1 if x<0.5, 0 if x>=0.5
 	u = np.zeros(Nx)
@@ -82,6 +92,11 @@ def fix_issue():
 	
 	#plot u(x,1)
 	plt.plot(u)
+	plt.title(r"BDF-2 Method Solution", fontsize=12)
+	plt.axis([-1,50, -0.1, 1.1])
+	plt.xlabel(r"$x$")
+	plt.ylabel("$u(x,1)$")
+	plt.savefig("problem3_bdf2_fixedissue.png", dpi=300)
 	plt.show()
 	plt.close()
 

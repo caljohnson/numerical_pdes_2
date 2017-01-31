@@ -347,6 +347,15 @@ INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm7
 INPUT /usr/local/texlive/2016/texmf-var/fonts/map/pdftex/updmap/pdftex.map
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/cm/cmti8.tfm
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/cm/cmti7.tfm
+INPUT problem3_initial_condition.png
+INPUT ./problem3_initial_condition.png
+INPUT ./problem3_initial_condition.png
+INPUT problem3_crank_nicolson_issue.png
+INPUT ./problem3_crank_nicolson_issue.png
+INPUT ./problem3_crank_nicolson_issue.png
+INPUT problem3_bdf2_fixedissue.png
+INPUT ./problem3_bdf2_fixedissue.png
+INPUT ./problem3_bdf2_fixedissue.png
 INPUT assignment1_writeup.aux
 INPUT ./assignment1_writeup.out
 INPUT ./assignment1_writeup.out
