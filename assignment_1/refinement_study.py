@@ -55,7 +55,7 @@ def refinement_study():
 		u_new = setup_and_run(del_x[i], del_t[i])
 		
 		#calculate successive difference between u(x,1) new and old	
-		diffs[i] = norm(restriction(u_new, del_x[i]) - u_old)
+		diffs[i] = del_x[i-1]*norm(restriction(u_new, del_x[i]) - u_old,1)
 
 	print(u_new)
 
@@ -89,7 +89,7 @@ def test_refinement_study():
 		# plt.close()
 		
 		#calculate error between u(x,1) approx and known solution	
-		errors[i] = norm(u_approx - u_sol)
+		errors[i] = del_x[i]*norm(u_approx - u_sol,1)
 
 	two_norm_table = [[del_x[i], del_t[i], errors[i], errors[i]/errors[i+1]] for i in range(refine_MAX-1)]	
 	print(tabulate(two_norm_table, headers=['delta x', 'delta t', 'diffs', 'diff ratios'], tablefmt="latex"))
