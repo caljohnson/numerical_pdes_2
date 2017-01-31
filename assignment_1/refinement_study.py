@@ -37,7 +37,7 @@ def refinement_study():
 	refine_MAX = 10
 
 	#loop through del_x values
-	del_x = [2**(-1-i) for i in range(0,refine_MAX)]
+	del_x = [2**(-2-i) for i in range(0,refine_MAX)]
 	del_t = [2**(-1-i) for i in range(0, refine_MAX)]
 
 	#set container for successive differences
@@ -55,7 +55,7 @@ def refinement_study():
 		u_new = setup_and_run(del_x[i], del_t[i])
 		
 		#calculate successive difference between u(x,1) new and old	
-		diffs[i] = interpolate_diffs(u_new, u_old, del_x[i])
+		diffs[i] = norm(restriction(u_new, del_x[i]) - u_old)
 
 	print(u_new)
 
@@ -81,6 +81,12 @@ def test_refinement_study():
 	for i in tqdm(range(0,refine_MAX)):
 		#get approx u(x,1) through Crank-Nicolson
 		[u_approx, u_sol] = setup_and_test(del_x[i], del_t[i])
+		#plot
+		# plt.plot(u_approx-u_sol)
+		plt.plot(u_sol)
+		plt.plot(u_approx)
+		plt.show()
+		plt.close()
 		
 		#calculate error between u(x,1) approx and known solution	
 		errors[i] = norm(u_approx - u_sol)
@@ -126,16 +132,16 @@ def restriction(u_f, h):
 def setup_and_test(del_x, del_t):
 	#set up the vectors and parameters for Crank-Nicolson method and run
 	#using diffusion coefficient, initial condition of test problem
-	#u_t = 0.01 u_xx
+	#u_t = u_xx
 	#u(0,t)=u(1,t)=0
 	#u(x,0)=sin(pi x)
-	#which has solution u(x,t)=e^{-pi^2 (0.01 t)}sin(pi x)
+	#which has solution u(x,t)=e^{-pi^2 t}sin(pi x)
 
 	#make vector of forcing function at all times 
 	Nx = int(1/del_x)-1
 	Nt = int(1/del_t)
 	x = [i*del_x for i in range(1, Nx+1)]
-	t = [i*del_t for i in range(0, Nt+1)]
+	t = [i*del_t for i in range(Nt+1)]
 	
 	#f = 0
 	f = [0*t for t in t]
@@ -144,15 +150,15 @@ def setup_and_test(del_x, del_t):
 	u = [sin(pi*x) for x in x]
 
 	#known solution u(x,t)=e^{-pi^2(0.01)t}sin(pi x) at t=1:
-	u_sol = [exp(-0.01*pi**2)*sin(pi*x) for x in x]
+	u_sol = [exp(-pi**2)*sin(pi*x) for x in x]
 	#plot
-	plt.plot(u_sol)
-	plt.show()
-	plt.close()
+	# plt.plot(u_sol)
+	# plt.show()
+	# plt.close()
 
 
 	#diffusion coefficient
-	D = 0.01
+	D = 1
 	u = crank_nicolson_method(del_x, del_t, u, f, D)
 	return u, u_sol	
 
@@ -180,4 +186,4 @@ def setup_and_run(del_x, del_t):
 
 if __name__ == '__main__':
 	test_refinement_study()
-	# refinement_study()
+	refinement_study()

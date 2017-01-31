@@ -59,7 +59,7 @@ def crank_nicolson_method(del_x, del_t, u, f, D):
 	#calculate number of time points after 0 up to 1 (inclusive)
 	Nt = int(1/del_t)
 
-	for t in range(0,Nt-1):
+	for t in range(0,Nt):
 		#take half point of f for solve
 		f_half = (f[t]+f[t+1])/2
 		#solve for next u
