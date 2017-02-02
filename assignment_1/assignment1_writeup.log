@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2016.5.22)  31 JAN 2017 12:57
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2016.5.22)  1 FEB 2017 17:48
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -2362,7 +2362,7 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
 [1{/usr/local/texlive/2016/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 121--123
+Underfull \hbox (badness 10000) in paragraph at lines 125--127
 
  []
 
@@ -2379,20 +2379,27 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[3] <problem3_initial_condition.png, id=36, 578.16pt x 433.62pt>
+[3]
+
+Package Fancyhdr Warning: \headheight is too small (12.0pt): 
+ Make it at least 14.49998pt.
+ We now make it that large for the rest of the document.
+ This may cause the page layout to be inconsistent, however.
+
+[4] <problem3_initial_condition.png, id=40, 578.16pt x 433.62pt>
 File: problem3_initial_condition.png Graphic file (type png)
 
 <use problem3_initial_condition.png>
-Package pdftex.def Info: problem3_initial_condition.png used on input line 207.
+Package pdftex.def Info: problem3_initial_condition.png used on input line 212.
 
 (pdftex.def)             Requested size: 362.77263pt x 272.07709pt.
 
-<problem3_crank_nicolson_issue.png, id=38, 578.16pt x 433.62pt>
+<problem3_crank_nicolson_issue.png, id=42, 578.16pt x 433.62pt>
 File: problem3_crank_nicolson_issue.png Graphic file (type png)
 
 <use problem3_crank_nicolson_issue.png>
 Package pdftex.def Info: problem3_crank_nicolson_issue.png used on input line 2
-13.
+18.
 (pdftex.def)             Requested size: 362.77263pt x 272.07709pt.
 
 
@@ -2401,12 +2408,19 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[4 <./problem3_initial_condition.png>]
-<problem3_bdf2_fixedissue.png, id=45, 578.16pt x 433.62pt>
+[5 <./problem3_initial_condition.png>]
+
+Package Fancyhdr Warning: \headheight is too small (12.0pt): 
+ Make it at least 14.49998pt.
+ We now make it that large for the rest of the document.
+ This may cause the page layout to be inconsistent, however.
+
+[6 <./problem3_crank_nicolson_issue.png>]
+<problem3_bdf2_fixedissue.png, id=55, 578.16pt x 433.62pt>
 File: problem3_bdf2_fixedissue.png Graphic file (type png)
 
 <use problem3_bdf2_fixedissue.png>
-Package pdftex.def Info: problem3_bdf2_fixedissue.png used on input line 224.
+Package pdftex.def Info: problem3_bdf2_fixedissue.png used on input line 241.
 (pdftex.def)             Requested size: 362.77263pt x 272.07709pt.
 
 
@@ -2415,33 +2429,33 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[5 <./problem3_crank_nicolson_issue.png> <./problem3_bdf2_fixedissue.png>]
+[7 <./problem3_bdf2_fixedissue.png>]
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[6]
-Overfull \hbox (139.97847pt too wide) in paragraph at lines 276--276
+[8]
+Overfull \hbox (139.97847pt too wide) in paragraph at lines 308--308
 []  \OT1/cmtt/m/n/12 two_norm_table = [[del_x[i], del_t[i], diffs[i], diffs[i]/
 diffs[i+1]] for i in range(refine_MAX-1)][] 
  []
 
 
-Overfull \hbox (177.02849pt too wide) in paragraph at lines 277--277
+Overfull \hbox (177.02849pt too wide) in paragraph at lines 309--309
 []  \OT1/cmtt/m/n/12 print(tabulate(two_norm_table, headers=['delta x', 'delta 
 t', 'diffs', 'diff ratios'], tablefmt="latex"))[] 
  []
 
 
-Overfull \hbox (158.50348pt too wide) in paragraph at lines 303--303
+Overfull \hbox (158.50348pt too wide) in paragraph at lines 335--335
 []  \OT1/cmtt/m/n/12 two_norm_table = [[del_x[i], del_t[i], errors[i], errors[i
 ]/errors[i+1]] for i in range(refine_MAX-1)][] 
  []
 
 
-Overfull \hbox (189.3785pt too wide) in paragraph at lines 304--304
+Overfull \hbox (189.3785pt too wide) in paragraph at lines 336--336
 []  \OT1/cmtt/m/n/12 print(tabulate(two_norm_table, headers=['delta x', 'delta 
 t', 'errors', 'error ratios'], tablefmt="latex"))[] 
  []
@@ -2452,8 +2466,8 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[7]
-Overfull \hbox (22.65341pt too wide) in paragraph at lines 348--348
+[9]
+Overfull \hbox (22.65341pt too wide) in paragraph at lines 380--380
 []  \OT1/cmtt/m/n/12 #using diffusion coefficient, initial condition, forcing f
 unction from problem 2[] 
  []
@@ -2464,36 +2478,64 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[8]
-
-Package Fancyhdr Warning: \headheight is too small (12.0pt): 
- Make it at least 14.49998pt.
- We now make it that large for the rest of the document.
- This may cause the page layout to be inconsistent, however.
-
-[9]
-
-Package Fancyhdr Warning: \headheight is too small (12.0pt): 
- Make it at least 14.49998pt.
- We now make it that large for the rest of the document.
- This may cause the page layout to be inconsistent, however.
-
 [10]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 433.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 433.
+
+Package Fancyhdr Warning: \headheight is too small (12.0pt): 
+ Make it at least 14.49998pt.
+ We now make it that large for the rest of the document.
+ This may cause the page layout to be inconsistent, however.
+
+[11]
+
+Package Fancyhdr Warning: \headheight is too small (12.0pt): 
+ Make it at least 14.49998pt.
+ We now make it that large for the rest of the document.
+ This may cause the page layout to be inconsistent, however.
+
+[12]
+
+Package Fancyhdr Warning: \headheight is too small (12.0pt): 
+ Make it at least 14.49998pt.
+ We now make it that large for the rest of the document.
+ This may cause the page layout to be inconsistent, however.
+
+[13]
+
+Package Fancyhdr Warning: \headheight is too small (12.0pt): 
+ Make it at least 14.49998pt.
+ We now make it that large for the rest of the document.
+ This may cause the page layout to be inconsistent, however.
+
+[14]
+
+Package Fancyhdr Warning: \headheight is too small (12.0pt): 
+ Make it at least 14.49998pt.
+ We now make it that large for the rest of the document.
+ This may cause the page layout to be inconsistent, however.
+
+[15]
+
+Package Fancyhdr Warning: \headheight is too small (12.0pt): 
+ Make it at least 14.49998pt.
+ We now make it that large for the rest of the document.
+ This may cause the page layout to be inconsistent, however.
+
+[16]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 655.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 655.
  (./assignment1_writeup.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 433.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 433.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 655.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 655.
 Package rerunfilecheck Info: File `assignment1_writeup.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 433.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 655.
  ) 
 Here is how much of TeX's memory you used:
- 35142 strings out of 493014
- 801960 string characters out of 6133351
- 967241 words of memory out of 5000000
- 38149 multiletter control sequences out of 15000+600000
- 14447 words of font info for 55 fonts, out of 8000000 for 9000
+ 35150 strings out of 493014
+ 802030 string characters out of 6133351
+ 966241 words of memory out of 5000000
+ 38150 multiletter control sequences out of 15000+600000
+ 14754 words of font info for 56 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  55i,16n,77p,10417b,609s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb
@@ -2509,10 +2551,10 @@ xlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texl
 ive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/local/texli
 ve/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/local/texliv
 e/2016/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb>
-Output written on assignment1_writeup.pdf (10 pages, 390719 bytes).
+Output written on assignment1_writeup.pdf (16 pages, 404542 bytes).
 PDF statistics:
- 123 PDF objects out of 1000 (max. 8388607)
- 91 compressed objects within 1 object stream
- 18 named destinations out of 1000 (max. 500000)
+ 152 PDF objects out of 1000 (max. 8388607)
+ 113 compressed objects within 2 object streams
+ 25 named destinations out of 1000 (max. 500000)
  28 words of extra memory for PDF output out of 10000 (max. 10000000)
 

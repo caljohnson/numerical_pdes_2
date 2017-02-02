@@ -356,6 +356,7 @@ INPUT ./problem3_crank_nicolson_issue.png
 INPUT problem3_bdf2_fixedissue.png
 INPUT ./problem3_bdf2_fixedissue.png
 INPUT ./problem3_bdf2_fixedissue.png
+INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/cm/cmtt12.tfm
 INPUT assignment1_writeup.aux
 INPUT ./assignment1_writeup.out
