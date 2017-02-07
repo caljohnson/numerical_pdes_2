@@ -57,7 +57,7 @@ def crank_nicolson_time_step(h, del_t, u, L, f, I):
 
 	return u_next
 
-def crank_nicolson_method(h, del_t, u, f, D):
+def crank_nicolson_method(h, del_t, u, f, D, x, y, plotting):
 
 	#create sparse matrices for crank-nicolson method
 	[L, I] = sparse_matrices(h)
@@ -65,18 +65,30 @@ def crank_nicolson_method(h, del_t, u, f, D):
 	#calculate number of time points after 0 up to 1 (inclusive)
 	Nt = int(1/del_t)
 
-	#set up plotting
-	# Axes3D.plot(u)
-	# plt.pause(0.5)
+	if plotting==1:
+		#set up plotting
+		fig = plt.figure()
+		ax = fig.add_subplot(111, projection='3d')
+		# `plot_surface` expects `x` and `y` data to be 2D
+		X, Y = np.meshgrid(x, y)  
+		#keep z limits fixed
+		ax.set_zlim(0, 1)
+		plt.ion()
+		#plot first frame, u(x,y,0)
+		frame = ax.plot_surface(X, Y, u)
+		plt.pause(0.05)
 
 	for t in range(0,Nt):
 		#take half point of f for solve
 		f_half = (f[t]+f[t+1])/2
 		#solve for next u
 		u = crank_nicolson_time_step(h, del_t, u, D*L, f_half, I)
-		# print(u)
-		# Axes3D.plot(u)
-		# plt.pause(0.5)
+		
+		if plotting==1:
+			#plot current u
+			ax.collections.remove(frame)
+			frame = ax.plot_surface(X, Y, u)
+			plt.pause(0.05)
 
 	return u
 

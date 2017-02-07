@@ -42,17 +42,20 @@ def run_Crank_Nicolson_problem2(h,del_t):
 	#initial condition u(x,y,0)=exp(-100((x-0.3)^2+(y-0.4)^2))
 	u = [[exp(-100*((x-0.3)**2+(y-0.4)**2)) for x in X] for y in Y]
 	u = np.asarray(u)
-	print(u)
 	print(norm(u))
+
+	#Decide whether or not to plot, 1=plot, 0=dont plot
+	plotting =1
+
 	#diffusion coefficient
 	D = 1
-	u = crank_nicolson_method(h, del_t, u, f, D)
+	u = crank_nicolson_method(h, del_t, u, f, D, X, Y, plotting)
 
-	print(u)
+	# print(u)
 	print(norm(u))
 	return u	
 
 if __name__ == '__main__':
 	# errors_refinement_study()
-	run_Crank_Nicolson_problem2(0.25,0.01)
+	run_Crank_Nicolson_problem2(2**(-8),0.01)
 
