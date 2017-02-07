@@ -11,16 +11,18 @@
 from __future__ import division
 
 import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 import scipy.sparse as sparse
 import scipy.sparse.linalg
 
-def sparse_matrices(del_x):
+def sparse_matrices(h):
 	#set sparse matrix L, the discrete 2-D Laplacian
 	#for 5-pt 2nd order approximation
 
 	#Set number of grid points
-	N = 1/del_x - 1
+	N = 1/h - 1
 
 	#set off-diagonal Laplacian components
 	off_diag = 1*np.ones(N)
@@ -32,12 +34,15 @@ def sparse_matrices(del_x):
 	lap1D = scipy.sparse.dia_matrix((A,[-1,0,1]),shape=(N,N))
 	speye = scipy.sparse.identity(N)
 	#put diagonals together into sparse matrix format
-	L = (1/(del_x**2))*(scipy.sparse.kron(lap1D,speye) + scipy.sparse.kron(speye,lap1D))
+	L = (1/(h**2))*(scipy.sparse.kron(lap1D,speye) + scipy.sparse.kron(speye,lap1D))
 
-	return L, speye
+	#make identity matrix of same size as L
+	I = scipy.sparse.identity(N**2)
+	return L, I
 
-def crank_nicolson_time_step(del_t, u, L, f, I):
+def crank_nicolson_time_step(h, del_t, u, L, f, I):
 	#one time step of crank-nicolson solver
+	N = 1/h -1
 
 	#(I + del_t/2 L)u^n
 	A = (I + (del_t/2) * L)
@@ -48,24 +53,31 @@ def crank_nicolson_time_step(del_t, u, L, f, I):
 
 	#solve (I-del_t/2 L)u^n+1 = (I + del_t/2 L)u^n + del_t f^n+1/2
 	u_next = scipy.sparse.linalg.spsolve(LHS_matrix, RHS_terms)
-	u_next = np.reshape(u_next, (n, n))
+	u_next = np.reshape(u_next, (N, N))
 
 	return u_next
 
-def crank_nicolson_method(del_x, del_t, u, f, D):
+def crank_nicolson_method(h, del_t, u, f, D):
 
 	#create sparse matrices for crank-nicolson method
-	[L, I] = sparse_matrices(del_x)
+	[L, I] = sparse_matrices(h)
 
 	#calculate number of time points after 0 up to 1 (inclusive)
 	Nt = int(1/del_t)
+
+	#set up plotting
+	# Axes3D.plot(u)
+	# plt.pause(0.5)
 
 	for t in range(0,Nt):
 		#take half point of f for solve
 		f_half = (f[t]+f[t+1])/2
 		#solve for next u
-		u = crank_nicolson_time_step(del_t, u, D*L, f_half, I)
-		
+		u = crank_nicolson_time_step(h, del_t, u, D*L, f_half, I)
+		# print(u)
+		# Axes3D.plot(u)
+		# plt.pause(0.5)
+
 	return u
 
 if __name__ == '__main__':
