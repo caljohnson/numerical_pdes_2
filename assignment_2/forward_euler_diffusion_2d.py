@@ -1,10 +1,9 @@
-#Crank-Nicolson_2D.py
+#Forward_Euler_Diffusion_2D.py
 #Cater Johnson
 #MAT228B Assignment 2
 
-#2-D Diffusion equation solver using Crank-Nicolson routine
-#5-pt 2nd order spatial discretization 
-#with a trapezoidal rule for time
+#2-D Diffusion equation solver using Forward Euler
+#using 5-pt 2nd order spatial discretization
 #for Dirichlet BC's
 #for time t=0 to t=1
 
@@ -40,24 +39,18 @@ def sparse_matrices(h):
 	I = scipy.sparse.identity(N**2)
 	return L, I
 
-def crank_nicolson_time_step(h, del_t, u, L, f, I):
+def forward_euler_time_step(h, del_t, u, L, f, I):
 	#one time step of crank-nicolson solver
 	N = 1/h -1
 
-	#(I + del_t/2 L)u^n
-	A = (I + (del_t/2) * L)
-	RHS_terms = A.dot(u.flatten(order='C')) + del_t*f
-
-	#make LHS matrix, put in CSC form for solver
-	LHS_matrix = scipy.sparse.csc_matrix(I-(del_t/2)*L)
-
-	#solve (I-del_t/2 L)u^n+1 = (I + del_t/2 L)u^n + del_t f^n+1/2
-	u_next = scipy.sparse.linalg.spsolve(LHS_matrix, RHS_terms)
+	#u^n+1 = (I + del_t L)u^n + del_t*f
+	A = (I + (del_t) * L)
+	u_next = A.dot(u.flatten(order='C')) + del_t*f
 	u_next = np.reshape(u_next, (N, N))
 
 	return u_next
 
-def crank_nicolson_method(h, del_t, u, f, D, x, y, plotting):
+def forward_euler_method(h, del_t, u, f, D, x, y, plotting):
 
 	#create sparse matrices for crank-nicolson method
 	[L, I] = sparse_matrices(h)
@@ -79,10 +72,8 @@ def crank_nicolson_method(h, del_t, u, f, D, x, y, plotting):
 		plt.pause(0.05)
 
 	for t in range(0,Nt):
-		#take half point of f for solve
-		f_half = (f[t]+f[t+1])/2
 		#solve for next u
-		u = crank_nicolson_time_step(h, del_t, u, D*L, f_half, I)
+		u = forward_euler_time_step(h, del_t, u, D*L, f[t], I)
 		
 		if plotting==1:
 			#plot current u
@@ -98,4 +89,3 @@ if __name__ == '__main__':
 	print(A.toarray())
 	# setup_and_run(1/4,1/100)
 	# refinement_study()
-
