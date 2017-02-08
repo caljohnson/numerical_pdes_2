@@ -50,7 +50,7 @@ def run_comparison():
 	
 	for i in range(len(h)):
 
-		FE_del_t = h[i]**2/4
+		FE_del_t = h[i]**2/5
 
 		#make vector of forcing function for FE at all times, also get grid points for level h
 		Nx = int(1/h[i])-1
@@ -78,7 +78,7 @@ def run_comparison():
 		FE_times.append(tic-toc)
 
 	runtime_table = [[h[i], CN_times[i], FE_times[i]] for i in range(len(h))]
-	print(tabulate(runtime_table, headers=["grid spacing", "Crank-Nicolson Run time", "Forward Euler run time"]))
+	print(tabulate(runtime_table, headers=["grid spacing", "Crank-Nicolson Run time", "Forward Euler run time"], tablefmt="latex"))
 	return u	
 
 
@@ -104,14 +104,16 @@ def run_Crank_Nicolson_problem2(h,del_t):
 	print(norm(u))
 
 	#Decide whether or not to plot, 1=plot, 0=dont plot
-	plotting =1
+	plotting =0
 
 	#diffusion coefficient
 	D = 1
 
 	#GO
+	toc=clock()
 	u = crank_nicolson_method(h, del_t, u, f, D, X, Y, plotting)
-
+	tic=clock()
+	print(tic-toc)
 	print(norm(u))
 	return u	
 
@@ -150,9 +152,9 @@ def run_Forward_Euler_problem2(h,del_t):
 
 
 if __name__ == '__main__':
-	run_comparison()
+	#run_comparison()
 	# h = 2**(-3)
 	# del_t = h**2/4
-	# run_Crank_Nicolson_problem2(h, 0.01)
+	run_Crank_Nicolson_problem2(2**(-8), 0.01)
 	# run_Forward_Euler_problem2(h, del_t)
 
