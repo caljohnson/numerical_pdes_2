@@ -73,14 +73,66 @@
 
 \begin{document}
 \lhead{MATH228B}
-\chead{Carter Johnson - Homework 01}
+\chead{Carter Johnson - Homework 02}
 \rhead{\today}
 
 {\let\newpage\relax} 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% P1
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% P2
 \begin{myprob}{Problem 1}
+Consider the forward time, centered space discretization
+$$\dfrac{u_j^{n+1}-u_j^n}{\Delta t} + a \dfrac{u_{j+1}^n - u_{j-1}^n}{2\Delta x} = b \dfrac{u_{j-1}^n - 2u_j^n + u_{j+1}^n}{\Delta x^2},$$
+to the convection-diffusion equation,
+$$u_t + au_x = bu_{xx}, \ b>0 .$$
+\end{myprob}
+\begin{enumerate}[(a)]
+\item Let $\nu = a\Delta t/ \Delta x$ and $\mu = b \Delta t/\Delta x^2$.  Since the solution to the PDE does not grow in time, it seems reasonable to require that the numerical solution not grow in time.  Use von Neumann analysis to show that the numerical solution does not grow (in 2-norm) if and only if $\nu^2 \leq 2\mu \leq 1.$
+
+Assume $u_j^n = e^{i\xi x_j}$ and $u_j^{n=1} = g(\xi) e^{i \xi x_j}$.  Then the scheme is 
+\begin{align*}
+g(\xi)e^{i \xi x_j}-e^{i \xi x_j} + \dfrac{a\Delta t}{2 \Delta x} \qty(e^{i \xi (x_j+\Delta x)} - e^{i \xi (x_j-\Delta x)}) &= \dfrac{b\Delta t}{\Delta x^2} \qty(e^{i \xi (x_j-\Delta x)}-2e^{i \xi x_j}+e^{i \xi (x_j+\Delta x)}) \\
+g(\xi)-1 + \dfrac{\nu}{2}\qty(e^{i \xi \Delta x}-e^{-i \xi \Delta x}) &= \mu \qty(e^{-i\xi \Delta x}-2+e^{i\xi\Delta x})\\
+g(\xi)- 1 + i \nu \sin(\xi\Delta x) &= -4\mu \sin^2\qty(\dfrac{\xi \Delta x}{2}) \\
+\implies g(\xi) = 1 - 2i \nu \sin\qty(\dfrac{\xi \Delta x}{2}) \cos\qty(\dfrac{\xi \Delta x}{2})  &- 4\mu sin^2\qty(\dfrac{\xi\Delta x}{2}).
+\end{align*}
+Since 
+$$\norm{u^{n+1}}_2 = \norm{g(\xi)u^n}_2 \leq \norm{g(\xi)}_\infty \norm{u^n}_2,$$
+in order for solutions to not grow in the 2-norm, we require that
+$$\max_{\xi} |g(\xi)| \leq 1 \implies |g(\xi)|\leq 1 \ \forall \xi.$$
+Then 
+\begin{align*}
+|g(\xi)| &= \qty(1-4\mu\sin^2\qty(\dfrac{\xi \Delta x}{2}))^2 + \qty(-2\nu \sin\qty(\dfrac{\xi \Delta x}{2})\cos\qty(\dfrac{\xi \Delta x}{2}))^2 \\
+&= \qty(1-4\mu\sin^2\qty(\dfrac{\xi \Delta x}{2}))^2 + 4\nu^2 \sin^2\qty(\dfrac{\xi \Delta x}{2})\cos^2\qty(\dfrac{\xi \Delta x}{2}) \\
+&= 1-8\mu\sin^2\qty(\dfrac{\xi \Delta x}{2})+16\mu^2\sin^4\qty(\dfrac{\xi \Delta x}{2}) + 4\nu^2 \sin^2\qty(\dfrac{\xi \Delta x}{2})\qty(1-\sin^2\qty(\dfrac{\xi \Delta x}{2})) \\
+&= 1+(4\nu^2-8\mu)\sin^2\qty(\dfrac{\xi \Delta x}{2})+(16\mu^2-4\nu^2)\sin^4\qty(\dfrac{\xi \Delta x}{2}).
+\end{align*}
+If $\nu^2 \leq 2\mu \leq 1$, then $$4\nu^2 - 8\mu\leq 0.$$
+Also, $\mu\leq 1/2 \implies \mu^2\leq 1/4$, and $\nu^2\leq 1$ so 
+$$16\mu^2 -4\nu^2 \leq 16/4 - 4\nu^2 \leq 4-4 = 0.$$
+Thus $$|g(\xi)| =  1+(4\nu^2-8\mu)\sin^2\qty(\dfrac{\xi \Delta x}{2})+(16\mu^2-4\nu^2)\sin^4\qty(\dfrac{\xi \Delta x}{2}) \leq 1.$$
+So if $\nu^2 \leq 2\mu \leq 1,$ numerical solutions do not grow in the 2-norm.
+
+Similarly, if we know that numerical solutions do not grow in the 2-norm, i.e.,
+$|g(\xi)| \leq 1,$
+then it must be that $$(4\nu^2-8\mu)\sin^2\qty(\dfrac{\xi \Delta x}{2})+(16\mu^2-4\nu^2)\sin^4\qty(\dfrac{\xi \Delta x}{2}) \leq 0.$$
+Then since $\sin^2(x)$ and $\sin^4(x)$ are both positive-definite, we must have that $$4\nu^2-8\mu \leq 0  \ \text{ and }\ \ 16\mu^2 - 4\nu^2 \leq 0 .$$
+The former yields $\nu^2 \leq 2 \mu$.  Then
+\begin{align*}
+16\mu^2 - 4 \nu^2 &\leq 0 \\
+16\mu^2 \leq 4\nu^2 &\leq 8 \mu \\
+\implies 2\mu^2 \leq \mu \\
+\implies 2\mu \leq 1.
+\end{align*}
+Hence the stability restriction is indeed $\nu^2 \leq 2\mu \leq 1.$
+
+\item Suppose that we use the mixed implicit-explicit scheme
+$$\dfrac{u_j^{n+1}-u_j^n}{\Delta t} + a \dfrac{u_{j+1}^n - u_{j-1}^n}{2\Delta x} = b \dfrac{u_{j-1}^{n+1} - 2u_j^{n+1} + u_{j+1}^{n+1}}{\Delta x^2}.$$
+Use von Neumann analysis to derive a stability restriction on the time step.
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% P2
+\begin{myprob}{Problem 2}
 Write programs to solve
 $$u_t = \Delta u \text{ on } \Omega = (0,1) \times (0,1)$$
 $$u=0 \text{ on } \delta \Omega$$
@@ -116,7 +168,7 @@ The runtime comparison of the two methods is given in Table 1.  FE is faster for
 
 \item In theory, how should the (run)time scale as the grid is refined for each algorithm? How did the (run)time scale with the grid size in practice?
 
-For CN, we used the same number of time steps for each solve, so that doesn't factor into the runtime scaling.  Each timestep, however, required a linear solve with an $N^2\times N^2$ sparse matrix, which takes $\O(N^2)$ work.  Each $N = 1/h = 2^{i},$ so the work at each time step should have been $2^{2i}$. The next grid spacing level would have $N=2^{i+1}$ and thus $2^{2i+2}$ work, for a successive ratio of $2^{2}=4$.  Thus the time to solve should scale by a factor $4$. In practice for CN, this scaling was never achieved, as shown in Table 2.
+For CN, we used the same number of time steps for each solve, so that doesn't factor into the runtime scaling.  Each timestep, however, required a linear solve with an $N^2\times N^2$ sparse matrix, which takes $\O(N^4)$ work.  Each $N = 1/h = 2^{i},$ so the work at each time step should have been $2^{4i}$. The next grid spacing level would have $N=2^{i+1}$ and thus $2^{4i+4}$ work, for a successive ratio of $2^{4}=16$.  Thus the time to solve should scale by a factor $16$. In practice for CN, this scaling was never achieved, as shown in Table 2.
 
 \begin{table}[H]
 \caption{C-N Runtime Scaling}
