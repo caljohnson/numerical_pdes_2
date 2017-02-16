@@ -31,7 +31,7 @@ def run_comparison():
 	#using diffusion coefficient, initial condition, forcing function from problem 2
 
 	#set vector of grid spacings
-	h = [2**(-i) for i in range(1,8)]
+	h = [2**(-i) for i in range(1,10)]
 
 	#set time steps for CN, forcing function for CN
 	CN_del_t = 0.01
@@ -44,11 +44,14 @@ def run_comparison():
 	#Don't plot
 	plotting=0
 
-	#record run times
-	CN_times = []
-	FE_times = []
+	#record run times and runtime ratios
+	CN_times = np.zeros(len(h))
+	FE_times = np.zeros(len(h))
+	CN_ratios = np.zeros(len(h))
+	FE_ratios = np.zeros(len(h))
+
 	
-	for i in range(len(h)):
+	for i in tqdm(range(len(h))):
 
 		FE_del_t = h[i]**2/5
 
@@ -70,15 +73,20 @@ def run_comparison():
 		toc=clock()
 		u = crank_nicolson_method(h[i], CN_del_t, u, f_CN, D, X, Y, plotting)
 		tic=clock()
-		CN_times.append(tic-toc)
+		if i>0:
+			CN_ratios[i]=(tic-toc)/CN_times[i-1]
+		CN_times[i]=tic-toc
 
-		toc=clock()
-		u = forward_euler_method(h[i], FE_del_t, u, f_FE, D, X, Y, plotting)
-		tic=clock()
-		FE_times.append(tic-toc)
+		if i<=7:
+			toc=clock()
+			u = forward_euler_method(h[i], FE_del_t, u, f_FE, D, X, Y, plotting)
+			tic=clock()
+			if i>0:
+				FE_ratios[i]=(tic-toc)/FE_times[i-1]
+			FE_times[i]=tic-toc
 
-	runtime_table = [[h[i], CN_times[i], FE_times[i]] for i in range(len(h))]
-	print(tabulate(runtime_table, headers=["grid spacing", "Crank-Nicolson Run time", "Forward Euler run time"], tablefmt="latex"))
+	runtime_table = [[h[i], CN_times[i], CN_ratios[i], FE_times[i], FE_ratios[i]] for i in range(len(h))]
+	print(tabulate(runtime_table, headers=["grid spacings", "Crank-Nicolson Runtimes", "CN Runtime Ratios", "Forward Euler Runtimes", "FE Runtime Ratios"], tablefmt="latex"))
 	return u	
 
 
@@ -152,9 +160,9 @@ def run_Forward_Euler_problem2(h,del_t):
 
 
 if __name__ == '__main__':
-	#run_comparison()
+	run_comparison()
 	# h = 2**(-3)
 	# del_t = h**2/4
-	run_Crank_Nicolson_problem2(2**(-8), 0.01)
+	#run_Crank_Nicolson_problem2(2**(-8), 0.01)
 	# run_Forward_Euler_problem2(h, del_t)
 

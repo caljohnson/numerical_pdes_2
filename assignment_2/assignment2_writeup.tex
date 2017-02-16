@@ -129,6 +129,24 @@ Hence the stability restriction is indeed $\nu^2 \leq 2\mu \leq 1.$
 \item Suppose that we use the mixed implicit-explicit scheme
 $$\dfrac{u_j^{n+1}-u_j^n}{\Delta t} + a \dfrac{u_{j+1}^n - u_{j-1}^n}{2\Delta x} = b \dfrac{u_{j-1}^{n+1} - 2u_j^{n+1} + u_{j+1}^{n+1}}{\Delta x^2}.$$
 Use von Neumann analysis to derive a stability restriction on the time step.
+
+Let $u_j^n = e^{i\xi x_j}$, assume $u_j^{n+1}=g(\xi)e^{i\xi x_j}$.  Then the scheme yields
+\begin{align*}
+g(\xi)e^{i\xi x_j} - e^{i\xi x_j} + \dfrac{\nu}{2}e^{i\xi x_j}\qty(e^{i\xi\Delta x}-e^{-i\xi \Delta x}) &= \mu g(\xi) e^{i\xi x_j}\qty(e^{-i\xi\Delta x} - 2 + e^{i\xi \Delta x}) \\
+g - 1 + i\nu\sin(\xi \Delta x) &= -4 g \mu \sin^2\qty(\dfrac{\xi \Delta x}{2}) \\
+g\qty(1+4\mu\sin^2\qty(\dfrac{\xi\Delta x}{2})) &= 1 - 2i\nu\sin\qty(\dfrac{\xi\Delta x}{2})\cos\qty(\dfrac{\xi\Delta x}{2}) \\
+\implies g(\xi) &= \dfrac{1 - 2i\nu\sin\qty(\dfrac{\xi\Delta x}{2})\cos\qty(\dfrac{\xi\Delta x}{2}) }{1+4\mu\sin^2\qty(\dfrac{\xi\Delta x}{2})}
+\end{align*}
+For the scheme to be stable, we need $|g(\xi)|\leq 1$.
+\begin{align*}
+\dfrac{1^2 + \qty(2\nu\sin\qty(\dfrac{\xi\Delta x}{2})\cos\qty(\dfrac{\xi\Delta x}{2}))^2}{\qty(1+4\mu\sin^2\qty(\dfrac{\xi\Delta x}{2}))^2} &\leq 1 \\
+1 + 4\nu^2\sin^2\qty(\dfrac{\xi\Delta x}{2})\cos^2\qty(\dfrac{\xi\Delta x}{2}) &\leq 1 + 8\mu\sin^2\qty(\dfrac{\xi \Delta x}{2}) + 16\mu^2\sin^4\qty(\dfrac{\xi\Delta x}{2}) \\
+4\nu\cos^2\qty(\dfrac{\xi\Delta x}{2}) &\leq 8\mu + 16\mu^2\sin^2\qty(\dfrac{\xi\Delta x}{2}) \\
+4\nu^2\qty(1-\sin^2\qty(\dfrac{\xi\Delta x}{2})) &\leq 8\mu + 16\mu^2\sin^2\qty(\dfrac{\xi\Delta x}{2}). 
+\end{align*}
+The above inequality holds for both extreme values of the increasing function $\sin^2\qty(\dfrac{\xi\Delta x}{2})$, 0 and 1.  For $\sin^2\qty(\dfrac{\xi\Delta x}{2})=0,$ the inequality becomes $$4\nu^2 \leq 8 \mu$$
+or $\nu^2 \leq 2\mu$.  For $\sin^2\qty(\dfrac{\xi\Delta x}{2})=1,$ the inequality becomes $$0 \leq 8\mu + 16\mu^2,$$ which is true since $\mu>0$.
+Thus the only stability restriction is that $\nu^2 \leq 2\mu$.
 \end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% P2
@@ -149,67 +167,278 @@ and since $D=1$ in this problem, I used a time step of $\Delta t = \dfrac{h^2}{5
 The runtime comparison of the two methods is given in Table 1.  FE is faster for coarse grid spacings due to the overhead in solving the linear system in C-N, but C-N easily outperforms FE for finer grid spacings from $2^{-4}$ and beyond.
 
 \begin{table}[H]
-\caption{Runtime Comparison for C-N, FE for 2-D Diffusion}
+\caption{Runtime (in Seconds) Comparison for C-N, FE for 2-D Diffusion}
 \centering\begin{tabular}{||c|c|c||}
 \hline \hline
-   grid spacing $h$ &  Crank-Nicolson Run time (seconds) &   Forward Euler run time (seconds) \\
-\hline
-    $2^{-1}$ &                  0.144207 &                 0.010568 \\
-    $2^{-2}$ &                  0.140511 &                 0.027865 \\
-    $2^{-3}$ &                  0.110168 &                 0.10511  \\
-    $2^{-4}$ &                  0.158117 &                 0.440522 \\
-    $2^{-5}$ &                  0.35293  &                 2.15241  \\
-    $2^{-6}$ &                  2.88994  &                11.1677   \\
-    $2^{-7}$ &                 14.1016   &               101.184    \\
-    $2^{-8}$ &                 95.351819 &                --------- \\ 
-\hline \hline
+   grid spacings $h$ &   Crank-Nicolson Runtimes &    Forward Euler Runtimes  \\
+\hline 
+      $2^{-1}$ &   0.134055 &      0.013954    \\
+      $2^{-2}$ &   0.136421 &    0.032493 \\
+      $2^{-3}$ &  0.102737 &   0.125547  \\
+      $2^{-4}$ &   0.151887 &    0.540384 \\
+      $2^{-5}$ &    0.335359 &         2.339   \\
+      $2^{-6}$ &    2.63749  &    13.3055    \\
+      $2^{-7}$ &    14.1191  &   118.39    \\
+      $2^{-8}$ &     93.7666  &   2320.99    \\
+      $2^{-9}$ &     610.232  &    ------    \\
+\hline\hline
 \end{tabular}
 \end{table}
 
 \item In theory, how should the (run)time scale as the grid is refined for each algorithm? How did the (run)time scale with the grid size in practice?
 
-For CN, we used the same number of time steps for each solve, so that doesn't factor into the runtime scaling.  Each timestep, however, required a linear solve with an $N^2\times N^2$ sparse matrix, which takes $\O(N^4)$ work.  Each $N = 1/h = 2^{i},$ so the work at each time step should have been $2^{4i}$. The next grid spacing level would have $N=2^{i+1}$ and thus $2^{4i+4}$ work, for a successive ratio of $2^{4}=16$.  Thus the time to solve should scale by a factor $16$. In practice for CN, this scaling was never achieved, as shown in Table 2.
+For CN, we used the same number of time steps for each solve, so that doesn't factor into the runtime scaling.  Each timestep, however, required a linear solve with an $N^2\times N^2$ sparse banded matrix.  With a dumb algorithm that takes advantage of the banded structure, it should take number of rows $\mathcal{O}(N^2)$ times the first band width spacing $\mathcal{O}(N)$ times the next band width spacing $\mathcal{O}(N)$, for a total of $\mathcal{O}(N^4)$ work.  Each $N = 1/h = 2^{i},$ so the work at each time step should have been $2^{4i}$. The next grid spacing level would have $N=2^{i+1}$ and thus $2^{4i+4}$ work, for a successive ratio of $2^{4}=16$.  Thus the time to solve should scale by a factor $16$. In practice for CN, this scaling was never achieved, as shown in Table 2.  The practical scaling was around a factor of $6.5$, which might indicate an asymptotic scaling factor of $8$.  This means that the scipy sparse matrix solver I use in the CN routine is better than my $\mathcal{O}(N^4)$ estimate, and it is probably closer to $\mathcal{O}(N^3)$.
 
 \begin{table}[H]
 \caption{C-N Runtime Scaling}
 \centering\begin{tabular}{||c|c|c||}
 \hline \hline
-   grid spacing $h$ &  Crank-Nicolson Run time (seconds) &   Ratio \\
+   grid spacings $h$ &   Crank-Nicolson Runtimes &   Successive Ratios \\
 \hline
-    $2^{-1}$ &                  0.144207 &                 --------- \\
-    $2^{-2}$ &                  0.140511 &                 0.974 \\
-    $2^{-3}$ &                  0.110168 &                 0.78  \\
-    $2^{-4}$ &                  0.158117 &                 1.44 \\
-    $2^{-5}$ &                  0.35293  &                 2.23  \\
-    $2^{-6}$ &                  2.88994  &                8.19   \\
-    $2^{-7}$ &                 14.1016   &               4.88    \\
-    $2^{-8}$ &                 95.351819 &               6.76 \\ 
+      $2^{-1}$   &                  0.134055 &           --------   \\
+      $2^{-2}$   &                  0.136421 &            1.01765  \\
+      $2^{-3}$   &                  0.102737 &            0.753088 \\
+      $2^{-4}$   &                  0.151887 &            1.47841 \\
+      $2^{-5}$   &                  0.335359 &            2.20795    \\
+      $2^{-6}$   &                  2.63749  &            7.86469   \\
+      $2^{-7}$   &                 14.1191   &            5.35322   \\
+      $2^{-8}$   &                 93.7666   &            6.64112   \\
+      $2^{-9}$   &                610.232    &            6.50799  \\
 \hline \hline
 \end{tabular}
 \end{table}
 
 For FE, the time step size was $\Delta t = h^2/5$, for grid spacings $h=2^{-1},\dots,2^{-7}$.  Thus at each grid level $h=2^{-i}$, there were $5\cdot2^{2i}$ time steps total.  Each timestep requires multiplication by a $2^{2i} \times 2^{2i}$ matrix, so $2^{2i}$ work.  At the next level, there are then a factor of $2^{2}$ more time steps and a factor of $2^2$ more work involved at each step, so the runtime should scale by a factor of 16.
 
-In practice for FE, the runtime scaling factor increases as the runtime increases, possibly the factor of 16 is achieved asymptotically.  The runtime scaling factors are shown in Table 3.
+In practice for FE, the runtime scaling factor increases as the runtime increases, but I did not run the simulation long enough to achieve the asymptotic scaling factor of 16.  The ratios jump from 2.33 to 4 to 9 to 20, so maybe the next run would have settled down closer to 16.  The runtime scaling factors are shown in Table 3.
 \begin{table}[H]
 \caption{FE Runtime Scaling}
 \centering\begin{tabular}{||c|c|c||}
 \hline \hline
    grid spacing $h$ &  Forward Euler run time (seconds) & Ratio \\
 \hline
-    $2^{-1}$ &               0.010568                 & ------ \\
-    $2^{-2}$ &               0.027865                 & 2.64 \\
-    $2^{-3}$ &               0.10511                  & 3.77 \\
-    $2^{-4}$ &               0.440522                 & 4.19 \\
-    $2^{-5}$ &               2.15241                  & 4.89 \\
-    $2^{-6}$ &               11.1677                  & 5.19 \\
-    $2^{-7}$ &               101.184                  & 9.06 \\
+    $2^{-1}$ &               0.013954                & ------ \\
+    $2^{-2}$ &               0.032493                & 2.33 \\
+    $2^{-3}$ &              0.125547                  & 3.86 \\
+    $2^{-4}$ &              0.540384                 & 4.30 \\
+    $2^{-5}$ &              2.339                   &  4.3284 \\
+    $2^{-6}$ &               13.3055                &   5.68853 \\
+    $2^{-7}$ &               118.39                 & 8.89785 \\
+    $2^{-8}$ &               2320.99                & 19.6046 \\
 \hline \hline
 \end{tabular}
 \end{table}
 
-\item  For this problem we could use an FFT-based Poisson solver which will perform the direct solve in $\O(N \log(N))$, where $N$ is the total number of grid points. We could also use multigrid and perform the solve in $\O(N)$ time. How should the time scale as the grid is refined for Crank-Nicolson if we used an $\O(N)$ solver?
+\item  For this problem we could use an FFT-based Poisson solver which will perform the direct solve in $\mathcal{O}(N \log(N))$, where $N$ is the total number of grid points. We could also use multigrid and perform the solve in $\mathcal{O}(N)$ time. How should the time scale as the grid is refined for Crank-Nicolson if we used an $\mathcal{O}(N)$ solver?
 
+Since there is no time step restriction in Crank-Nicolson, we can keep the same time step size across finer grids.  Then with an $\mathcal{O}(N)$ solver, the runtime should scale like the grid size, i.e., $\mathcal{O}(N)$.
 
 \end{enumerate}
+
+\newpage
+The following Python code was used for problem 2.
+\begin{verbatim}
+#Problem2.py
+#Carter Johnson
+
+#Runtime comparison of Forward Euler and Crank-Nicolson
+#for 2-D diffusion eqn
+
+#u_t = Delta u  on Omega = (0,1)x(0,1)
+#u = 0 on dOmega
+#u(x,y,0)=exp(-100((x-0.3)^2+(y-0.4)^2))
+
+from __future__ import division
+import numpy as np
+from numpy import exp, sin, pi
+from numpy.linalg import norm
+import matplotlib.pyplot as plt
+from tabulate import tabulate
+from tqdm import tqdm
+from time import clock
+
+
+def run_comparison():
+    #run comparison between Crank-Nicolson and Forward euler on the problem
+    #set up the vectors and parameters for the methods and run
+    #using diffusion coefficient, initial condition, forcing function from problem 2
+
+    #set vector of grid spacings
+    h = [2**(-i) for i in range(1,10)]
+
+    #set time steps for CN, forcing function for CN
+    CN_del_t = 0.01
+    Nt_CN = int(1/CN_del_t)
+    f_CN = np.zeros(Nt_CN+1)
+
+    #diffusion coefficient
+    D = 1
+
+    #Don't plot
+    plotting=0
+
+    #record run times and runtime ratios
+    CN_times = np.zeros(len(h))
+    FE_times = np.zeros(len(h))
+    CN_ratios = np.zeros(len(h))
+    FE_ratios = np.zeros(len(h))
+
+    
+    for i in tqdm(range(len(h))):
+
+        FE_del_t = h[i]**2/5
+
+        #make vector of forcing function for FE at all times, also get grid points for level h
+        Nx = int(1/h[i])-1
+        Ny = int(1/h[i])-1
+        Nt_FE = int(1/FE_del_t)
+        X = [j*h[i]for j in range(1, Nx+1)]
+        Y = [j*h[i] for j in range(1, Ny+1)]
+        
+        #f =0
+        f_FE = np.zeros(Nt_FE+1)
+    
+        #initial condition u(x,y,0)=exp(-100((x-0.3)^2+(y-0.4)^2))
+        u = [[exp(-100*((x-0.3)**2+(y-0.4)**2)) for x in X] for y in Y]
+        u = np.asarray(u)
+
+
+        toc=clock()
+        u = crank_nicolson_method(h[i], CN_del_t, u, f_CN, D, X, Y, plotting)
+        tic=clock()
+        if i>0:
+            CN_ratios[i]=(tic-toc)/CN_times[i-1]
+        CN_times[i]=tic-toc
+
+        if i<=7:
+            toc=clock()
+            u = forward_euler_method(h[i], FE_del_t, u, f_FE, D, X, Y, plotting)
+            tic=clock()
+            if i>0:
+                FE_ratios[i]=(tic-toc)/FE_times[i-1]
+            FE_times[i]=tic-toc
+
+    runtime_table = [[h[i], CN_times[i], CN_ratios[i], FE_times[i], FE_ratios[i]] for i in range(len(h))]
+    print(tabulate(runtime_table, headers=["grid spacings", "Crank-Nicolson Runtimes", "CN Runtime Ratios", "Forward Euler Runtimes", "FE Runtime Ratios"], tablefmt="latex"))
+    return u    
+
+def sparse_matrices(h):
+    #set sparse matrix L, the discrete 2-D Laplacian
+    #for 5-pt 2nd order approximation
+
+    #Set number of grid points
+    N = 1/h - 1
+
+    #set off-diagonal Laplacian components
+    off_diag = 1*np.ones(N)
+    #set diagonal Laplacian components
+    diag = (-2)*np.ones(N)
+
+    # Generate the diagonal and off-diagonal matrices
+    A = np.vstack((off_diag, diag, off_diag))
+    lap1D = scipy.sparse.dia_matrix((A,[-1,0,1]),shape=(N,N))
+    speye = scipy.sparse.identity(N)
+    #put diagonals together into sparse matrix format
+    L = (1/(h**2))*(scipy.sparse.kron(lap1D,speye) + scipy.sparse.kron(speye,lap1D))
+
+    #make identity matrix of same size as L
+    I = scipy.sparse.identity(N**2)
+    return L, I
+
+def crank_nicolson_time_step(h, del_t, u, L, f, I):
+    #one time step of crank-nicolson solver
+    N = 1/h -1
+
+    #(I + del_t/2 L)u^n
+    A = (I + (del_t/2) * L)
+    RHS_terms = A.dot(u.flatten(order='C')) + del_t*f
+
+    #make LHS matrix, put in CSC form for solver
+    LHS_matrix = scipy.sparse.csc_matrix(I-(del_t/2)*L)
+
+    #solve (I-del_t/2 L)u^n+1 = (I + del_t/2 L)u^n + del_t f^n+1/2
+    u_next = scipy.sparse.linalg.spsolve(LHS_matrix, RHS_terms)
+    u_next = np.reshape(u_next, (N, N))
+
+    return u_next
+
+def crank_nicolson_method(h, del_t, u, f, D, x, y, plotting):
+
+    #create sparse matrices for crank-nicolson method
+    [L, I] = sparse_matrices(h)
+
+    #calculate number of time points after 0 up to 1 (inclusive)
+    Nt = int(1/del_t)
+
+    if plotting==1:
+        #set up plotting
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        # `plot_surface` expects `x` and `y` data to be 2D
+        X, Y = np.meshgrid(x, y)  
+        #keep z limits fixed
+        ax.set_zlim(0, 1)
+        plt.ion()
+        #plot first frame, u(x,y,0)
+        frame = ax.plot_surface(X, Y, u)
+        plt.pause(0.05)
+
+    for t in range(0,Nt):
+        #take half point of f for solve
+        f_half = (f[t]+f[t+1])/2
+        #solve for next u
+        u = crank_nicolson_time_step(h, del_t, u, D*L, f_half, I)
+        
+        if plotting==1:
+            #plot current u
+            ax.collections.remove(frame)
+            frame = ax.plot_surface(X, Y, u)
+            plt.pause(0.05)
+
+    return u
+
+def forward_euler_time_step(h, del_t, u, L, f, I):
+    #one time step of crank-nicolson solver
+    N = 1/h -1
+
+    #u^n+1 = (I + del_t L)u^n + del_t*f
+    A = (I + (del_t) * L)
+    u_next = A.dot(u.flatten(order='C')) + del_t*f
+    u_next = np.reshape(u_next, (N, N))
+
+    return u_next
+
+def forward_euler_method(h, del_t, u, f, D, x, y, plotting):
+
+    #create sparse matrices for crank-nicolson method
+    [L, I] = sparse_matrices(h)
+
+    #calculate number of time points after 0 up to 1 (inclusive)
+    Nt = int(1/del_t)
+
+    if plotting==1:
+        #set up plotting
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        # `plot_surface` expects `x` and `y` data to be 2D
+        X, Y = np.meshgrid(x, y)  
+        #keep z limits fixed
+        ax.set_zlim(0, 1)
+        plt.ion()
+        #plot first frame, u(x,y,0)
+        frame = ax.plot_surface(X, Y, u)
+        plt.pause(0.05)
+
+    for t in range(0,Nt):
+        #solve for next u
+        u = forward_euler_time_step(h, del_t, u, D*L, f[t], I)
+        
+        if plotting==1:
+            #plot current u
+            ax.collections.remove(frame)
+            frame = ax.plot_surface(X, Y, u)
+            plt.pause(0.05)
+
+    return u
+\end{verbatim}
 \end{document}
