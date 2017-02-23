@@ -1,0 +1,193 @@
+\documentclass[12pt]{article}
+\textwidth=17cm \oddsidemargin=-0.9cm \evensidemargin=-0.9cm
+\textheight=23.7cm \topmargin=-1.7cm
+\headheight=14.5pt
+
+\usepackage{amssymb, amsmath, amsfonts}
+\usepackage{moreverb}
+\usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage{graphics}
+\usepackage{color}
+\usepackage{array}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{textcomp}
+\usepackage{alltt}
+\usepackage{physics}
+\usepackage{mathtools}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usetikzlibrary{arrows}
+\usepackage{bigints}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsthm}
+\usepackage{fancyhdr}
+\usepackage[makeroom]{cancel}
+\pagestyle{fancy}
+\allowdisplaybreaks
+
+\newcommand{\E}{\varepsilon}
+
+\newcommand{\suchthat}{\, \mid \,}
+\newcommand{\ol}[1]{\overline{#1}}
+\newcommand{\bbar}[1]{\overline{#1}}
+\newcommand{\inpd}[1]{{\left< \, #1 \, \right>}}
+\renewcommand{\theenumi}{\alph{enumi}}
+\newcommand\Wider[2][3em]{%
+\makebox[\linewidth][c]{%
+  \begin{minipage}{\dimexpr\textwidth+#1\relax}
+  \raggedright#2
+  \end{minipage}%
+  }%
+}
+
+\def\R{\mathbb{R}}
+\def\C{\mathbb{C}}
+\def\H{\mathcal{H}}
+\DeclareMathOperator*{\esssup}{\text{ess~sup}}
+\newcommand{\resolv}[1]{\rho(#1)}
+\newcommand{\spec}[1]{\sigma(#1)}
+\newcommand{\iffR}{\noindent \underline{$\Longrightarrow$:} }
+\newcommand{\iffL}{\noindent \underline{$\Longleftarrow$:} }
+\newcommand{\lightning}{\textbf{\Huge \Lightning}}
+\newcommand{\spt}[1]{\text{spt}(#1)}
+\def\ran{\text{ ran}}
+   
+\newenvironment{myprob}[1]
+    {%before text commands
+    %{\Huge \_ \_ \_ \_ \_ \_ \_ \_ \_ \_ \_ \_ \_ \_ \_ \_ \_ \_ } \\
+    \noindent{\Huge$\ulcorner$}\textbf{#1.}\begin{em}
+    }
+    { 
+    %after text commands
+    \end{em} \\ \hphantom{l} \hfill {\Huge$\lrcorner$} }
+%	{\noindent \rule{7.5cm}{2pt} \textgoth{#1} \rule{8.cm}{2pt} \begin{em}}
+%	{\end{em}\\ \vspace{0.1pt}\noindent \rule{\textwidth}{2pt}}
+%
+\setcounter{section}{-1}
+
+
+
+
+\begin{document}
+\lhead{MATH228B}
+\chead{Carter Johnson - Homework 03}
+\rhead{\today}
+
+{\let\newpage\relax} 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% P2
+\begin{myprob}{Problem 1}
+Consider 
+$$u_t = 0.1 \Delta u \text{ on } \Omega = (0,1) \times (0,1) $$
+$$\dfrac{\partial u}{\partial \vec{n}}=0 \text{ on } \delta \Omega $$
+$$u(x,y,0)=\exp\qty(-10\qty((x-0.3)^2+(y-0.4)^2)) .$$
+Write a program to solve this PDE using the Peaceman-Rachford ADI
+scheme on a cell-centered grid. Use a direct solver for the tridiagonal
+systems. In a cell-centered discretization the solution is stored at the
+grid points $(x_i,y_j)=\qty(\Delta x(i-0.5),\Delta x(j-0.5))$ for $i,j = 1, \dots, N$ and $\Delta x = 1/N$. 
+\end{myprob}
+\begin{enumerate}[(a)]
+\item Perform a refinement study to show that your numerical solution is second-order accurate in space and time (refine time and space simultaneously using $\Delta t = \Delta x$) at time $t=1$.
+
+The one-dimensional discrete Laplacian for homogeneous Neumann boundary conditions is 
+$$L = \dfrac{1}{\Delta x^2}\qty(\begin{array}{cccccc}
+-1 & 1 &  & & \\
+1 & -2 & 1 &  & \\
+& \ddots & \ddots & \ddots & \\
+& & 1 & -2 & 1 \\
+& & & 1 & -1 \\
+\end{array}).$$
+Using this matrix for both $L_x$ and $L_y$ (since $\Delta x = \Delta y$), I implemented the Peaceman-Rachford ADI scheme
+\begin{align*}
+\qty(I - \dfrac{0.1 \Delta t}{2} L)u^* &= \qty(I + \dfrac{0.1 \Delta t}{2}L)u^n \\
+\qty(I - \dfrac{0.1 \Delta t}{2} L)u^{n+1} &= \qty(I + \dfrac{0.1 \Delta t}{2}L)u^*.
+\end{align*}
+Using $\Delta t = \Delta x$, I performed a refinement study on the scheme for $\Delta x = 2^{-1}, \dots, 2^{-9}$.  Since the analytic solution is not known, I used successive differences to demonstrate the second-order accuracy. The successive differences were computed by comparing the numerical solution $u^{(i)}(x,y,1)$ for $\Delta x = 2^{-i}$ with a simple coarsening of the solution $u^{(i+1)}(x,y,1)$ for $\Delta x = 2^{-(i+1)}$ in the discrete 1-norm
+$$d_{i+1} = (2^{-i})^2 \norm{\text{restrict}(u^{(i+1)}) - u^{(i)}}_1, $$
+where $\norm{\cdot}_1$ is the matrix one-norm (max(sum(abs(x), axis=0))).
+The successive differences and the ratios between them are given in Table 1.  The table shows that as we reduce the grid/time spacing by a factor of 2, the successive differences are reduced by a factor of 4, hence the scheme is indeed second-order accurate in time and space.
+
+\begin{table}[H]
+\caption{Peaceman-Rachford ADI Scheme Runtimes and Successive Differences}
+\centering\begin{tabular}{||c|cc|cc||}
+\hline \hline
+   $\Delta x = \Delta t$ &    Runtimes $T$ &   $T_{i}/T_{i-1}$ &  $d_i$ &   $d_{i-1}/d_{i}$ \\
+\hline
+                 $2^{-1}$        &    0.009598 &          -----      &              -----           &             -----       \\
+                 $2^{-2}$        &    0.106325 &         11.0778  &              0.00724905  &             -----       \\
+                 $2^{-3}$      &    0.214403 &          2.01649 &              0.00567909  &             1.27645 \\
+                 $2^{-4}$     &    0.89652  &          4.18147 &              0.000722082 &             7.86487 \\
+                 $2^{-5}$     &    4.07281  &          4.54291 &              0.000167095 &             4.32138 \\
+                 $2^{-6}$    &   13.8926   &          3.41106 &              4.04168e-05 &             4.13431 \\
+                 $2^{-7}$   &   58.2466   &          4.19263 &              9.93768e-06 &             4.06702 \\
+                 $2^{-8}$  &  249.929    &          4.29087 &              2.4638e-06  &             4.03347 \\
+                 $2^{-9}$  & 1116.29     &          4.46645 &              6.13385e-07 &             4.01673 \\
+\hline \hline
+\end{tabular}
+\end{table}
+\item Time your code for different grid sizes. Show how the computational time scales with the grid size. Compare your timing results with those from the previous homework assignment for Crank-Nicolson.
+
+The runtimes and ratios for Peaceman-Rachford ADI (PR-ADI) are also shown in Table 1.  As we reduce the grid and time spacing by a factor of 2, we only increase the total runtime by a factor of 4.  This is much better scaling than in Crank-Nicolson, which had runtime increase by a factor of 8 when the grid spacing was reduced by factor of 2.  In PR-ADI, we're inverting $N\times N$-size, tridiagonal matrices as opposed to CN, which inverts $N^2\times N^2$-size, banded matrices.  The work to invert an $N\times N$ tridiagonal matrix is only $\mathcal{O}(N)$, so the work per timestep for PR-ADI is $\mathcal{O}(N)$.  Since we use $\Delta t = \Delta x,$ we perform $N$ time steps, so the total work is $\mathcal{O}(N^2)$.  Hence, the runtimes \emph{should} increase by 4 when $\Delta x$ is reduced by a factor of 2.
+
+\item Show that the spatial integral of the solution to the PDE does not change in time. That is $$\dfrac{\dd }{\dd t} \int_\Omega u \ \dd V = 0.$$
+
+\begin{align*}
+\dfrac{\dd }{\dd t} \int_\Omega u \ \dd V &= \int_\Omega u_t \ \dd V &\text{by Lebesgue DCT} \\
+&= 0.1 \int_\Omega \Delta u \ \dd V &\text{ by the PDE} \\
+&= 0.1 \int_\Omega \grad \cdot (\grad u) \ \dd V &\text{by definition of $\Delta$} \\
+&= 0.1 \int_{\delta \Omega} \grad u \cdot \vec{n} \ \dd s &\text{by Flux-Divergence Thm} \\
+&= 0 &\text{ since $\dfrac{\partial u}{\partial \vec{n}}=0 \text{ on } \delta \Omega$. }
+\end{align*}
+
+\item  Show that the solution to the discrete equations satisfies the discrete conservation property
+$$\sum_{i,j} u_{i,j}^n = \sum_{i,j} u^0_{i,j} $$
+for all $n$. Demonstrate this property with your code.
+
+Table 2 shows the difference in the sums between the initial condition and the final solution $u(x,y,1)$.
+\begin{table}[H]
+\caption{Peaceman-Rachford ADI Scheme - Energy Conservation}
+\centering\begin{tabular}{|cc|}
+\hline \hline
+   $\Delta x = \Delta t$ & $\sum_{i,j} u_{i,j}^0 - \sum_{i,j} u^n_{i,j}$  \\
+\hline
+                 $2^{-1}$  & 0.0453006481033    \\
+                 $2^{-2}$  & -6.66133814775e-16 \\
+                 $2^{-3}$  & -4.4408920985e-16  \\
+                 $2^{-4}$  & -1.7763568394e-15  \\
+                 $2^{-5}$  & 1.20792265079e-13  \\
+                 $2^{-6}$  & 1.16529008665e-12  \\
+                 $2^{-7}$  & -3.9221959014e-11  \\
+                 $2^{-8}$  & 4.27462509833e-11  \\
+                 $2^{-9}$  & -2.69519659923e-08 \\
+
+\hline \hline
+\end{tabular}
+\end{table}
+\end{enumerate}
+
+\begin{myprob}{Problem 2}
+The FitzHugh-Nagumo equations
+\begin{align*}
+\dfrac{\partial v}{\partial t} &= D \Delta v + (a-v)(v-1)v -w + I \\
+\dfrac{\partial w}{\partial t} &= \varepsilon(v-\gamma w)
+\end{align*}
+are used in electrophysiology to model the cross membrane electrical potential (voltage) in cardiac tissue and in neurons. Assuming that the spatial coupling is local and passive results the term which looks like the diffusion of voltage. The state variables are the voltage $v$ and the recovery variable $w$.
+\end{myprob}
+\begin{enumerate}[(a)]
+\item Write a program to solve the FitzHugh-Nagumo equations on the unit square with homogeneous Neumann boundary conditions for v (meaning electrically insulated). Use a fractional step method to handle the diffusion and reactions separately. Use an ADI method for the diffusion solve. Describe what ODE solver you used for the reactions and what fractional stepping your chose.
+
+\item Use the following parameters $a = 0.1$, $\gamma = 2$, $\varepsilon = 0.005$, $I = 0$, $D = 5 \cdot 10^{-5}$ , and initial conditions 
+$$v(x, y, 0) = exp(-100(x^2 + y^2)$$
+$$w(x, y, 0) = 0.0.$$
+Note that $v = 0, w = 0$ is a stable steady state of the system. Call this the rest state. For these initial conditions the voltage has been raised above rest in the bottom corner of the domain. Generate a numerical solution up to time t = 300. Visualize the voltage and describe the solution. Pick space and time steps to resolve the spatiotemporal dynamics of the solution you see. Discuss what grid size and time step you used and why.
+
+\item  Use the same parameters from part (b), but use the initial conditions
+$$v(x,y,0) = 1-2x$$
+$$w(x,y,0) = 0.05y$$
+and run the simulation until time t = 600. Show the voltage at several points in time (pseudocolor plot, or contour plot, or surface plot $z = V (x, y, t)$) and describe the solution.
+\end{enumerate}
+\end{document}
