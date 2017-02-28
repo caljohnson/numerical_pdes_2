@@ -37,16 +37,17 @@ def strang_split_step(v,w, h, delT, b, L, I):
 	#flatten v and w from grid-lined up matrices into column vectors, put side by side
 	v_and_w = np.c_[v_star.flatten(), w.flatten()]
 	#solve ODE at each grid point (row of v_and_w) for one time step ∆t
-	solver = ode(f).set_integrator('vode', method='adams', order=10, rtol=0, atol=1e-6,with_jacobian=False)
-	solver.set_initial_value(v_and_w[:],0)
-	solver.integrate(solver.t+delT)
-	v_and_w = solver.y+0
+	# solver = ode(f).set_integrator('vode', method='adams', order=10, rtol=0, atol=1e-6,with_jacobian=False)
+	# solver.set_initial_value(v_and_w,0)
+	# solver.integrate(solver.t+delT)
+	# v_and_w = solver.y+0
 
-	# for i in range((N**2)):
-	# 	solver = ode(f).set_integrator('vode', method='adams', order=10, rtol=0, atol=1e-6,with_jacobian=False)
-	# 	solver.set_initial_value(v_and_w[i])
-	# 	solver.integrate(solver.t+delT)
-	# 	v_and_w[i] = solver.y+0
+	for i in range((N**2)):
+		# solver = ode(f).set_integrator('vode', method='adams', order=10, rtol=0, atol=1e-6,with_jacobian=False)
+		solver = ode(f).set_integrator('vode', method='bdf')
+		solver.set_initial_value(v_and_w[i])
+		solver.integrate(solver.t+delT)
+		v_and_w[i] = solver.y+0
 
 	#reshape back into v, w grid matrices
 	v_starstar = np.reshape(v_and_w[:,0], (N,N))
@@ -85,7 +86,7 @@ def frac_step_strang_split(h, delT, Nt, b, v_old, w_old, plotting):
 		#solve for next v and w
 		[v_new,w_new] = strang_split_step(v_old,w_old, h, delT, b, L, I)
 		
-		if plotting==1 and t%10==0:
+		if plotting==1 and t%(Nt/100)==0:
 			#plot current v
 			ax.collections.remove(frame)
 			frame = ax.plot_surface(X, Y, v_new)
@@ -97,10 +98,9 @@ def frac_step_strang_split(h, delT, Nt, b, v_old, w_old, plotting):
 
 	return v_new, w_new
 
-def part_b_Run():
+def part_b_Run(h,delT):
+	#parameters
 	plotting = 1
-	h = 2**(-4)
-	delT = 2**(-2)
 	N = int(1/h - 1)
 	Nt = 300*int(1/delT)
 	a = 0.1
@@ -109,18 +109,18 @@ def part_b_Run():
 	I_current=0
 	D = 5*(10**(-5))
 
+	#setup initial data
 	grid_X = [h*(i-0.5) for i in range(1,N+1)]
 	grid_Y = [h*(j-0.5) for j in range(1, N+1)]
-
 	v0 = np.asarray([[exp(-100*(x**2+y**2)) for x in grid_X] for y in grid_Y])
 	w0 = np.asarray([[0*x+0*y for x in grid_X] for y in grid_Y])
 	
+	#run Fractional Step method to solve up to time Nt
 	[v,w] = frac_step_strang_split(h,delT,Nt,D, v0,w0, plotting)
 
-def part_c_Run():
+def part_c_Run(h,delT):
+	#parameters
 	plotting = 1
-	h = 2**(-4)
-	delT = 2**(-2)
 	N = int(1/h - 1)
 	Nt = 600*int(1/delT)
 	a = 0.1
@@ -129,14 +129,17 @@ def part_c_Run():
 	I_current=0
 	D = 5*10**(-5)
 
+	#setup initial data
 	grid_X = [h*(i-0.5) for i in range(1,N+1)]
 	grid_Y = [h*(j-0.5) for j in range(1, N+1)]
-
 	v0 = np.asarray([[1-2*x for x in grid_X] for y in grid_Y])
 	w0 = np.asarray([[0.05*y for x in grid_X] for y in grid_Y])
 	
+	#run Fractional Step method to solve up to time Nt
 	[v,w] = frac_step_strang_split(h,delT,Nt,D, v0,w0, plotting)
 
 if __name__ == '__main__':
-	part_b_Run()
-	# part_c_Run()	
+	h = 2**(-4)
+	delT = 2**(-4)
+	part_b_Run(h,delT)
+	# part_c_Run(h,delT)	
