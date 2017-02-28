@@ -22,10 +22,18 @@ import scipy.sparse.linalg
 from scipy.integrate import ode
 from peaceman_rachford import peaceman_rachford_method, peaceman_rachford_step, sparse_matrices
 
-def f(t,u,a=0.1,I=0.0,eps=0.005,gamma=2):
-	return [(a-u[0])*(u[0]-1)*u[0]-u[1]+I, eps*(u[0]-gamma*u[1])]
+# def f(t,u,a=0.1,I=0.0,eps=0.005,gamma=2):
+# 	return [(a-u[0])*(u[0]-1)*u[0]-u[1]+I, eps*(u[0]-gamma*u[1])]
 
-def strang_split_step(v,w, h, delT, b, L, I):
+def f(u,a=0.1,I=0.0,eps=0.005,gamma=2):
+	return np.c_[(a-u[:,0])*(u[:,0]-1)*u[:,0]-u[:,1]+I, eps*(u[:,0]-gamma*u[:,1])]
+
+
+def ab2(u,u_old,delT):
+	u_next = u + delT*((3/2)*f(u)-(1/2)*f(u_old))
+	return u_next
+
+def strang_split_step(v,w, old_vw, h, delT, b, L, I):
 	#Strang splitting time step for fractional step method solve
 	# v = b∆v + R(v,w)
 	# w = R(v,w)
@@ -37,26 +45,27 @@ def strang_split_step(v,w, h, delT, b, L, I):
 	#flatten v and w from grid-lined up matrices into column vectors, put side by side
 	v_and_w = np.c_[v_star.flatten(), w.flatten()]
 	#solve ODE at each grid point (row of v_and_w) for one time step ∆t
-	# solver = ode(f).set_integrator('vode', method='adams', order=10, rtol=0, atol=1e-6,with_jacobian=False)
+	# solver = ode(f).set_integrator('vode', method='bdf')
 	# solver.set_initial_value(v_and_w,0)
 	# solver.integrate(solver.t+delT)
 	# v_and_w = solver.y+0
-
-	for i in range((N**2)):
-		# solver = ode(f).set_integrator('vode', method='adams', order=10, rtol=0, atol=1e-6,with_jacobian=False)
-		solver = ode(f).set_integrator('vode', method='bdf')
-		solver.set_initial_value(v_and_w[i])
-		solver.integrate(solver.t+delT)
-		v_and_w[i] = solver.y+0
+	v_w_star = ab2(v_and_w, old_vw, delT)
+	old_vw = v_and_w
+	# for i in range((N**2)):
+	# 	# solver = ode(f).set_integrator('vode', method='adams', order=10, rtol=0, atol=1e-6,with_jacobian=False)
+	# 	solver = ode(f).set_integrator('vode', method='bdf')
+	# 	solver.set_initial_value(v_and_w[i])
+	# 	solver.integrate(solver.t+delT)
+	# 	v_and_w[i] = solver.y+0
 
 	#reshape back into v, w grid matrices
-	v_starstar = np.reshape(v_and_w[:,0], (N,N))
-	w_next = np.reshape(v_and_w[:,1], (N,N))
+	v_starstar = np.reshape(v_w_star[:,0], (N,N))
+	w_next = np.reshape(v_w_star[:,1], (N,N))
 
 	#solve diffusion on v_starstar for ∆t/2 to get v_next
 	v_next = peaceman_rachford_step(v_starstar,h,delT/2,b,L,I)
 
-	return v_next, w_next
+	return v_next, w_next, old_vw
 	
 
 def frac_step_strang_split(h, delT, Nt, b, v_old, w_old, plotting):
@@ -68,7 +77,11 @@ def frac_step_strang_split(h, delT, Nt, b, v_old, w_old, plotting):
 	#get operators
 	[L,I] = sparse_matrices(h)
 
-	if plotting==1:
+	#set oldest v,w for ab2 solver
+	old_vw = np.c_[v_old.flatten(), w_old.flatten()]
+
+	#set up plotting
+	if plotting[0]==1:
 		fig = plt.figure()
 		ax = fig.add_subplot(111, projection='3d')
 		# `plot_surface` expects `x` and `y` data to be 2D
@@ -82,15 +95,16 @@ def frac_step_strang_split(h, delT, Nt, b, v_old, w_old, plotting):
 		frame = ax.plot_surface(X, Y, v_old)
 		plt.pause(0.05)
 
+	#run simulation for Nt time steps
 	for t in tqdm(range(Nt)):
 		#solve for next v and w
-		[v_new,w_new] = strang_split_step(v_old,w_old, h, delT, b, L, I)
+		[v_new,w_new, old_vw] = strang_split_step(v_old,w_old, old_vw, h, delT, b, L, I)
 		
-		if plotting==1 and t%(Nt/100)==0:
+		if plotting[0]==1 and t%plotting[1]==0:
 			#plot current v
 			ax.collections.remove(frame)
 			frame = ax.plot_surface(X, Y, v_new)
-			plt.pause(0.05)
+			plt.pause(0.001)
 
 		v_old = v_new + 0
 		w_old = w_new
@@ -98,9 +112,9 @@ def frac_step_strang_split(h, delT, Nt, b, v_old, w_old, plotting):
 
 	return v_new, w_new
 
-def part_b_Run(h,delT):
+def part_b_Run(h,delT,frames):
 	#parameters
-	plotting = 1
+	plotting = [1,frames]
 	N = int(1/h - 1)
 	Nt = 300*int(1/delT)
 	a = 0.1
@@ -118,9 +132,9 @@ def part_b_Run(h,delT):
 	#run Fractional Step method to solve up to time Nt
 	[v,w] = frac_step_strang_split(h,delT,Nt,D, v0,w0, plotting)
 
-def part_c_Run(h,delT):
+def part_c_Run(h,delT,frames):
 	#parameters
-	plotting = 1
+	plotting = [1,frames]
 	N = int(1/h - 1)
 	Nt = 600*int(1/delT)
 	a = 0.1
@@ -139,7 +153,8 @@ def part_c_Run(h,delT):
 	[v,w] = frac_step_strang_split(h,delT,Nt,D, v0,w0, plotting)
 
 if __name__ == '__main__':
-	h = 2**(-4)
+	h = 2**(-8)
 	delT = 2**(-4)
-	part_b_Run(h,delT)
-	# part_c_Run(h,delT)	
+	frames=40
+	part_b_Run(h,delT,frames)
+	# part_c_Run(h,delT,frames)	
