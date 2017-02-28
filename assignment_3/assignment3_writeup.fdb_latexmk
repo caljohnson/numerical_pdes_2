@@ -1,5 +1,5 @@
 # Fdb version 3
-["pdflatex"] 1487820110 "assignment3_writeup.tex" "assignment3_writeup.pdf" "assignment3_writeup" 1487820112
+["pdflatex"] 1488229455 "assignment3_writeup.tex" "assignment3_writeup.pdf" "assignment3_writeup" 1488229457
   "/usr/local/texlive/2016/texmf-dist/fonts/map/fontname/texfonts.map" 1272929888 3287 e6b82fe08f5336d4d5ebc73fb1152e87 ""
   "/usr/local/texlive/2016/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmbsy6.tfm" 1246382020 1124 14ccf5552bc7f77ca02a8a402bea8bfb ""
   "/usr/local/texlive/2016/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmbsy8.tfm" 1246382020 1120 200be8b775682cdf80acad4be5ef57e4 ""
@@ -183,11 +183,11 @@
   "/usr/local/texlive/2016/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1466894878 1888048 f2c5faed5981a516f406b2ccc20bff71 ""
   "/usr/local/texlive/2016/texmf-var/web2c/pdftex/pdflatex.fmt" 1463979169 3873397 413fbfbbedb8e719ddc392043a7add02 ""
   "/usr/local/texlive/2016/texmf.cnf" 1463979140 577 2938757e76f31531e65cc647e3507693 ""
-  "assignment3_writeup.aux" 1487820111 1104 37307ba2c3d7f1af1e7a435ed5d11293 ""
-  "assignment3_writeup.out" 1487820111 0 d41d8cd98f00b204e9800998ecf8427e ""
-  "assignment3_writeup.tex" 1487820109 10228 def68ebce40ca18d6a6507bcdc94cb04 ""
+  "assignment3_writeup.aux" 1488229456 1310 95f8903b957bf25ca8755aab95331965 ""
+  "assignment3_writeup.out" 1488229456 0 d41d8cd98f00b204e9800998ecf8427e ""
+  "assignment3_writeup.tex" 1488229450 10993 96a6e94157ca1d8400d847ea5fcaec75 ""
   (generated)
-  "assignment3_writeup.log"
-  "assignment3_writeup.out"
   "assignment3_writeup.pdf"
+  "assignment3_writeup.out"
+  "assignment3_writeup.log"
   "assignment3_writeup.aux"

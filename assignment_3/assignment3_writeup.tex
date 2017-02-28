@@ -147,9 +147,35 @@ The runtimes and ratios for Peaceman-Rachford ADI (PR-ADI) are also shown in Tab
 $$\sum_{i,j} u_{i,j}^n = \sum_{i,j} u^0_{i,j} $$
 for all $n$. Demonstrate this property with your code.
 
-Table 2 shows the difference in the sums between the initial condition and the final solution $u(x,y,1)$.
 \begin{table}[H]
-\caption{Peaceman-Rachford ADI Scheme - Energy Conservation}
+\caption{Peaceman-Rachford ADI Scheme - Discrete Conservation Property, $\Delta x = 2^{-8}$, $\Delta t = 2^{-4}$.}
+\centering\begin{tabular}{|cc|}
+\hline \hline
+Time Step $n$ ($n\Delta t$) & $\sum_{i,j} u_{i,j}^0 - \sum_{i,j} u^n_{i,j}$ \\
+\hline  
+1 & 5.82076609135e-11 \\
+2 & 1.52795109898e-10 \\
+3 & 2.11002770811e-10 \\
+4 & 2.51020537689e-10 \\
+5 & 2.65572452918e-10 \\
+6 & 2.76486389339e-10 \\
+7 & 2.83762346953e-10 \\
+8 & 2.98314262182e-10 \\
+9 & 3.16504156217e-10 \\
+10 & 3.3833202906e-10 \\
+11 & 3.56521923095e-10 \\
+12 & 3.89263732359e-10 \\
+13 & 4.14729584008e-10 \\
+14 & 4.40195435658e-10 \\
+15 & 4.69299266115e-10 \\
+16 & 5.16592990607e-10 \\
+\hline \hline
+\end{tabular}
+\end{table}
+
+Table 3 shows the difference in the sums between the initial condition and the final solution $u(x,y,1)$ for various grid and time spacings.
+\begin{table}[H]
+\caption{Peaceman-Rachford ADI Scheme - Final Discrete Conservation Property}
 \centering\begin{tabular}{|cc|}
 \hline \hline
    $\Delta x = \Delta t$ & $\sum_{i,j} u_{i,j}^0 - \sum_{i,j} u^n_{i,j}$  \\
