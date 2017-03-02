@@ -85,9 +85,9 @@ def frac_step_strang_split(h, delT, Nt, b, v_old, w_old, plotting):
 		frame = ax.plot_surface(X, Y, v_old, cmap=my_col, vmin=-0.25, vmax=1, rstride=4, cstride=4)
 		plt.pause(0.05)
 		#save first frame
-		frame_no=1
-		filename=plotting[2]+'_fig0'+str(frame_no)+'.png'
-		savefig(filename)
+		# frame_no=1
+		# filename=plotting[2]+'_fig0'+str(frame_no)+'.png'
+		# savefig(filename)
 
 	#run simulation for Nt time steps
 	for t in tqdm(range(Nt)):
@@ -98,14 +98,15 @@ def frac_step_strang_split(h, delT, Nt, b, v_old, w_old, plotting):
 			#plot current v
 			ax.collections.remove(frame)
 			frame = ax.plot_surface(X, Y, v_new, cmap=my_col,vmin=-0.25, vmax=1, rstride=4, cstride=4)
+			# ax.view_init(30,t/20)
 			plt.pause(0.001)
-			if t%(5*plotting[1])==0:
-				frame_no=frame_no+1
-				if frame_no<10:
-					filename=plotting[2]+'_fig0'+str(frame_no)+'.png'
-				else:
-					filename=plotting[2]+'_fig'+str(frame_no)+'.png'
-				savefig(filename)
+			# if t%(5*plotting[1])==0:
+			# 	frame_no=frame_no+1
+			# 	if frame_no<10:
+			# 		filename=plotting[2]+'_fig0'+str(frame_no)+'.png'
+			# 	else:
+			# 		filename=plotting[2]+'_fig'+str(frame_no)+'.png'
+			# 	savefig(filename)
 
 
 		v_old = v_new + 0
@@ -136,7 +137,7 @@ def part_b_Run(h,delT,plotting):
 def part_c_Run(h,delT,plotting):
 	#parameters
 	N = int(1/h - 1)
-	Nt = 600*int(1/delT)
+	Nt = 1000*int(1/delT)
 	a = 0.1
 	gamma = 2
 	eps = 0.005
@@ -157,5 +158,5 @@ if __name__ == '__main__':
 	delT = 2**(-5)
 	frames=100
 	plot_on=1
-	part_b_Run(h,delT,[plot_on,frames,'partb'])
-	# part_c_Run(h,delT,[plot_on, frames, 'partc'])	
+	# part_b_Run(h,delT,[plot_on,frames,'partb'])
+	part_c_Run(h,delT,[plot_on, frames, 'partc_spin'])	
