@@ -2,11 +2,11 @@
 #Carter Johnson
 #Mat228B Assignment 3
 
-#Fraction Step Strang-splitting method to solve Reaction-diffusion eqn
-#using Peaceman-Rachford ADI scheme on a cell-centered grid
+#Fraction Step Strang-splitting method to solve Fitzhugh-Nagumo 
+#Reaction-diffusion eqn
+#using Peaceman-Rachford ADI scheme on a cell-centered unit square grid
 #for solving 2-d homogeneous diffusion part with Neumann BCs
-#on unit square
-#and scipy ode solver for reaction terms
+#and runge-kutta 2 for reaction term ode 
 
 from __future__ import division
 
@@ -17,29 +17,22 @@ from mpl_toolkits.mplot3d import Axes3D
 from numpy import exp
 from numpy.linalg import norm
 from tqdm import tqdm
-
+from pylab import savefig
 import scipy.sparse as sparse
 import scipy.sparse.linalg
 from scipy.integrate import ode
 from peaceman_rachford import peaceman_rachford_method, peaceman_rachford_step, sparse_matrices
 
-# def f(t,u,a=0.1,I=0.0,eps=0.005,gamma=2):
-# 	return [(a-u[0])*(u[0]-1)*u[0]-u[1]+I, eps*(u[0]-gamma*u[1])]
-
-def f(u,a=0.1,I=0.0,eps=0.005,gamma=2):
+def f(u,a=0.1,I=0,eps=0.005,gamma=2):
+	#Reaction terms for Fitzhugh-Negumo model
 	return np.c_[(a-u[:,0])*(u[:,0]-1)*u[:,0]-u[:,1]+I, eps*(u[:,0]-gamma*u[:,1])]
-
-def ab2(u,u_old,delT):
-	#Adams-Bashford 2 Method - simple 2nd order explicit ODE solver
-	u_next = u + (delT/2)*(3*f(u)-f(u_old))
-	return u_next
 
 def rk2(u,delT):
 	#Runge-Kutta 2 Method - simple 2nd order explicit ODE solver
 	u_star = u + delT/2*f(u)
 	return u+delT*f(u_star)
 
-def strang_split_step(v,w, old_vw, h, delT, b, L, I):
+def strang_split_step(v,w, h, delT, b, L, I):
 	#Strang splitting time step for fractional step method solve
 	# v = b∆v + R(v,w)
 	# w = R(v,w)
@@ -47,24 +40,12 @@ def strang_split_step(v,w, old_vw, h, delT, b, L, I):
 
 	#first solve diffusion on v using ADI scheme for time length ∆t/2
 	v_star = peaceman_rachford_step(v,h,delT/2,b,L,I)
+
 	#then solve reaction for ∆t using a ODE solver
 	#flatten v and w from grid-lined up matrices into column vectors, put side by side
 	v_and_w = np.c_[v_star.flatten(), w.flatten()]
 	#solve ODE at each grid point (row of v_and_w) for one time step ∆t
-	# solver = ode(f).set_integrator('vode', method='bdf')
-	# solver.set_initial_value(v_and_w,0)
-	# solver.integrate(solver.t+delT)
-	# v_and_w = solver.y+0
-	# v_w_star = ab2(v_and_w, old_vw, delT)
 	v_w_star = rk2(v_and_w,delT)
-	old_vw = v_and_w
-	# for i in range((N**2)):
-	# 	# solver = ode(f).set_integrator('vode', method='adams', order=10, rtol=0, atol=1e-6,with_jacobian=False)
-	# 	solver = ode(f).set_integrator('vode', method='bdf')
-	# 	solver.set_initial_value(v_and_w[i])
-	# 	solver.integrate(solver.t+delT)
-	# 	v_and_w[i] = solver.y+0
-
 	#reshape back into v, w grid matrices
 	v_starstar = np.reshape(v_w_star[:,0], (N,N))
 	w_next = np.reshape(v_w_star[:,1], (N,N))
@@ -72,7 +53,7 @@ def strang_split_step(v,w, old_vw, h, delT, b, L, I):
 	#solve diffusion on v_starstar for ∆t/2 to get v_next
 	v_next = peaceman_rachford_step(v_starstar,h,delT/2,b,L,I)
 
-	return v_next, w_next, old_vw
+	return v_next, w_next
 	
 
 def frac_step_strang_split(h, delT, Nt, b, v_old, w_old, plotting):
@@ -99,21 +80,33 @@ def frac_step_strang_split(h, delT, Nt, b, v_old, w_old, plotting):
 		ax.set_zlim(0, 1)
 		plt.ion()
 		#set colors for plot
-		my_col = cm.RdYlGn
+		my_col = cm.Reds
 		#plot first frame, v(x,y,0)
-		frame = ax.plot_surface(X, Y, v_old, cmap=my_col)
+		frame = ax.plot_surface(X, Y, v_old, cmap=my_col, vmin=-0.25, vmax=1, rstride=4, cstride=4)
 		plt.pause(0.05)
+		#save first frame
+		frame_no=1
+		filename=plotting[2]+'_fig0'+str(frame_no)+'.png'
+		savefig(filename)
 
 	#run simulation for Nt time steps
 	for t in tqdm(range(Nt)):
 		#solve for next v and w
-		[v_new,w_new, old_vw] = strang_split_step(v_old,w_old, old_vw, h, delT, b, L, I)
+		[v_new,w_new] = strang_split_step(v_old,w_old, h, delT, b, L, I)
 		
 		if plotting[0]==1 and t%plotting[1]==0:
 			#plot current v
 			ax.collections.remove(frame)
-			frame = ax.plot_surface(X, Y, v_new, cmap=my_col)
+			frame = ax.plot_surface(X, Y, v_new, cmap=my_col,vmin=-0.25, vmax=1, rstride=4, cstride=4)
 			plt.pause(0.001)
+			if t%(5*plotting[1])==0:
+				frame_no=frame_no+1
+				if frame_no<10:
+					filename=plotting[2]+'_fig0'+str(frame_no)+'.png'
+				else:
+					filename=plotting[2]+'_fig'+str(frame_no)+'.png'
+				savefig(filename)
+
 
 		v_old = v_new + 0
 		w_old = w_new
@@ -147,7 +140,7 @@ def part_c_Run(h,delT,plotting):
 	a = 0.1
 	gamma = 2
 	eps = 0.005
-	I_current=0
+	I_current=0.0
 	D = 5*10**(-5)
 
 	#setup initial data
@@ -160,9 +153,9 @@ def part_c_Run(h,delT,plotting):
 	[v,w] = frac_step_strang_split(h,delT,Nt,D, v0,w0, plotting)
 
 if __name__ == '__main__':
-	h = 2**(-8)
-	delT = 2**(-4)
-	frames=40
-	plotting=[1,frames]
-	part_b_Run(h,delT,plotting)
-	#part_c_Run(h,delT,plotting)	
+	h = 2**(-7)
+	delT = 2**(-5)
+	frames=100
+	plot_on=1
+	part_b_Run(h,delT,[plot_on,frames,'partb'])
+	# part_c_Run(h,delT,[plot_on, frames, 'partc'])	

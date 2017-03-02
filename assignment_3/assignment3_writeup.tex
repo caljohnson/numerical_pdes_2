@@ -116,55 +116,24 @@ The successive differences and the ratios between them are given in Table 1.  Th
 \centering\begin{tabular}{||c|cc|cc||}
 \hline \hline
    $\Delta x = \Delta t$ &    Runtimes $T$ &   $T_{i}/T_{i-1}$ &  $d_i$ &   $d_{i-1}/d_{i}$ \\
-\hline
-                $2^{-1}$         &   0.00947  &         0        &              0           &             0       \\
-                $2^{-2}$       &   0.075573 &         7.98025  &              0.0348654   &             0       \\
-                $2^{-3}$      &   0.034424 &         0.455507 &              0.00313627  &            11.1168  \\
-                $2^{-4}$     &   0.074947 &         2.17717  &              0.00229895  &             1.36422 \\
-               $2^{-5}$   &   0.149076 &         1.98909  &              0.000492328 &             4.66955 \\
-               $2^{-6}$    &   0.324086 &         2.17396  &              0.000122112 &             4.03177 \\
-               $2^{-7}$  &   0.791242 &         2.44146  &              3.05572e-05 &             3.99618 \\
-               $2^{-8}$  &   3.17393  &         4.01133  &              7.6659e-06  &             3.98612 \\
-            $2^{-9}$ &  19.0227   &         5.99342  &              1.9156e-06  &             4.00184 \\
-                $2^{-10}$ & 165.316    &         8.69045  &              4.78845e-07 &             4.00045 \\
+\hline \hline
+                $2^{-1}$        &   0.007034 &         0        &              0           &             0       \\
+                $2^{-2}$        &   0.076405 &        10.8622   &              0.00724905  &             0       \\
+                $2^{-3}$       &   0.035218 &         0.460938 &              0.00567909  &             1.27645 \\
+                $2^{-4}$       &   0.068123 &         1.93432  &              0.000722082 &             7.86487 \\
+                $2^{-5}$      &   0.128576 &         1.88741  &              0.000167095 &             4.32138 \\
+                $2^{-6}$     &   0.243953 &         1.89734  &              4.04168e-05 &             4.13431 \\
+                $2^{-7}$    &   0.594346 &         2.43631  &              9.93768e-06 &             4.06702 \\
+                $2^{-8}$   &   3.23291  &         5.43945  &              2.4638e-06  &             4.03347 \\
+                $2^{-9}$   &  18.9192   &         5.85205  &              6.13385e-07 &             4.01673 \\
+                $2^{-10}$  & 159.495    &         8.43036  &              1.53026e-07 &             4.00836 \\
 \hline \hline
 \end{tabular}
 \end{table}
 
-%time tests with pooling
-% \begin{tabular}{rrrrr}
-% \hline
-%    grid spacings/time steps &   Runtimes &   Runtime Ratios &   Successive Differences &   Difference Ratios \\
-% \hline
-%                  0.5        &   0.028983 &          0       &              0           &             0       \\
-%                  0.25       &   0.06265  &          2.16161 &              0.00724905  &             0       \\
-%                  0.125      &   0.129011 &          2.05923 &              0.00567909  &             1.27645 \\
-%                  0.0625     &   0.310218 &          2.40459 &              0.000722082 &             7.86487 \\
-%                  0.03125    &   0.672906 &          2.16914 &              0.000167095 &             4.32138 \\
-%                  0.015625   &   1.49409  &          2.22035 &              4.04168e-05 &             4.13431 \\
-%                  0.0078125  &   3.70389  &          2.47903 &              9.93768e-06 &             4.06702 \\
-%                  0.00390625 &   9.81638  &          2.65029 &              2.4638e-06  &             4.03347 \\
-% \hline
-% \end{tabular}
 
-%working code LOL
-% \begin{tabular}{rrrrr}
-% \hline
-%    grid spacings/time steps &   Runtimes &   Runtime Ratios &   Successive Differences &   Difference Ratios \\
-% \hline
-%                 0.5         &   0.007034 &         0        &              0           &             0       \\
-%                 0.25        &   0.076405 &        10.8622   &              0.00724905  &             0       \\
-%                 0.125       &   0.035218 &         0.460938 &              0.00567909  &             1.27645 \\
-%                 0.0625      &   0.068123 &         1.93432  &              0.000722082 &             7.86487 \\
-%                 0.03125     &   0.128576 &         1.88741  &              0.000167095 &             4.32138 \\
-%                 0.015625    &   0.243953 &         1.89734  &              4.04168e-05 &             4.13431 \\
-%                 0.0078125   &   0.594346 &         2.43631  &              9.93768e-06 &             4.06702 \\
-%                 0.00390625  &   3.23291  &         5.43945  &              2.4638e-06  &             4.03347 \\
-%                 0.00195312  &  18.9192   &         5.85205  &              6.13385e-07 &             4.01673 \\
-%                 0.000976562 & 159.495    &         8.43036  &              1.53026e-07 &             4.00836 \\
-% \hline
-% \end{tabular}
 \item Time your code for different grid sizes. Show how the computational time scales with the grid size. Compare your timing results with those from the previous homework assignment for Crank-Nicolson.
+
 
 The runtimes and ratios for Peaceman-Rachford ADI (PR-ADI) are also shown in Table 1.  As we reduce the grid and time spacing by a factor of 2, we only increase the total runtime by a factor of 4.  This is much better scaling than in Crank-Nicolson, which had runtime increase by a factor of 8 when the grid spacing was reduced by factor of 2.  In PR-ADI, we're inverting $N\times N$-size, tridiagonal matrices as opposed to CN, which inverts $N^2\times N^2$-size, banded matrices.  The work to invert an $N\times N$ tridiagonal matrix is only $\mathcal{O}(N)$, so the work per timestep for PR-ADI is $\mathcal{O}(N)$.  Since we use $\Delta t = \Delta x,$ we perform $N$ time steps, so the total work is $\mathcal{O}(N^2)$.  Hence, the runtimes \emph{should} increase by 4 when $\Delta x$ is reduced by a factor of 2.
 
@@ -240,6 +209,8 @@ are used in electrophysiology to model the cross membrane electrical potential (
 \end{myprob}
 \begin{enumerate}[(a)]
 \item Write a program to solve the FitzHugh-Nagumo equations on the unit square with homogeneous Neumann boundary conditions for v (meaning electrically insulated). Use a fractional step method to handle the diffusion and reactions separately. Use an ADI method for the diffusion solve. Describe what ODE solver you used for the reactions and what fractional stepping your chose.
+
+I used a fractional step method with Strang splitting time steps to solve the FitzHugh-Nagumo equations.  I first solved the diffusion on $v$ using my Peaceman-Rachford ADI method from number 1 for one time step of length $\Delta t/2$.  Then I used Runge-Kutta 2 to solve the reaction ODEs for one time step of length $\Delta t$.  Then I again solved the diffusion using PR-ADI for one time step of length $\Delta t/2$.  I chose Strang-splitting for its code simplicity, and I chose Runge-Kutta 2 because it's an explicit second-order ODE solver and the Fitzhugh-Nagumo reaction terms are nonlinear (which would take much longer in an implicit ODE solver).
 
 \item Use the following parameters $a = 0.1$, $\gamma = 2$, $\varepsilon = 0.005$, $I = 0$, $D = 5 \cdot 10^{-5}$ , and initial conditions 
 $$v(x, y, 0) = exp(-100(x^2 + y^2)$$
