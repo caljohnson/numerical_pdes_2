@@ -12,7 +12,8 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from numpy import exp
 from numpy.linalg import norm
-
+from multiprocessing import Pool
+from itertools import repeat
 import scipy.sparse as sparse
 import scipy.sparse.linalg
 
@@ -39,9 +40,7 @@ def sparse_matrices(h):
 	return L, I
 
 def peaceman_rachford_step(u,h,delT,b,L,I):
-	#one full time step of the ADI scheme
-	N = int(1/h -1)
-
+	N = int(1/h)-1
 	#Diffuse in x direction
 	# iterate over columns of u^n to get columns of u^*
 	A = (I + (b*delT/2) * L)
@@ -49,14 +48,126 @@ def peaceman_rachford_step(u,h,delT,b,L,I):
 	LHS_matrix = scipy.sparse.csc_matrix(I-(b*delT/2)*L)
 	u_star = scipy.sparse.linalg.spsolve(LHS_matrix, RHS_terms)	
 
+	# u_star2 = np.zeros((N,N))
+	# for i in range(N):
+	# 	#get column of u^n
+	# 	u_col = u[:,i]
+	# 	#(I + b*delT/2 L_y)u^n
+	# 	A = (I + (b*delT/2) * L)
+	# 	RHS_terms = A.dot(u_col)
+	# 	#make LHS matrix, put in CSC form for solver
+	# 	LHS_matrix = scipy.sparse.csc_matrix(I-(b*delT/2)*L)
+	# 	#solve (I - b*delT/2 L_x)u^* = (I + b*delT/2 L_y)u^n
+	# 	u_star2[:,i] = scipy.sparse.linalg.spsolve(LHS_matrix, RHS_terms)
+	# print(norm(u_star2-u_star))
+
 	#Diffuse in y direction
 	#iterate over rows of u^* to get rows of u^n+1
 	A = (I + (b*delT/2) * L)
-	RHS_terms = A.dot(np.transpose(u))
+	RHS_terms = A.dot(np.transpose(u_star))
 	LHS_matrix = scipy.sparse.csc_matrix(I-(b*delT/2)*L)
 	u_next = np.transpose(scipy.sparse.linalg.spsolve(LHS_matrix, RHS_terms))
 
+	# u_next2 = np.zeros((N,N))
+	# for i in range(N):
+	# 	#get row of u^*
+	# 	u_row = u_star[i,:]
+	# 	#(I + b*delT/2 L_x)u^*
+	# 	A = (I + (b*delT/2) * L)
+	# 	RHS_terms = A.dot(u_row)
+
+	# 	#make LHS matrix, put in CSC form for solver
+	# 	LHS_matrix = scipy.sparse.csc_matrix(I-(b*delT/2)*L)
+
+	# 	#solve (I - b*delT/2 L_y)u^n+1 = (I + b*delT/2 L_x)u^*
+	# 	u_next2[i,:] = scipy.sparse.linalg.spsolve(LHS_matrix, RHS_terms)
+
+	# print(norm(u_next2-u_next))
+	# raise
+
+	return u_next
+
+def peaceman_rachford_step_pooling(u,h,delT,b,L,I):
+	#one full time step of the ADI scheme
+	N = int(1/h -1)
+
+	# #Diffuse in x direction
+	# # iterate over columns of u^n to get columns of u^*
+	# A = (I + (b*delT/2) * L)
+	# RHS_terms = A.dot(u)
+	# LHS_matrix = scipy.sparse.csc_matrix(I-(b*delT/2)*L)
+	# u_star = scipy.sparse.linalg.spsolve(LHS_matrix, RHS_terms)	
+
+	# #Diffuse in y direction
+	# #iterate over rows of u^* to get rows of u^n+1
+	# A = (I + (b*delT/2) * L)
+	# RHS_terms = A.dot(np.transpose(u))
+	# LHS_matrix = scipy.sparse.csc_matrix(I-(b*delT/2)*L)
+	# u_next = scipy.sparse.linalg.spsolve(LHS_matrix, RHS_terms)
+
+	pool = Pool()
+	#Diffuse in x direction
+	#iterate over columns of u^n to get columns of u^*
+	u_star = np.zeros((N,N))
+	args = [u[:,i] for i in range(N)]
+	u_star = pool.starmap(col_solves,zip(args, repeat(delT), repeat(b), repeat(L),repeat(I)))
+	u_star = np.reshape(u_star, (N,N))
+	#Diffuse in y direction
+	args = [u_star[i,:] for i in range(N)]
+	u_next = pool.starmap(row_solves, zip(args,repeat(delT), repeat(b), repeat(L),repeat(I)))
+	u_next = np.reshape(u_next, (N,N))
+	# for i in range(N):
+	# 	#get column of u^n
+	# 	u_col = u[:,i]
+	# 	#(I + b*delT/2 L_y)u^n
+	# 	A = (I + (b*delT/2) * L)
+	# 	RHS_terms = A.dot(u_col)
+
+	# 	#make LHS matrix, put in CSC form for solver
+	# 	LHS_matrix = scipy.sparse.csc_matrix(I-(b*delT/2)*L)
+
+	# 	#solve (I - b*delT/2 L_x)u^* = (I + b*delT/2 L_y)u^n
+	# 	u_star[:,i] = scipy.sparse.linalg.spsolve(LHS_matrix, RHS_terms)
+
+	# #Diffuse in y direction
+	# #iterate over rows of u^* to get rows of u^n+1
+	# u_next = np.zeros((N,N))
+	# for i in range(N):
+	# 	#get row of u^*
+	# 	u_row = u_star[i,:]
+	# 	#(I + b*delT/2 L_x)u^*
+	# 	A = (I + (b*delT/2) * L)
+	# 	RHS_terms = A.dot(np.transpose(u_row))
+
+	# 	#make LHS matrix, put in CSC form for solver
+	# 	LHS_matrix = scipy.sparse.csc_matrix(I-(b*delT/2)*L)
+
+	# 	#solve (I - b*delT/2 L_y)u^n+1 = (I + b*delT/2 L_x)u^*
+	# 	u_next[i,:] = np.transpose(scipy.sparse.linalg.spsolve(LHS_matrix, RHS_terms))
+
+	pool.close()
 	return u_next	
+
+def col_solves(u_col, delT,b,L,I):
+	#(I + b*delT/2 L_y)u^n
+	A = (I + (b*delT/2) * L)
+	RHS_terms = A.dot(u_col)
+
+	#make LHS matrix, put in CSC form for solver
+	LHS_matrix = scipy.sparse.csc_matrix(I-(b*delT/2)*L)
+
+	#solve (I - b*delT/2 L_x)u^* = (I + b*delT/2 L_y)u^n
+	return scipy.sparse.linalg.spsolve(LHS_matrix, RHS_terms)
+
+def row_solves(u_row, delT, b, L, I):
+	#(I + b*delT/2 L_x)u^*
+	A = (I + (b*delT/2) * L)
+	RHS_terms = A.dot(np.transpose(u_row))
+	#make LHS matrix, put in CSC form for solver
+	LHS_matrix = scipy.sparse.csc_matrix(I-(b*delT/2)*L)
+	#solve (I - b*delT/2 L_y)u^n+1 = (I + b*delT/2 L_x)u^*
+	return np.transpose(scipy.sparse.linalg.spsolve(LHS_matrix, RHS_terms))
+
 
 def peaceman_rachford_method(h,delT,b,u_old, plotting):
 	N = int(1/h - 1)
@@ -97,8 +208,8 @@ def peaceman_rachford_method(h,delT,b,u_old, plotting):
 		# print(energy-energy2)
 
 
-	# energy2 = np.sum(u_new)
-	# print(energy-energy2)
+	energy2 = np.sum(u_new)
+	print(energy-energy2)
 	return u_new
 
 
@@ -120,5 +231,35 @@ def test():
 
 	u = peaceman_rachford_method(h,delT, 0.1, u0,1)
 
+def test2():
+	A = np.array([[1,2],[0,1]])
+	u = np.array([[1,2],[3,4]])
+	N=2
+	#Diffuse in x direction
+	# iterate over columns of u^n to get columns of u^*
+	u_star=A.dot(u)
+
+	u_star2 = np.zeros((N,N))
+	for i in range(N):
+		#get column of u^n
+		u_col = u[:,i]
+		u_star2[:,i] = A.dot(u_col)
+
+	print(norm(u_star2-u_star))
+	#Diffuse in y direction
+	#iterate over rows of u^* to get rows of u^n+1
+	u_next = np.transpose(A.dot(np.transpose(u_star)))
+
+	u_next2 = np.zeros((N,N))
+	for i in range(N):
+		#get row of u^*
+		u_row = u_star[i,:]
+		u_next2[i,:] = np.transpose(A.dot(np.transpose(u_row)))
+
+	print(norm(u_next2-u_next))
+	raise
+
+
 if __name__ == '__main__':
 	test()
+	# test2()

@@ -12,6 +12,7 @@ from __future__ import division
 
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import cm
 from mpl_toolkits.mplot3d import Axes3D
 from numpy import exp
 from numpy.linalg import norm
@@ -28,10 +29,15 @@ from peaceman_rachford import peaceman_rachford_method, peaceman_rachford_step, 
 def f(u,a=0.1,I=0.0,eps=0.005,gamma=2):
 	return np.c_[(a-u[:,0])*(u[:,0]-1)*u[:,0]-u[:,1]+I, eps*(u[:,0]-gamma*u[:,1])]
 
-
 def ab2(u,u_old,delT):
-	u_next = u + delT*((3/2)*f(u)-(1/2)*f(u_old))
+	#Adams-Bashford 2 Method - simple 2nd order explicit ODE solver
+	u_next = u + (delT/2)*(3*f(u)-f(u_old))
 	return u_next
+
+def rk2(u,delT):
+	#Runge-Kutta 2 Method - simple 2nd order explicit ODE solver
+	u_star = u + delT/2*f(u)
+	return u+delT*f(u_star)
 
 def strang_split_step(v,w, old_vw, h, delT, b, L, I):
 	#Strang splitting time step for fractional step method solve
@@ -49,7 +55,8 @@ def strang_split_step(v,w, old_vw, h, delT, b, L, I):
 	# solver.set_initial_value(v_and_w,0)
 	# solver.integrate(solver.t+delT)
 	# v_and_w = solver.y+0
-	v_w_star = ab2(v_and_w, old_vw, delT)
+	# v_w_star = ab2(v_and_w, old_vw, delT)
+	v_w_star = rk2(v_and_w,delT)
 	old_vw = v_and_w
 	# for i in range((N**2)):
 	# 	# solver = ode(f).set_integrator('vode', method='adams', order=10, rtol=0, atol=1e-6,with_jacobian=False)
@@ -91,8 +98,10 @@ def frac_step_strang_split(h, delT, Nt, b, v_old, w_old, plotting):
 		#keep z limits fixed
 		ax.set_zlim(0, 1)
 		plt.ion()
+		#set colors for plot
+		my_col = cm.RdYlGn
 		#plot first frame, v(x,y,0)
-		frame = ax.plot_surface(X, Y, v_old)
+		frame = ax.plot_surface(X, Y, v_old, cmap=my_col)
 		plt.pause(0.05)
 
 	#run simulation for Nt time steps
@@ -103,7 +112,7 @@ def frac_step_strang_split(h, delT, Nt, b, v_old, w_old, plotting):
 		if plotting[0]==1 and t%plotting[1]==0:
 			#plot current v
 			ax.collections.remove(frame)
-			frame = ax.plot_surface(X, Y, v_new)
+			frame = ax.plot_surface(X, Y, v_new, cmap=my_col)
 			plt.pause(0.001)
 
 		v_old = v_new + 0
@@ -112,9 +121,8 @@ def frac_step_strang_split(h, delT, Nt, b, v_old, w_old, plotting):
 
 	return v_new, w_new
 
-def part_b_Run(h,delT,frames):
+def part_b_Run(h,delT,plotting):
 	#parameters
-	plotting = [1,frames]
 	N = int(1/h - 1)
 	Nt = 300*int(1/delT)
 	a = 0.1
@@ -132,9 +140,8 @@ def part_b_Run(h,delT,frames):
 	#run Fractional Step method to solve up to time Nt
 	[v,w] = frac_step_strang_split(h,delT,Nt,D, v0,w0, plotting)
 
-def part_c_Run(h,delT,frames):
+def part_c_Run(h,delT,plotting):
 	#parameters
-	plotting = [1,frames]
 	N = int(1/h - 1)
 	Nt = 600*int(1/delT)
 	a = 0.1
@@ -156,5 +163,6 @@ if __name__ == '__main__':
 	h = 2**(-8)
 	delT = 2**(-4)
 	frames=40
-	part_b_Run(h,delT,frames)
-	# part_c_Run(h,delT,frames)	
+	plotting=[1,frames]
+	part_b_Run(h,delT,plotting)
+	#part_c_Run(h,delT,plotting)	
