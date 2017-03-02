@@ -46,7 +46,7 @@ def refinement_study():
 		delT = h[i]
 
 		#get grid points for level h
-		N = int(1/h[i]-1)
+		N = int(1/h[i])
 		Nt = int(1/delT)
 		X = [h[i]*(j-0.5) for j in range(1,N+1)]
 		Y = [h[i]*(j-0.5) for j in range(1, N+1)]
@@ -74,7 +74,7 @@ def refinement_study():
 def restriction(u, h):
 	u_f = u +0
 	h2 = 2*h
-	n2 = int(1/h2)-1
+	n2 = int(1/h2)
 	u_c = np.zeros((n2, n2), dtype=float)
 
 	#loop over coarse mesh

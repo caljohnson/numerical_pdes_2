@@ -36,7 +36,7 @@ def strang_split_step(v,w, h, delT, b, L, I):
 	#Strang splitting time step for fractional step method solve
 	# v = b∆v + R(v,w)
 	# w = R(v,w)
-	N = int(1/h)-1
+	N = int(1/h)
 
 	#first solve diffusion on v using ADI scheme for time length ∆t/2
 	v_star = peaceman_rachford_step(v,h,delT/2,b,L,I)
@@ -60,7 +60,7 @@ def frac_step_strang_split(h, delT, Nt, b, v_old, w_old, plotting):
 	#Strang splitting fractional step method
 	#solve reaction-diffusion eqn for v,w
 	#up to time Nt
-	N = int(1/h-1)
+	N = int(1/h)
 
 	#get operators
 	[L,I] = sparse_matrices(h)
@@ -117,7 +117,7 @@ def frac_step_strang_split(h, delT, Nt, b, v_old, w_old, plotting):
 
 def part_b_Run(h,delT,plotting):
 	#parameters
-	N = int(1/h - 1)
+	N = int(1/h)
 	Nt = 300*int(1/delT)
 	a = 0.1
 	gamma = 2
@@ -136,7 +136,7 @@ def part_b_Run(h,delT,plotting):
 
 def part_c_Run(h,delT,plotting):
 	#parameters
-	N = int(1/h - 1)
+	N = int(1/h)
 	Nt = 1000*int(1/delT)
 	a = 0.1
 	gamma = 2
