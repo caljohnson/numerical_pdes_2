@@ -26,7 +26,7 @@ def refinement_study():
 	#for homogenous diffusion w/ Neumann bcs
 
 	#set vector of grid spacings/time steps
-	h = [2**(-i) for i in range(1,11)]
+	h = [3**(-i) for i in range(1,7)]
 
 	#diffusion coefficient
 	b = 0.1
@@ -46,8 +46,8 @@ def refinement_study():
 		delT = h[i]
 
 		#get grid points for level h
-		N = int(1/h[i])
-		Nt = int(1/delT)
+		N = int(round(1/h[i]))
+		Nt = int(round(1/delT))
 		X = [h[i]*(j-0.5) for j in range(1,N+1)]
 		Y = [h[i]*(j-0.5) for j in range(1, N+1)]
 
@@ -55,12 +55,14 @@ def refinement_study():
 		u = [[exp(-100*((x-0.3)**2+(y-0.4)**2)) for x in X] for y in Y]
 		u = np.asarray(u)
 
-
 		toc=clock()
 		u_new = peaceman_rachford_method(h[i], delT, b, u, plotting)
 		tic=clock()
 		if i>0:
-			diffs[i]=(h[i-1]**2)*norm(restriction(u_new, h[i]) - u_old,ord=1)
+			# print(restriction(u_new,h[i]).shape)
+			# print(u_old.shape)
+			# diffs[i]=(h[i-1]**2)*norm(restriction(u_new, h[i]) - u_old,ord=1)
+			diffs[i] = np.amax(restriction(u_new,h[i])-u_old)
 			time_ratios[i] = (tic-toc)/times[i-1]
 		if i>1:
 			diff_ratios[i]=diffs[i-1]/diffs[i]
@@ -73,14 +75,14 @@ def refinement_study():
 
 def restriction(u, h):
 	u_f = u +0
-	h2 = 2*h
-	n2 = int(1/h2)
+	h2 = 3*h
+	n2 = int(round(1/h2))
 	u_c = np.zeros((n2, n2), dtype=float)
 
 	#loop over coarse mesh
 	for i in range(0,n2):
 		for j in range(0,n2):
-			u_c[i][j] = u_f[2*i+1][2*j+1]
+			u_c[i][j] = u_f[3*i+1][3*j+1]
 	return u_c
 
 if __name__ == '__main__':

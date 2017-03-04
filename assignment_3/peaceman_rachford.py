@@ -23,7 +23,7 @@ def sparse_matrices(h):
 	#includes Neumann BCs
 
 	#Set number of grid points
-	N = int(1/h)
+	N = int(round(1/h))
 
 	#set off-diagonal Laplacian components
 	off_diag = 1*np.ones(N)
@@ -40,7 +40,7 @@ def sparse_matrices(h):
 	return L, I
 
 def peaceman_rachford_step(u,h,delT,b,L,I):
-	N = int(1/h)
+	N = int(round(1/h))
 	#Diffuse in x direction
 	# iterate over columns of u^n to get columns of u^*
 	A = (I + (b*delT/2) * L)
@@ -57,7 +57,7 @@ def peaceman_rachford_step(u,h,delT,b,L,I):
 
 def peaceman_rachford_step_pooling(u,h,delT,b,L,I):
 	#one full time step of the ADI scheme
-	N = int(1/h)
+	N = int(round(1/h))
 	pool = Pool()
 	#Diffuse in x direction
 	#iterate over columns of u^n to get columns of u^*
@@ -94,8 +94,8 @@ def row_solves(u_row, delT, b, L, I):
 
 
 def peaceman_rachford_method(h,delT,b,u_old, plotting):
-	N = int(1/h)
-	Nt = int(1/delT)
+	N = int(round(1/h))
+	Nt = int(round(1/delT))
 
 	#get operators
 	[L, I] = sparse_matrices(h)
@@ -129,7 +129,7 @@ def peaceman_rachford_method(h,delT,b,u_old, plotting):
 
 		u_old = u_new + 0
 		energy2 = np.sum(u_new)
-		print(energy-energy2)
+		# print(energy-energy2)
 
 
 	energy2 = np.sum(u_new)
@@ -139,8 +139,8 @@ def peaceman_rachford_method(h,delT,b,u_old, plotting):
 def test():
 	h = 2**(-8)
 	delT = 2**(-4)
-	N = int(1/h)
-	Nt = int(1/delT)
+	N = int(round(1/h))
+	Nt = int(round(1/delT))
 	plotting = 1
 
 	[L, I] = sparse_matrices(h)

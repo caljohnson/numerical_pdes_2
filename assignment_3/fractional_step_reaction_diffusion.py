@@ -36,7 +36,7 @@ def strang_split_step(v,w, h, delT, b, L, I):
 	#Strang splitting time step for fractional step method solve
 	# v = b∆v + R(v,w)
 	# w = R(v,w)
-	N = int(1/h)
+	N = int(round(1/h))
 
 	#first solve diffusion on v using ADI scheme for time length ∆t/2
 	v_star = peaceman_rachford_step(v,h,delT/2,b,L,I)
@@ -60,7 +60,7 @@ def frac_step_strang_split(h, delT, Nt, b, v_old, w_old, plotting):
 	#Strang splitting fractional step method
 	#solve reaction-diffusion eqn for v,w
 	#up to time Nt
-	N = int(1/h)
+	N = int(round(1/h))
 
 	#get operators
 	[L,I] = sparse_matrices(h)
@@ -79,28 +79,43 @@ def frac_step_strang_split(h, delT, Nt, b, v_old, w_old, plotting):
 		#keep z limits fixed
 		ax.set_zlim(0, 1)
 		plt.ion()
+		#text
+		text = ax.text2D(0.05,0.95, r"$t=0$", transform=ax.transAxes)
 		#set colors for plot
 		my_col = cm.Reds
 		#plot first frame, v(x,y,0)
 		frame = ax.plot_surface(X, Y, v_old, cmap=my_col, vmin=-0.25, vmax=1, rstride=4, cstride=4)
+		fig.colorbar(frame)
 		plt.pause(0.05)
 		#save first frame
-		# frame_no=1
-		# filename=plotting[2]+'_fig0'+str(frame_no)+'.png'
-		# savefig(filename)
+		if plotting[3]==1:
+			frame_no=1
+			filename=plotting[2]+'_fig0'+str(frame_no)+'.png'
+			savefig(filename)
 
 	#run simulation for Nt time steps
-	for t in tqdm(range(Nt)):
+	for t in tqdm(range(Nt+1)):
 		#solve for next v and w
 		[v_new,w_new] = strang_split_step(v_old,w_old, h, delT, b, L, I)
 		
 		if plotting[0]==1 and t%plotting[1]==0:
 			#plot current v
 			ax.collections.remove(frame)
+			#make old texts go bye-bye
+			for txt in ax.texts:
+				txt.set_visible(False)
+			text = ax.text2D(0.05,0.95, r"$t=%.3f$" % (t*delT), transform=ax.transAxes)
 			frame = ax.plot_surface(X, Y, v_new, cmap=my_col,vmin=-0.25, vmax=1, rstride=4, cstride=4)
 			# ax.view_init(30,t/20)
 			plt.pause(0.001)
-			# if t%(5*plotting[1])==0:
+			if plotting[3]==1 and t%(5*plotting[1])==0:
+				frame_no=frame_no+1
+				if frame_no<10:
+					filename=plotting[2]+'_fig0'+str(frame_no)+'.png'
+				else:
+					filename=plotting[2]+'_fig'+str(frame_no)+'.png'
+				savefig(filename)
+			# if t==300 or t==600:
 			# 	frame_no=frame_no+1
 			# 	if frame_no<10:
 			# 		filename=plotting[2]+'_fig0'+str(frame_no)+'.png'
@@ -117,8 +132,8 @@ def frac_step_strang_split(h, delT, Nt, b, v_old, w_old, plotting):
 
 def part_b_Run(h,delT,plotting):
 	#parameters
-	N = int(1/h)
-	Nt = 300*int(1/delT)
+	N = int(round(1/h))
+	Nt = 300*int(round(1/delT))
 	a = 0.1
 	gamma = 2
 	eps = 0.005
@@ -136,8 +151,8 @@ def part_b_Run(h,delT,plotting):
 
 def part_c_Run(h,delT,plotting):
 	#parameters
-	N = int(1/h)
-	Nt = 1000*int(1/delT)
+	N = int(round(1/h))
+	Nt = 600*int(round(1/delT))
 	a = 0.1
 	gamma = 2
 	eps = 0.005
@@ -155,8 +170,9 @@ def part_c_Run(h,delT,plotting):
 
 if __name__ == '__main__':
 	h = 2**(-7)
-	delT = 2**(-5)
-	frames=100
+	delT = 1
+	frames=5
 	plot_on=1
-	# part_b_Run(h,delT,[plot_on,frames,'partb'])
-	part_c_Run(h,delT,[plot_on, frames, 'partc_spin'])	
+	gif_on=1
+	part_b_Run(h,delT,[plot_on,frames,'partb_fast', gif_on])
+	# part_c_Run(h,delT,[plot_on, frames, 'partc_fast', gif_on])	

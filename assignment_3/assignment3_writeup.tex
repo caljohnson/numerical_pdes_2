@@ -104,37 +104,54 @@ $$L = \dfrac{1}{\Delta x^2}\qty(\begin{array}{cccccc}
 Using this matrix for both $L_x$ and $L_y$ (since $\Delta x = \Delta y$), I implemented the Peaceman-Rachford ADI scheme
 \begin{align*}
 \qty(I - \dfrac{0.1 \Delta t}{2} L)u^* &= \qty(I + \dfrac{0.1 \Delta t}{2}L)u^n \\
-\qty(I - \dfrac{0.1 \Delta t}{2} L)u^{n+1} &= \qty(I + \dfrac{0.1 \Delta t}{2}L)u^*.
+\qty(I - \dfrac{0.1 \Delta t}{2} L)(u^{n+1})^T &= \qty(I + \dfrac{0.1 \Delta t}{2}L)(u^*)^T.
 \end{align*}
-Using $\Delta t = \Delta x$, I performed a refinement study on the scheme for $\Delta x = 2^{-1}, \dots, 2^{-9}$.  Since the analytic solution is not known, I used successive differences to demonstrate the second-order accuracy. The successive differences were computed by comparing the numerical solution $u^{(i)}(x,y,1)$ for $\Delta x = 2^{-i}$ with a simple coarsening of the solution $u^{(i+1)}(x,y,1)$ for $\Delta x = 2^{-(i+1)}$ in the discrete 1-norm
-$$d_{i+1} = (2^{-i})^2 \norm{\text{restrict}(u^{(i+1)}) - u^{(i)}}_1, $$
-where $\norm{\cdot}_1$ is the matrix one-norm (max(sum(abs(x), axis=0))).
-The successive differences and the ratios between them are given in Table 1.  The table shows that as we reduce the grid/time spacing by a factor of 2, the successive differences are reduced by a factor of 4, hence the scheme is indeed second-order accurate in time and space.
+Using $\Delta t = \Delta x$, I performed a refinement study on the scheme for $\Delta x = 3^{-1}, \dots, 3^{-6}$. I reduced the grid spacing by a factor of 3 between refinement steps so that the cell-centered grid points would line up between runs, which made the restriction step simple.  Since the analytic solution is not known, I used successive differences to demonstrate the second-order accuracy. The successive differences were computed by comparing the numerical solution $u^{(i)}(x,y,1)$ for $\Delta x = 3^{-i}$ with a simple coarsening of the solution $u^{(i+1)}(x,y,1)$ for $\Delta x = 3^{-(i+1)}$ in the discrete max-norm
+$$d_{i+1} = \norm{\text{restrict}(u^{(i+1)}) - u^{(i)}}.$$
+The successive differences and the ratios between them are given in Table 1.  The table shows that as we reduce the grid/time spacing by a factor of 3, the successive differences are reduced by a factor of 9, hence the scheme is indeed second-order accurate in time and space.
 
 \begin{table}[H]
 \caption{Peaceman-Rachford ADI Successive Differences and Ratios}
-\centering\begin{tabular}{||c|cc||}
+\centering \begin{tabular}{||c|cc||}
 \hline \hline
-   $\Delta x = \Delta t$ &  $d_i$ &   $d_{i-1}/d_{i}$ \\
-\hline \hline
-                $2^{-1}$      &            ------       &        ------   \\
-                $2^{-2}$    &              0.00550621  &       ------   \\
-                $2^{-3}$    &      0.00236241  &             2.33076  \\
-                $2^{-4}$     &         0.000234787 &            10.0619\\
-                $2^{-5}$      &       5.57923e-05 &             4.20823 \\
-                $2^{-6}$       &       1.38646e-05 &             4.02407  \\
-                $2^{-7}$        &      3.45834e-06 &             4.00904  \\
-                $2^{-8}$         &    8.63688e-07 &             4.00416 \\
-                $2^{-9}$          &    2.15822e-07 &             4.00184 \\
-                $2^{-10}$          &     5.39421e-08 &             4.001 \\
+   $\Delta x = \Delta t$ &   Successive Differences $d_i$ & Difference Ratios $d_{i-1}/d_i$ \\
+\hline
+$3^{-1}$  & --- & ---  \\
+$3^{-2}$   &  0.0392297   &   --- \\
+$3^{-3}$  &  0.000182032 &   215.51    \\
+$3^{-4}$   & 1.96354e-05 &             9.27056 \\
+$3^{-5}$  & 2.18015e-06 &             9.00647 \\
+$3^{-6}$  &              2.42219e-07 &             9.00073 \\
 \hline \hline
 \end{tabular}
 \end{table}
 
 
+% \begin{table}[H]
+% \caption{Peaceman-Rachford ADI Successive Differences and Ratios}
+% \centering\begin{tabular}{||c|cc||}
+% \hline \hline
+%    $\Delta x = \Delta t$ &  $d_i$ &   $d_{i-1}/d_{i}$ \\
+% \hline \hline
+%                 $2^{-1}$      &            ------       &        ------   \\
+%                 $2^{-2}$    &              0.00550621  &       ------   \\
+%                 $2^{-3}$    &      0.00236241  &             2.33076  \\
+%                 $2^{-4}$     &         0.000234787 &            10.0619\\
+%                 $2^{-5}$      &       5.57923e-05 &             4.20823 \\
+%                 $2^{-6}$       &       1.38646e-05 &             4.02407  \\
+%                 $2^{-7}$        &      3.45834e-06 &             4.00904  \\
+%                 $2^{-8}$         &    8.63688e-07 &             4.00416 \\
+%                 $2^{-9}$          &    2.15822e-07 &             4.00184 \\
+%                 $2^{-10}$          &     5.39421e-08 &             4.001 \\
+% \hline \hline
+% \end{tabular}
+% \end{table}
+
+
 \item Time your code for different grid sizes. Show how the computational time scales with the grid size. Compare your timing results with those from the previous homework assignment for Crank-Nicolson.
 
-Table 2 shows that PR-ADI vastly outperforms my Crank-Nicolson code from last assignment.  However, PR-ADI had no visible runtime scaling, much like CN last homework, but it may be climbing up to a scaling factor of 16 asymptotically.  As we reduce the grid and time spacing by a factor of 2, we should increase the total runtime by a factor of 16.  This is the same scaling than in Crank-Nicolson.  In PR-ADI, we're inverting $N\times N$-size, tridiagonal matrices as opposed to CN, which inverts $N^2\times N^2$-size, banded matrices.  The work to invert an $N\times N$ tridiagonal matrix is only $\mathcal{O}(N)$, but we have to invert $N$ matrices of this size, so the work per timestep for PR-ADI is still $\mathcal{O}(N^2)$.  Since we use $\Delta t = \Delta x,$ we perform $N$ time steps, so the total work is $\mathcal{O}(N^3)$.  Hence, the runtimes \emph{should} increase by 8 when $\Delta x$ is reduced by a factor of 2.
+To compare with last assignment, I solved the problem for grid spacing $\Delta x = 2^{-i}$ for $i=1, \dots, 9$ to match with my runtime calculations from Assignment 2 with Crank-Nicolson.  Table 2 shows that PR-ADI vastly outperforms my Crank-Nicolson code from last assignment.  However, PR-ADI had no visible runtime scaling, much like CN last homework, but it may be climbing up to a scaling factor of 16 asymptotically. 
+ % As we reduce the grid and time spacing by a factor of 2, we should increase the total runtime by a factor of 16.  This is the same scaling than in Crank-Nicolson.  In PR-ADI, we're inverting $N\times N$-size, tridiagonal matrices as opposed to CN, which inverts $N^2\times N^2$-size, banded matrices.  The work to invert an $N\times N$ tridiagonal matrix is only $\mathcal{O}(N)$, but we have to invert $N$ matrices of this size, so the work per timestep for PR-ADI is still $\mathcal{O}(N^2)$.  Since we use $\Delta t = \Delta x,$ we perform $N$ time steps, so the total work is $\mathcal{O}(N^4)$.  Hence, the runtimes \emph{should} increase by 16 when $\Delta x$ is reduced by a factor of 2.
 
 \begin{table}[H]
 \caption{PR-ADI vs. Crank-Nicolson Runtime Comparison}
@@ -143,19 +160,19 @@ Table 2 shows that PR-ADI vastly outperforms my Crank-Nicolson code from last as
    $\Delta x = \Delta t$ &   PR-ADI Runtimes $T$ &   $T_{i}/T_{i-1}$ &  CN Runtimes $T$ &   $T_{i}/T_{i-1}$ \\
 \hline \hline
  $2^{-1}$        &   0.062193 &    -----       &       0.134055 &           --------   \\
-                $2^{-2}$        &   0.00985  &         0.158378   &  0.136421 &            1.01765 \\
-                $2^{-3}$       &   0.020712 &         2.10274 &    0.102737 &            0.753088 \\
-                $2^{-4}$       &   0.045364 &         2.19023  &   0.151887 &            1.47841 \\
-                $2^{-5}$      &   0.087029 &         1.91846  &  0.335359 &            2.20795    \\
-                $2^{-6}$     &   0.192444 &         2.21126  &      2.63749  &            7.86469   \\
-                $2^{-7}$    &   0.49876  &         2.59171  &    14.1191   &            5.35322   \\
-                $2^{-8}$   &    2.7783   &         5.57042  &  93.7666   &            6.64112   \\
-                $2^{-9}$   &  23.3481   &         8.40372   &   610.232    &            6.50799  \\
-                $2^{-10}$  & 368.058    &        15.7639  &  -------- & ------ \\
+$2^{-2}$        &   0.00985  &         0.158378   &  0.136421 &            1.01765 \\
+$2^{-3}$       &   0.020712 &         2.10274 &    0.102737 &            0.753088 \\
+$2^{-4}$       &   0.045364 &         2.19023  &   0.151887 &            1.47841 \\
+$2^{-5}$      &   0.087029 &         1.91846  &  0.335359 &            2.20795    \\
+$2^{-6}$     &   0.192444 &         2.21126  &      2.63749  &            7.86469   \\
+$2^{-7}$    &   0.49876  &         2.59171  &    14.1191   &            5.35322   \\
+$2^{-8}$   &    2.7783   &         5.57042  &  93.7666   &            6.64112   \\
+$2^{-9}$   &  23.3481   &         8.40372   &   610.232    &            6.50799  \\
+$2^{-10}$  & 368.058    &        15.7639  &  -------- & ------ \\
 \hline \hline
 \end{tabular}
 \end{table}
-
+\newpage
 \item Show that the spatial integral of the solution to the PDE does not change in time. That is $$\dfrac{\dd }{\dd t} \int_\Omega u \ \dd V = 0.$$
 
 \begin{align*}
@@ -169,6 +186,20 @@ Table 2 shows that PR-ADI vastly outperforms my Crank-Nicolson code from last as
 \item  Show that the solution to the discrete equations satisfies the discrete conservation property
 $$\sum_{i,j} u_{i,j}^n = \sum_{i,j} u^0_{i,j} $$
 for all $n$. Demonstrate this property with your code.
+
+The updates for Peaceman-Rachford ADI is based on the single step
+$$(I-\dfrac{b\Delta t}{2}L)u^* = (I+\dfrac{b\Delta t}{2}L)u,$$
+which is equivalent to
+$$u^* - \dfrac{b\Delta t}{2} L u^* = u + \dfrac{b\Delta t}{2} L u.$$
+If we take the matrix sums of both sides, we have
+$$sum(u^*) - \dfrac{b\Delta t}{2} sum(Lu^*) = sum(u) + \dfrac{b\Delta t}{2} sum(Lu).$$
+We will show that $sum(Lu)=0$ for any $u$, so that $sum(u^*)=sum(u)$.
+If $u$ is a column vector, then
+$$Lu = \qty(\begin{array}{c} u_2 - u_1 \\ u_1 - 2u_2 + u_3 \\ \vdots \\ u_{n-2}-2_{n-1}+u_n \\ u_{n-1} - u_n \end{array}).$$
+Then clearly, 
+$$sum(Lu) = u_2 - u_1 + u_1 - 2u_2 + u_3 + u_2 - 2u_3 + u_4 + \dots + u_{n-2} -2u_{n-1} + u_n + u_{n-1} - u_n = 0.$$
+It follows that if $u$ is a matrix, then the column sums of $Lu$ will still be 0, so the full matrix sum will be 0.
+Since this is the only step in Peaceman-Rachford, and we always have that $sum(u^*)=sum(u)$, then $sum(u^0) = sum(u^n)$ for all $n$ in the method.
 
 Table 3 shows that the difference between the sums of the initial condition and every time step is close to machine precision, so the discrete conservation property holds.
 \begin{table}[H]
@@ -230,29 +261,30 @@ are used in electrophysiology to model the cross membrane electrical potential (
 \begin{enumerate}[(a)]
 \item Write a program to solve the FitzHugh-Nagumo equations on the unit square with homogeneous Neumann boundary conditions for v (meaning electrically insulated). Use a fractional step method to handle the diffusion and reactions separately. Use an ADI method for the diffusion solve. Describe what ODE solver you used for the reactions and what fractional stepping your chose.
 
-I used a fractional step method with Strang splitting time steps to solve the FitzHugh-Nagumo equations.  I first solved the diffusion on $v$ using my Peaceman-Rachford ADI method from number 1 for one time step of length $\Delta t/2$.  Then I used Runge-Kutta 2 to solve the reaction ODEs for one time step of length $\Delta t$.  Then I again solved the diffusion using PR-ADI for one time step of length $\Delta t/2$.  I chose Strang-splitting for its code simplicity, and I chose Runge-Kutta 2 because it's an explicit second-order ODE solver and the Fitzhugh-Nagumo reaction terms are nonlinear (which would take much longer in an implicit ODE solver).
+I used a fractional step method with Strang splitting time steps to solve the FitzHugh-Nagumo equations.  I first solved the diffusion on $v$ using my Peaceman-Rachford ADI method from number 1 for one time step of length $\Delta t/2$.  Then I used Runge-Kutta 2 to solve the reaction ODEs for one time step of length $\Delta t$.  Then I again solved the diffusion using PR-ADI for one time step of length $\Delta t/2$.  I chose Strang-splitting because it is second-order, and I chose Runge-Kutta 2 because it's an explicit second-order ODE solver and the Fitzhugh-Nagumo reaction terms are nonlinear (which would take much longer in an implicit ODE solver).  Since Strang-splitting is only second-order, it doesn't help much to use a more accurate ODE solver.
 
 \item Use the following parameters $a = 0.1$, $\gamma = 2$, $\varepsilon = 0.005$, $I = 0$, $D = 5 \cdot 10^{-5}$ , and initial conditions 
 $$v(x, y, 0) = exp(-100(x^2 + y^2)$$
 $$w(x, y, 0) = 0.0.$$
 Note that $v = 0, w = 0$ is a stable steady state of the system. Call this the rest state. For these initial conditions the voltage has been raised above rest in the bottom corner of the domain. Generate a numerical solution up to time t = 300. Visualize the voltage and describe the solution. Pick space and time steps to resolve the spatiotemporal dynamics of the solution you see. Discuss what grid size and time step you used and why.
 
-I used a space step of $\Delta x = \Delta y = 2^{-7}$ and a time step of $\Delta t = 2^{-5}$.  The small space step allows the wave to form with a decent resolution, while the slightly larger time step allows the computation to perform in a reasonable amount of time.
+I used a space step of $\Delta x = \Delta y = 2^{-7}$ and a time step of $\Delta t = 1$.  The small space step allows the wave to form with a decent resolution, since the wave takes up about a space length of 0.1, so with 128 grid points in each direction we have about 10 points in each direction to resolve the wave.   The time step was chosen big enough to allow the computation to perform quickly but small enough so that the wave didn't move too far during the time step.  It takes about the full 300 seconds for the wave to travel diagonally across the 1x1 grid, so a time step of $\Delta t=1$ resolves the timescale nicely.\\
 The voltage spikes in a wave through the grid, as we can see in the following figures.  The homogeneous recovery variable initial condition starts all the neurons in the grid in the excitable state, which are then excited by the voltage spikes and allow the voltage spike wave to spread.  The voltage spike wave doesn't propagate backwards to already spiked neurons since they are in a refractory/recovery state.
 \begin{figure}[H]
-\includegraphics[scale=0.4]{partb_fig_frames/partb_fig01.png}%
-\includegraphics[scale=0.4]{partb_fig_frames/partb_fig03.png}
-\caption{$t=0$ and $t=60$.}
+\includegraphics[scale=0.4]{partb_fast_frames/partb_fast_fig01.png}%
+\includegraphics[scale=0.4]{partb_fast_frames/partb_fast_fig03.png}
 \end{figure}
 \begin{figure}[H]
-\includegraphics[scale=0.4]{partb_fig_frames/partb_fig05.png}%
-\includegraphics[scale=0.4]{partb_fig_frames/partb_fig07.png}
-\caption{$t=120$ and $t=180$.}
+\includegraphics[scale=0.4]{partb_fast_frames/partb_fast_fig05.png}%
+\includegraphics[scale=0.4]{partb_fast_frames/partb_fast_fig07.png}
 \end{figure}
 \begin{figure}[H]
-\includegraphics[scale=0.4]{partb_fig_frames/partb_fig09.png}%
-\includegraphics[scale=0.4]{partb_fig_frames/partb_fig11.png}
-\caption{$t=240$ and $t=300$.}
+\includegraphics[scale=0.4]{partb_fast_frames/partb_fast_fig09.png}%
+\includegraphics[scale=0.4]{partb_fast_frames/partb_fast_fig11.png}
+\end{figure}
+\begin{figure}[H]
+\includegraphics[scale=0.4]{partb_fast_frames/partb_fast_fig13.png}%
+\includegraphics[scale=0.4]{partb_fast_frames/partb_fast_fig14.png}
 \end{figure}
 
 \item  Use the same parameters from part (b), but use the initial conditions
@@ -264,35 +296,34 @@ and run the simulation until time t = 600. Show the voltage at several points in
 The voltage solution in this case exhibits a spiral wave pattern throughout the grid that doesn't dampen out.  The spiral wave pattern forms since the nonhomogeneous recovery variable initial condition creates an imbalance in excitable and refractory neurons on the grid.  This allows the voltage spike to spread in one direction and not the other, which then loops back around when the refractory neurons become excitable again, and so on.
 
 \begin{figure}[H]
-\includegraphics[scale=0.4]{partc_fig_frames/partc_fig01.png}%
-\includegraphics[scale=0.4]{partc_fig_frames/partc_fig03.png}
-\caption{$t=0$ and $t=60$.}
+\includegraphics[scale=0.4]{partc_fast_frames/partc_fast_fig01.png}
+\includegraphics[scale=0.4]{partc_fast_frames/partc_fast_fig03.png}
 \end{figure}
 \begin{figure}[H]
-\includegraphics[scale=0.4]{partc_fig_frames/partc_fig05.png}%
-\includegraphics[scale=0.4]{partc_fig_frames/partc_fig07.png}
-\caption{$t=120$ and $t=180$.}
+\includegraphics[scale=0.4]{partc_fast_frames/partc_fast_fig05.png}
+\includegraphics[scale=0.4]{partc_fast_frames/partc_fast_fig07.png}
 \end{figure}
 \begin{figure}[H]
-\includegraphics[scale=0.4]{partc_fig_frames/partc_fig09.png}%
-\includegraphics[scale=0.4]{partc_fig_frames/partc_fig11.png}
-\caption{$t=240$ and $t=300$.}
+\includegraphics[scale=0.4]{partc_fast_frames/partc_fast_fig09.png}
+\includegraphics[scale=0.4]{partc_fast_frames/partc_fast_fig11.png}
 \end{figure}
 \begin{figure}[H]
-\includegraphics[scale=0.4]{partc_fig_frames/partc_fig13.png}%
-\includegraphics[scale=0.4]{partc_fig_frames/partc_fig15.png}
-\caption{$t=360$ and $t=420$.}
+\includegraphics[scale=0.4]{partc_fast_frames/partc_fast_fig13.png}
+\includegraphics[scale=0.4]{partc_fast_frames/partc_fast_fig15.png}
 \end{figure}
 \begin{figure}[H]
-\includegraphics[scale=0.4]{partc_fig_frames/partc_fig17.png}%
-\includegraphics[scale=0.4]{partc_fig_frames/partc_fig19.png}
-\caption{$t=480$ and $t=540$.}
+\includegraphics[scale=0.4]{partc_fast_frames/partc_fast_fig17.png}
+\includegraphics[scale=0.4]{partc_fast_frames/partc_fast_fig19.png}
 \end{figure}
 \begin{figure}[H]
-\centering\includegraphics[scale=0.4]{partc_fig_frames/partc_fig21.png}
-\caption{$t=600$.}
+\includegraphics[scale=0.4]{partc_fast_frames/partc_fast_fig21.png}
+\includegraphics[scale=0.4]{partc_fast_frames/partc_fast_fig23.png}
 \end{figure}
-
+\begin{figure}[H]
+\includegraphics[scale=0.4]{partc_fast_frames/partc_fast_fig25.png}
+\includegraphics[scale=0.4]{partc_fast_frames/partc_fast_fig27.png}
+\end{figure}
+\newpage
 %-------------------------------------------------------------------------------
 \section*{Python Code}
 The following code was used to generate the refinement study tables for problem 1:
@@ -305,27 +336,13 @@ The following code was used to generate the refinement study tables for problem 
 #Peaceman-Rachford ADI scheme on a cell-centered grid
 #for solving 2-d homogeneous diffusion eqn with Neumann BCs
 
-from __future__ import division
-
-import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-from numpy import exp
-from numpy.linalg import norm
-from tabulate import tabulate
-from tqdm import tqdm
-from time import clock
-import scipy.sparse as sparse
-import scipy.sparse.linalg
-
-from peaceman_rachford import peaceman_rachford_method
 
 def refinement_study():
     #refinement study for 2d diffusion using peaceman-rachford ADI scheme
     #for homogenous diffusion w/ Neumann bcs
 
     #set vector of grid spacings/time steps
-    h = [2**(-i) for i in range(1,11)]
+    h = [3**(-i) for i in range(1,7)]
 
     #diffusion coefficient
     b = 0.1
@@ -359,7 +376,7 @@ def refinement_study():
         u_new = peaceman_rachford_method(h[i], delT, b, u, plotting)
         tic=clock()
         if i>0:
-            diffs[i]=(h[i-1]**2)*norm(restriction(u_new, h[i]) - u_old,ord=1)
+            diffs[i]=np.amax(restriction(u_new, h[i]) - u_old)
             time_ratios[i] = (tic-toc)/times[i-1]
         if i>1:
             diff_ratios[i]=diffs[i-1]/diffs[i]
@@ -372,14 +389,14 @@ def refinement_study():
 
 def restriction(u, h):
     u_f = u +0
-    h2 = 2*h
+    h2 = 3*h
     n2 = int(1/h2)
     u_c = np.zeros((n2, n2), dtype=float)
 
     #loop over coarse mesh
     for i in range(0,n2):
         for j in range(0,n2):
-            u_c[i][j] = u_f[2*i+1][2*j+1]
+            u_c[i][j] = u_f[3*i+1][3*j+1]
     return u_c
 
 if __name__ == '__main__':
@@ -394,16 +411,6 @@ The following code was used to implement the Peaceman-Rachford ADI scheme for bo
 
 #Peaceman-Rachford ADI scheme on a cell-centered grid
 #for solving 2-d homogeneous diffusion eqn with Neumann BCs
-
-from __future__ import division
-
-import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-from numpy import exp
-from numpy.linalg import norm
-import scipy.sparse as sparse
-import scipy.sparse.linalg
 
 def sparse_matrices(h):
     #set sparse matrix L, the discrete 1-D Laplacian
@@ -648,10 +655,10 @@ def part_c_Run(h,delT,plotting):
 
 if __name__ == '__main__':
     h = 2**(-7)
-    delT = 2**(-5)
+    delT = 1
     frames=100
     plot_on=1
     part_b_Run(h,delT,[plot_on,frames,'partb'])
-    part_c_Run(h,delT,[plot_on, frames, 'partc_spin'])  
+    part_c_Run(h,delT,[plot_on, frames, 'partc'])  
 \end{verbatim}
 \end{document}
