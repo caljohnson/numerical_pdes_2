@@ -49,7 +49,7 @@ def LW_method(u0, LW, delT, Tf):
 	steps = int(round(Tf/delT))
 	# print(steps)
 	for t in range(steps):
-		#advance u w/ upwinding scheme
+		#advance u w/ LW scheme
 		u_next = LW.dot(u_old)
 		#update u_old
 		u_old = u_next+0
@@ -79,7 +79,7 @@ if __name__ == '__main__':
 	# print(grid_X)
 	u0 = np.asarray([sin(2*pi*x) for x in grid_X])
 	# print(u0)
-	#solve advection eqn using upwinding method up to Tf=1
+	#solve advection eqn using LW method up to Tf=1
 	u = LW_method(u0, LW, delT, Tf)
 	# print(u)
 	print(u0-u)
