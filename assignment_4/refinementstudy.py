@@ -22,7 +22,7 @@ def refinement_study():
 	#for upwinding scheme and Lax-Wendroff
 
 	#set vector of grid spacings
-	h = [2**(-i) for i in range(1,10)]
+	h = [2**(-i) for i in range(3,17)]
 
 	#advection speed
 	a = 1
@@ -60,18 +60,19 @@ def refinement_study():
 		toc=clock()
 		u = upwinding_method(u0, S, delT, Tf)
 		tic=clock()
-		errors_norm1[i] = h[i]*norm(u0-u,1)
-		errors_norm2[i] = h[i]*norm(u0-u,2)
-		errors_normmax[i] = norm(u0-u,np.inf)
+		error = u0-u
+		errors_norm1[i] = h[i]*sum(abs(error))
+		errors_norm2[i] = (h[i]*sum(error**2))**(1/2)
+		errors_normmax[i] = max(abs(error))
 		times[i]=tic-toc
 		if i>0:
-			norm1_ratios[i] = errors_norm1[i]/errors_norm1[i-1]
-			norm2_ratios[i] = errors_norm2[i]/errors_norm2[i-1]
-			normmax_ratios[i] = errors_norm2[i]/errors_normmax[i-1]
+			norm1_ratios[i] = errors_norm1[i-1]/errors_norm1[i]
+			norm2_ratios[i] = errors_norm2[i-1]/errors_norm2[i]
+			normmax_ratios[i] = errors_norm2[i-1]/errors_normmax[i]
 			time_ratios[i] = (tic-toc)/times[i-1]
 
-
-	print(type(errors_norm1))
+	table = [[h[i], errors_norm1[i], errors_norm2[i], errors_normmax[i], times[i], time_ratios[i]] for i in range(len(h))]
+	print(tabulate(table, headers=["delta x", "1-norm error", "2-norm error", "max-norm error", "runtime", "runtime ratios"], tablefmt="latex"))
 	norm1_table = [[h[i], errors_norm1[i], norm1_ratios[i]] for i in range(len(h))]
 	print(tabulate(norm1_table, headers=["delta x", "1-norm error", "Ratios"], tablefmt="latex"))
 	norm2_table = [[h[i], errors_norm2[i], norm2_ratios[i]] for i in range(len(h))]
