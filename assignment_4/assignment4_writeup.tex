@@ -1,0 +1,112 @@
+\documentclass[12pt]{article}
+\textwidth=17cm \oddsidemargin=-0.9cm \evensidemargin=-0.9cm
+\textheight=23.7cm \topmargin=-1.7cm
+\headheight=14.5pt
+
+\usepackage{amssymb, amsmath, amsfonts}
+\usepackage{moreverb}
+\usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage{graphics}
+\usepackage{color}
+\usepackage{array}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{textcomp}
+\usepackage{alltt}
+\usepackage{physics}
+\usepackage{mathtools}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usetikzlibrary{arrows}
+\usepackage{bigints}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsthm}
+\usepackage{fancyhdr}
+\usepackage[makeroom]{cancel}
+\pagestyle{fancy}
+\allowdisplaybreaks
+
+\newcommand{\E}{\varepsilon}
+
+\newcommand{\suchthat}{\, \mid \,}
+\newcommand{\ol}[1]{\overline{#1}}
+\newcommand{\bbar}[1]{\overline{#1}}
+\newcommand{\inpd}[1]{{\left< \, #1 \, \right>}}
+\renewcommand{\theenumi}{\alph{enumi}}
+\newcommand\Wider[2][3em]{%
+\makebox[\linewidth][c]{%
+  \begin{minipage}{\dimexpr\textwidth+#1\relax}
+  \raggedright#2
+  \end{minipage}%
+  }%
+}
+
+\def\R{\mathbb{R}}
+\def\C{\mathbb{C}}
+\def\H{\mathcal{H}}
+\DeclareMathOperator*{\esssup}{\text{ess~sup}}
+\newcommand{\resolv}[1]{\rho(#1)}
+\newcommand{\spec}[1]{\sigma(#1)}
+\newcommand{\iffR}{\noindent \underline{$\Longrightarrow$:} }
+\newcommand{\iffL}{\noindent \underline{$\Longleftarrow$:} }
+\newcommand{\lightning}{\textbf{\Huge \Lightning}}
+\newcommand{\spt}[1]{\text{spt}(#1)}
+\def\ran{\text{ ran}}
+   
+\newenvironment{myprob}[1]
+    {%before text commands
+    %{\Huge \_ \_ \_ \_ \_ \_ \_ \_ \_ \_ \_ \_ \_ \_ \_ \_ \_ \_ } \\
+    \noindent{\Huge$\ulcorner$}\textbf{#1.}\begin{em}
+    }
+    { 
+    %after text commands
+    \end{em} \\ \hphantom{l} \hfill {\Huge$\lrcorner$} }
+%	{\noindent \rule{7.5cm}{2pt} \textgoth{#1} \rule{8.cm}{2pt} \begin{em}}
+%	{\end{em}\\ \vspace{0.1pt}\noindent \rule{\textwidth}{2pt}}
+%
+\setcounter{section}{-1}
+
+
+
+
+\begin{document}
+\lhead{MATH228B}
+\chead{Carter Johnson - Homework 04}
+\rhead{\today}
+
+{\let\newpage\relax} 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% P2
+\begin{myprob}{Problem 1}
+Write programs to solve the advection equation
+$$u_t + au_x = 0, $$
+on $[0,1]$ with periodic boundary conditions using upwinding and Lax-Wendroff.  For smooth solutions, we expect upwinding to be first-order accurate and Lax-Wendroff to be second-order accurate, but it is not clear what accuracy to expect for nonsmooth solutions.
+\end{myprob}
+\begin{enumerate}[(a)]
+\item Let $a=1$ and solve the problem up to time $t=1$.  Perform a refinement study for both upwinding and Lax-Wendroff with $\Delta t=0.9a\Delta x$ with a smooth initial condition.  Compute the rate of convergence in the 1-norm, 2-norm, and max-norm.  Note that the exact solution at time $t=1$ is the initial condition, and so computing the error is easy.
+
+
+\item Repeat the previous problem with the discontinuous initial condition
+$$u(x,0) = \begin{cases}1 & \text{ if } |x-1/2|<1/4 \\ 0 & \text{ otherwise } \end{cases}.$$
+
+
+\end{enumerate}
+
+\begin{myprob}{Problem 2}
+For solving the heat equation we frequently use Crank-Nicolson, which is trapezoidal rule time integration with a second-order space discretization.  The analogous scheme for the linear advection equation is
+$$u_{j+1}^{n+1} - u_{j}^{n} + \dfrac{\nu}{4}\qty(u_{j+1}^{n}-u_{j-1}^{n}) + \dfrac{\nu}{4}\qty(u_{j+1}^{n+1}-u_{j-1}^{n+1}) =0,$$
+where $\nu = a\Delta t/\Delta x$.
+\end{myprob}
+\begin{enumerate}[(a)]
+\item Use von Neumann analysis to show that this scheme is unconditionally stable and that $\norm{u^n}_2 = \norm{u^0}_2$.  This scheme is said to be nondissipative- i.e., there is no amplitude error.  This seems reasonable because this is a property of the PDE.
+
+\item Solve the advection equation on the periodic domain $[0,1]$ with the initial condition from problem 1(b).  Show the solution and comment on your results.
+
+\item Compute the relative phase error as arg($g(\theta)$)/($-\nu\theta$), where $g$ is the amplification factor and $\theta = \xi\Delta x$, and plot it for $\theta\in[0,\pi]$.  How does the relative phase error and lack of amplitude error relate to the numerical solutions you observed in part (b).
+\end{enumerate}
+
+
+\end{document}
