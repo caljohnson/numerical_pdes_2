@@ -88,12 +88,425 @@ on $[0,1]$ with periodic boundary conditions using upwinding and Lax-Wendroff.  
 \begin{enumerate}[(a)]
 \item Let $a=1$ and solve the problem up to time $t=1$.  Perform a refinement study for both upwinding and Lax-Wendroff with $\Delta t=0.9a\Delta x$ with a smooth initial condition.  Compute the rate of convergence in the 1-norm, 2-norm, and max-norm.  Note that the exact solution at time $t=1$ is the initial condition, and so computing the error is easy.
 
+I used the smooth initial condition $u(x,0) = \sin(\pi x)$ on [0,1].  I started with an initial number of grid points $N_x = 90$ and initial number of time steps $N_t = 100$ so that $$\dfrac{\Delta t}{a\Delta x} = \dfrac{N_x}{N_t} = 0.9.$$From there, I performed a refinement study on both upwinding and Lax-Wendroff methods by doubling $N_x$ (and subsequently $N_t$).  The results are tabulated as follows. As we double the number of grid points, we see that for the upwinding method, the error in the 1-norm and 2-norm are reduced by a factor of 2, so upwinding is indeed first-order in the 1-norm and 2-norm.  For the max-norm however, the error is only reduced by a factor of 1.4, so the method is still convergent but less than first-order in the max-norm.
+
+For Lax-Wendroff, we see that doubling the number of grid points reduces the error in the 1-norm and 2-norm by a factor of 4, so the method is indeed second-order in the 1-norm and 2-norm.  For the max-norm, the error is only reduced by a factor of 2.8, so the method is still convergent but somewhere between first and second-order in the max-norm.
+
+\begin{table}[H]
+\caption{Upwinding Refinement Study - Errors and Runtimes}
+\centering\begin{tabular}{||c|ccc|cc||}
+\hline \hline
+    $N_x$ & $\norm{u(x,0)-u(x,1)}_1$ & $\norm{u(x,0)-u(x,1)}_2$ & $\norm{u(x,0)-u(x,1)}_{\infty}$ &   Runtime &   Runtime Ratios \\
+\hline
+    90 &    0.0138114   &    0.0153396   &      0.0216905   &  0.002116 &          0       \\
+   180 &    0.00694327  &    0.00771191  &      0.0109058   &  0.003697 &          1.74716 \\
+   360 &    0.00348112  &    0.00386653  &      0.00546805  &  0.007303 &          1.97539 \\
+   720 &    0.00174294  &    0.00193592  &      0.00273779  &  0.015256 &          2.089   \\
+  1440 &    0.000872067 &    0.000968623 &      0.00136984  &  0.034589 &          2.26724 \\
+  2880 &    0.000436183 &    0.000484477 &      0.000685154 &  0.074314 &          2.14849 \\
+  5760 &    0.000218129 &    0.00024228  &      0.000342636 &  0.24084  &          3.24084 \\
+ 11520 &    0.000109074 &    0.00012115  &      0.000171333 &  0.771567 &          3.20365 \\
+ 23040 &    5.45392e-05 &    6.05778e-05 &      8.567e-05   &  2.97792  &          3.85957 \\
+ 46080 &    2.72702e-05 &    3.02896e-05 &      4.28359e-05 & 11.749    &          3.94537 \\
+\hline \hline
+\end{tabular}
+\end{table}
+\begin{minipage}{0.5\textwidth}
+\begin{table}[H]
+\caption{Upwinding - 1-Norm Convergence}
+\centering\begin{tabular}{||c|cc||}
+\hline \hline
+    $N_x$ &   $\norm{u(x,0)-u(x,1)}_1$ &   Ratios \\
+\hline
+    90 &    0.0138114   &  0       \\
+   180 &    0.00694327  &  1.98918 \\
+   360 &    0.00348112  &  1.99455 \\
+   720 &    0.00174294  &  1.99727 \\
+  1440 &    0.000872067 &  1.99863 \\
+  2880 &    0.000436183 &  1.99932 \\
+  5760 &    0.000218129 &  1.99966 \\
+ 11520 &    0.000109074 &  1.99983 \\
+ 23040 &    5.45392e-05 &  1.99991 \\
+ 46080 &    2.72702e-05 &  1.99996 \\
+\hline \hline
+\end{tabular}
+\end{table}
+\end{minipage}%
+\begin{minipage}{0.5\textwidth}
+\begin{table}[H]
+\caption{Upwinding - 2-Norm Convergence}
+\centering\begin{tabular}{||c|cc||}
+\hline \hline
+    Nx &   $\norm{u(x,0)-u(x,1)}_2$ &   Ratios \\
+\hline
+    90 &    0.0153396   &  0       \\
+   180 &    0.00771191  &  1.98908 \\
+   360 &    0.00386653  &  1.99453 \\
+   720 &    0.00193592  &  1.99726 \\
+  1440 &    0.000968623 &  1.99863 \\
+  2880 &    0.000484477 &  1.99931 \\
+  5760 &    0.00024228  &  1.99966 \\
+ 11520 &    0.00012115  &  1.99983 \\
+ 23040 &    6.05778e-05 &  1.99991 \\
+ 46080 &    3.02896e-05 &  1.99996 \\
+\hline \hline
+\end{tabular}
+\end{table}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+\begin{table}[H]
+\caption{Upwinding - Max-Norm Convergence}
+\centering\begin{tabular}{||c|cc||}
+\hline \hline
+    Nx &   $\norm{u(x,0)-u(x,1)}_\infty$ &   Ratios \\
+\hline
+    90 &      0.0216905   &  0       \\
+   180 &      0.0109058   &  1.40655 \\
+   360 &      0.00546805  &  1.41036 \\
+   720 &      0.00273779  &  1.41228 \\
+  1440 &      0.00136984  &  1.41325 \\
+  2880 &      0.000685154 &  1.41373 \\
+  5760 &      0.000342636 &  1.41397 \\
+ 11520 &      0.000171333 &  1.41409 \\
+ 23040 &      8.567e-05   &  1.41415 \\
+ 46080 &      4.28359e-05 &  1.41418 \\
+\hline \hline
+\end{tabular}
+\end{table}
+\end{minipage}%
+\begin{minipage}{0.5\textwidth}
+\begin{table}[H]
+\caption{Upwinding- Runtimes}
+\centering\begin{tabular}{||c|cc||}
+\hline \hline
+    Nx &   Runtimes &   Runtime Ratios \\
+\hline
+    90 &   0.002116 &          0       \\
+   180 &   0.003697 &          1.74716 \\
+   360 &   0.007303 &          1.97539 \\
+   720 &   0.015256 &          2.089   \\
+  1440 &   0.034589 &          2.26724 \\
+  2880 &   0.074314 &          2.14849 \\
+  5760 &   0.24084  &          3.24084 \\
+ 11520 &   0.771567 &          3.20365 \\
+ 23040 &   2.97792  &          3.85957 \\
+ 46080 &  11.749    &          3.94537 \\
+\hline
+\end{tabular}
+\end{table}
+\end{minipage}
+\begin{table}[H]
+\caption{Lax-Wendroff Refinement Study - Errors and Runtimes}
+\begin{tabular}{||c|ccc|cc||}
+\hline \hline
+    $N_x$ & $\norm{u(x,0)-u(x,1)}_1$ & $\norm{u(x,0)-u(x,1)}_2$ & $\norm{u(x,0)-u(x,1)}_{\infty}$ &   runtime &   runtime ratios \\
+\hline
+    90 &    0.000617121 &    0.000685479 &      0.000969175 &  0.001979 &          0       \\
+   180 &    0.000154332 &    0.000171414 &      0.000242401 &  0.003954 &          1.99798 \\
+   360 &    3.85844e-05 &    4.28562e-05 &      6.06068e-05 &  0.008095 &          2.04729 \\
+   720 &    9.64619e-06 &    1.07142e-05 &      1.51521e-05 &  0.017808 &          2.19988 \\
+  1440 &    2.41155e-06 &    2.67856e-06 &      3.78805e-06 &  0.044824 &          2.51707 \\
+  2880 &    6.02889e-07 &    6.69641e-07 &      9.47015e-07 &  0.106869 &          2.38419 \\
+  5760 &    1.50722e-07 &    1.6741e-07  &      2.36754e-07 &  0.284315 &          2.66041 \\
+ 11520 &    3.76805e-08 &    4.18526e-08 &      5.91885e-08 &  0.939381 &          3.30401 \\
+ 23040 &    9.42014e-09 &    1.04631e-08 &      1.47971e-08 &  3.94602  &          4.20066 \\
+ 46080 &    2.35503e-09 &    2.61579e-09 &      3.69928e-09 & 15.9845   &          4.0508  \\
+\hline \hline
+\end{tabular}
+\end{table}
+\begin{minipage}{0.5\textwidth}
+\begin{table}[H]
+\caption{Lax-Wendroff - 1-Norm Convergence}
+\centering\begin{tabular}{||c|cc||}
+\hline \hline
+    $N_x$ & $\norm{u(x,0)-u(x,1)}_1$ &  Ratios \\
+\hline
+    90 &    0.000617121 &  0       \\
+   180 &    0.000154332 &  3.99867 \\
+   360 &    3.85844e-05 &  3.99985 \\
+   720 &    9.64619e-06 &  3.99996 \\
+  1440 &    2.41155e-06 &  3.99999 \\
+  2880 &    6.02889e-07 &  4       \\
+  5760 &    1.50722e-07 &  4       \\
+ 11520 &    3.76805e-08 &  4       \\
+ 23040 &    9.42014e-09 &  4       \\
+ 46080 &    2.35503e-09 &  4       \\
+\hline \hline
+\end{tabular}
+\end{table}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+\begin{table}[H]
+\caption{Lax-Wendroff - 2-Norm Convergence}
+\centering\begin{tabular}{||c|cc||}
+\hline \hline
+$N_x$  & $\norm{u(x,0)-u(x,1)}_2$ &  Ratios \\
+\hline
+    90 &    0.000685479 &  0       \\
+   180 &    0.000171414 &  3.99897 \\
+   360 &    4.28562e-05 &  3.99975 \\
+   720 &    1.07142e-05 &  3.99994 \\
+  1440 &    2.67856e-06 &  3.99998 \\
+  2880 &    6.69641e-07 &  4       \\
+  5760 &    1.6741e-07  &  4       \\
+ 11520 &    4.18526e-08 &  4       \\
+ 23040 &    1.04631e-08 &  4       \\
+ 46080 &    2.61579e-09 &  4       \\
+\hline \hline
+\end{tabular}
+\end{table}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+\begin{table}[H]
+\caption{LW - Max-Norm Convergence}
+\centering\begin{tabular}{||c|cc||}
+\hline \hline
+   $N_x$ & $\norm{u(x,0)-u(x,1)}_{\infty}$ &   Ratios \\
+\hline
+    90 &      0.000969175 &  0       \\
+   180 &      0.000242401 &  2.82788 \\
+   360 &      6.06068e-05 &  2.8283  \\
+   720 &      1.51521e-05 &  2.8284  \\
+  1440 &      3.78805e-06 &  2.82842 \\
+  2880 &      9.47015e-07 &  2.82843 \\
+  5760 &      2.36754e-07 &  2.82843 \\
+ 11520 &      5.91885e-08 &  2.82843 \\
+ 23040 &      1.47971e-08 &  2.82843 \\
+ 46080 &      3.69928e-09 &  2.82843 \\
+\hline \hline
+\end{tabular}
+\end{table}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+\begin{table}[H]
+\caption{Lax-Wendroff - Runtimes}
+\centering\begin{tabular}{||c|cc||}
+\hline \hline
+    $N_x$ &   Runtimes &   Runtime Ratios \\
+\hline
+    90 &   0.001979 &          0       \\
+   180 &   0.003954 &          1.99798 \\
+   360 &   0.008095 &          2.04729 \\
+   720 &   0.017808 &          2.19988 \\
+  1440 &   0.044824 &          2.51707 \\
+  2880 &   0.106869 &          2.38419 \\
+  5760 &   0.284315 &          2.66041 \\
+ 11520 &   0.939381 &          3.30401 \\
+ 23040 &   3.94602  &          4.20066 \\
+ 46080 &  15.9845   &          4.0508  \\
+\hline\hline
+\end{tabular}
+\end{table}
+\end{minipage}
 
 \item Repeat the previous problem with the discontinuous initial condition
 $$u(x,0) = \begin{cases}1 & \text{ if } |x-1/2|<1/4 \\ 0 & \text{ otherwise } \end{cases}.$$
-
-
 \end{enumerate}
+
+Again, I started with an initial number of grid points $N_x = 90$ and initial number of time steps $N_t = 100$ so that $$\dfrac{\Delta t}{a\Delta x} = \dfrac{N_x}{N_t} = 0.9.$$
+From there, I performed a refinement study on both upwinding and Lax-Wendroff methods by doubling $N_x$ (and subsequently $N_t$).  The results are tabulated as follows. As we double the number of grid points, we see that for the upwinding method, the errors in the 1-norm is reduced by a factor of 1.4 and the errors in the 2-norm are reduced by a factor of 1.18, so upwinding is less than first-order in the 1-norm and 2-norm.  For the max-norm however, the errors are actually growing, so it seems that the method is not convergent for discontinuous initial data in the max-norm.
+
+For Lax-Wendroff, we see that doubling the number of grid points reduces the error in the 1-norm by a factor of 1.5 and and in the 2-norm by a factor of 1.24, so the method is less than first-order in the 1-norm and 2-norm.  For the max-norm, the error is growing so the method is not convergent for discontinuous initial data in the max-norm.
+
+\begin{table}[H]
+\caption{Upwinding Refinement Study - Errors and Runtimes}
+\centering\begin{tabular}{||c|ccc|cc||}
+\hline \hline
+    $N_x$ & $\norm{u(x,0)-u(x,1)}_1$ & $\norm{u(x,0)-u(x,1)}_2$ & $\norm{u(x,0)-u(x,1)}_{\infty}$ &   Runtime &   Runtime Ratios \\
+\hline
+    90 &     0.0527461  &      0.123893  &         0.45129  &  0.001942 &          0       \\
+   180 &     0.0374545  &      0.104568  &         0.465538 &  0.00373  &          1.9207  \\
+   360 &     0.0265402  &      0.0880948 &         0.475626 &  0.007954 &          2.13244 \\
+   720 &     0.0187865  &      0.074148  &         0.482763 &  0.014647 &          1.84146 \\
+  1440 &     0.0132911  &      0.06238   &         0.487811 &  0.034097 &          2.32792 \\
+  2880 &     0.00940068 &      0.0524674 &         0.491381 &  0.096329 &          2.82515 \\
+  5760 &     0.00664816 &      0.0441248 &         0.493905 &  0.237519 &          2.46571 \\
+ 11520 &     0.00470127 &      0.0371066 &         0.49569  &  0.863169 &          3.63411 \\
+ 23040 &     0.00332441 &      0.0312037 &         0.496953 &  4.11757  &          4.77029 \\
+ 46080 &     0.00235075 &      0.0262395 &         0.497845 & 19.8843   &          4.82914 \\
+\hline \hline
+\end{tabular}
+\end{table}
+\begin{minipage}{0.5\textwidth}
+\begin{table}[H]
+\caption{Upwinding - 1-Norm Convergence}
+\centering\begin{tabular}{||c|cc||}
+\hline \hline
+    $N_x$ &   $\norm{u(x,0)-u(x,1)}_1$ &   Ratios \\
+\hline
+    90 &     0.0527461  &  0       \\
+   180 &     0.0374545  &  1.40827 \\
+   360 &     0.0265402  &  1.41124 \\
+   720 &     0.0187865  &  1.41272 \\
+  1440 &     0.0132911  &  1.41347 \\
+  2880 &     0.00940068 &  1.41384 \\
+  5760 &     0.00664816 &  1.41403 \\
+ 11520 &     0.00470127 &  1.41412 \\
+ 23040 &     0.00332441 &  1.41417 \\
+ 46080 &     0.00235075 &  1.41419 \\
+\hline \hline
+\end{tabular}
+\end{table}
+\end{minipage}%
+\begin{minipage}{0.5\textwidth}
+\begin{table}[H]
+\caption{Upwinding - 2-Norm Convergence}
+\centering\begin{tabular}{||c|cc||}
+\hline \hline
+    Nx &   $\norm{u(x,0)-u(x,1)}_2$ &   Ratios \\
+\hline
+    90 &      0.123893  &  0       \\
+   180 &      0.104568  &  1.18481 \\
+   360 &      0.0880948 &  1.18699 \\
+   720 &      0.074148  &  1.18809 \\
+  1440 &      0.06238   &  1.18865 \\
+  2880 &      0.0524674 &  1.18893 \\
+  5760 &      0.0441248 &  1.18907 \\
+ 11520 &      0.0371066 &  1.18914 \\
+ 23040 &      0.0312037 &  1.18917 \\
+ 46080 &      0.0262395 &  1.18919 \\
+\hline \hline
+\end{tabular}
+\end{table}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+\begin{table}[H]
+\caption{Upwinding - Max-Norm Convergence}
+\centering\begin{tabular}{||c|cc||}
+\hline \hline
+    $N_x$ & $\norm{u(x,0)-u(x,1)}_{\infty}$ &    Ratios \\
+\hline
+    90 &         0.45129  & 0         \\
+   180 &         0.465538 & 0.266128  \\
+   360 &         0.475626 & 0.219853  \\
+   720 &         0.482763 & 0.18248   \\
+  1440 &         0.487811 & 0.152001  \\
+  2880 &         0.491381 & 0.126948  \\
+  5760 &         0.493905 & 0.10623   \\
+ 11520 &         0.49569  & 0.089017  \\
+ 23040 &         0.496953 & 0.0746683 \\
+ 46080 &         0.497845 & 0.0626776 \\
+\hline \hline
+\end{tabular}
+\end{table}
+\end{minipage}%
+\begin{minipage}{0.5\textwidth}
+\begin{table}[H]
+\caption{Upwinding- Runtimes}
+\centering\begin{tabular}{||c|cc||}
+\hline \hline
+    $N_x$ &   Runtimes &   Runtime Ratios \\
+\hline
+    90 &   0.001942 &          0       \\
+   180 &   0.00373  &          1.9207  \\
+   360 &   0.007954 &          2.13244 \\
+   720 &   0.014647 &          1.84146 \\
+  1440 &   0.034097 &          2.32792 \\
+  2880 &   0.096329 &          2.82515 \\
+  5760 &   0.237519 &          2.46571 \\
+ 11520 &   0.863169 &          3.63411 \\
+ 23040 &   4.11757  &          4.77029 \\
+ 46080 &  19.8843   &          4.82914 \\
+\hline \hline
+\end{tabular}\end{table}\end{minipage}
+
+\begin{table}[H]
+\caption{Lax-Wendroff Refinement Study - Errors and Runtimes}
+\begin{tabular}{||c|ccc|cc||}
+\hline \hline
+    $N_x$ & $\norm{u(x,0)-u(x,1)}_1$ & $\norm{u(x,0)-u(x,1)}_2$ & $\norm{u(x,0)-u(x,1)}_{\infty}$ &   runtime &   runtime ratios \\
+\hline
+    90 &     0.0418176  &      0.106137  &         0.519683 &  0.001815 &          0       \\
+   180 &     0.0275851  &      0.0870176 &         0.553077 &  0.00379  &          2.08815 \\
+   360 &     0.0183735  &      0.0709873 &         0.578605 &  0.008669 &          2.28734 \\
+   720 &     0.0122411  &      0.0577062 &         0.598151 &  0.018017 &          2.07833 \\
+  1440 &     0.00813114 &      0.0467847 &         0.613178 &  0.04204  &          2.33335 \\
+  2880 &     0.00539299 &      0.0378493 &         0.624783 &  0.111989 &          2.66387 \\
+  5760 &     0.003566   &      0.0305659 &         0.633786 &  0.445533 &          3.97836 \\
+ 11520 &     0.00235739 &      0.0246465 &         0.640799 &  2.24809  &          5.04583 \\
+ 23040 &     0.00155764 &      0.0198469 &         0.646281 & 11.868    &          5.27918 \\
+ 46080 &     0.0010277  &      0.0159631 &         0.650578 & 57.1154   &          4.81254 \\
+\hline \hline
+\end{tabular}
+\end{table}
+\begin{minipage}{0.5\textwidth}
+\begin{table}[H]
+\caption{Lax-Wendroff - 1-Norm Convergence}
+\centering\begin{tabular}{||c|cc||}
+\hline \hline
+    $N_x$ & $\norm{u(x,0)-u(x,1)}_1$ &  Ratios \\
+\hline
+    90 &     0.0418176  &  0       \\
+   180 &     0.0275851  &  1.51595 \\
+   360 &     0.0183735  &  1.50135 \\
+   720 &     0.0122411  &  1.50097 \\
+  1440 &     0.00813114 &  1.50546 \\
+  2880 &     0.00539299 &  1.50772 \\
+  5760 &     0.003566   &  1.51234 \\
+ 11520 &     0.00235739 &  1.51269 \\
+ 23040 &     0.00155764 &  1.51344 \\
+ 46080 &     0.0010277  &  1.51567 \\
+\hline
+\end{tabular}\end{table}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+\begin{table}[H]
+\caption{Lax-Wendroff - 2-Norm Convergence}
+\centering\begin{tabular}{||c|cc||}
+\hline \hline
+$N_x$  & $\norm{u(x,0)-u(x,1)}_2$ &  Ratios \\
+\hline
+    90 &      0.106137  &  0       \\
+   180 &      0.0870176 &  1.21972 \\
+   360 &      0.0709873 &  1.22582 \\
+   720 &      0.0577062 &  1.23015 \\
+  1440 &      0.0467847 &  1.23344 \\
+  2880 &      0.0378493 &  1.23608 \\
+  5760 &      0.0305659 &  1.23828 \\
+ 11520 &      0.0246465 &  1.24017 \\
+ 23040 &      0.0198469 &  1.24183 \\
+ 46080 &      0.0159631 &  1.2433  \\
+\hline
+\end{tabular}\end{table}\end{minipage}
+\begin{minipage}{0.5\textwidth}
+\begin{table}[H]
+\caption{LW - Max-Norm Convergence}
+\centering\begin{tabular}{||c|cc||}
+\hline \hline
+   $N_x$ & $\norm{u(x,0)-u(x,1)}_{\infty}$ &   Ratios \\
+\hline
+    90 &         0.519683 & 0         \\
+   180 &         0.553077 & 0.191903  \\
+   360 &         0.578605 & 0.150392  \\
+   720 &         0.598151 & 0.118678  \\
+  1440 &         0.613178 & 0.09411   \\
+  2880 &         0.624783 & 0.0748815 \\
+  5760 &         0.633786 & 0.0597193 \\
+ 11520 &         0.640799 & 0.0476997 \\
+ 23040 &         0.646281 & 0.0381358 \\
+ 46080 &         0.650578 & 0.0305066 \\
+\hline \hline
+\end{tabular}\end{table}\end{minipage}
+\begin{minipage}{0.5\textwidth}
+\begin{table}[H]
+\caption{Lax-Wendroff Runtimes}
+\centering\begin{tabular}{||c|cc||}
+\hline \hline
+    $N_x$ &   Runtimes &   Runtime Ratios \\
+\hline
+    90 &   0.001815 &          0       \\
+   180 &   0.00379  &          2.08815 \\
+   360 &   0.008669 &          2.28734 \\
+   720 &   0.018017 &          2.07833 \\
+  1440 &   0.04204  &          2.33335 \\
+  2880 &   0.111989 &          2.66387 \\
+  5760 &   0.445533 &          3.97836 \\
+ 11520 &   2.24809  &          5.04583 \\
+ 23040 &  11.868    &          5.27918 \\
+ 46080 &  57.1154   &          4.81254 \\
+\hline \hline
+\end{tabular}\end{table}\end{minipage}
+
 
 \begin{myprob}{Problem 2}
 For solving the heat equation we frequently use Crank-Nicolson, which is trapezoidal rule time integration with a second-order space discretization.  The analogous scheme for the linear advection equation is
