@@ -15,8 +15,11 @@
 \usepackage{textcomp}
 \usepackage{alltt}
 \usepackage{physics}
+\usepackage{nicefrac}
 \usepackage{mathtools}
 \usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.13}
 \usetikzlibrary{positioning}
 \usetikzlibrary{arrows}
 \usepackage{bigints}
@@ -88,29 +91,51 @@ on $[0,1]$ with periodic boundary conditions using upwinding and Lax-Wendroff.  
 \begin{enumerate}[(a)]
 \item Let $a=1$ and solve the problem up to time $t=1$.  Perform a refinement study for both upwinding and Lax-Wendroff with $\Delta t=0.9a\Delta x$ with a smooth initial condition.  Compute the rate of convergence in the 1-norm, 2-norm, and max-norm.  Note that the exact solution at time $t=1$ is the initial condition, and so computing the error is easy.
 
-I used the smooth initial condition $u(x,0) = \sin(\pi x)$ on [0,1].  I started with an initial number of grid points $N_x = 90$ and initial number of time steps $N_t = 100$ so that $$\dfrac{\Delta t}{a\Delta x} = \dfrac{N_x}{N_t} = 0.9.$$From there, I performed a refinement study on both upwinding and Lax-Wendroff methods by doubling $N_x$ (and subsequently $N_t$).  The results are tabulated as follows. As we double the number of grid points, we see that for the upwinding method, the error in the 1-norm and 2-norm are reduced by a factor of 2, so upwinding is indeed first-order in the 1-norm and 2-norm.  For the max-norm however, the error is only reduced by a factor of 1.4, so the method is still convergent but less than first-order in the max-norm.
+I used the smooth initial condition $u(x,0) = \sin(\pi x)$ on [0,1].  I started with an initial number of grid points $N_x = 90$ and initial number of time steps $N_t = 100$ so that $$\dfrac{\Delta t}{a\Delta x} = \dfrac{N_x}{N_t} = 0.9.$$
+
+To implement Upwinding on the periodic domain, I used the iteration matrix
+$$S = \qty(\begin{array}{cccc} 
+1-\nu & & &  \nu \\
+\nu & 1-\nu & &  \\
+& \ddots & \ddots &  \\
+& & \nu & 1-\nu
+\end{array}) $$
+and followed the scheme $$u^{n+1} = S u^{n}$$ for $N_t$ time steps.
+
+To implement Lax-Wendroff on the periodic domain, I used the iteration matrix
+$$LW = \qty(\begin{array}{cccccc} 
+1-\nu^2 & \frac{\nu^2-\nu}{2} & & & &  \frac{\nu^2+\nu}{2} \\
+\frac{\nu^2+\nu}{2} & 1-\nu^2 & \frac{\nu^2-\nu}{2} & & & \\
+& \ddots & \ddots & \ddots & & \\
+& & \ddots & \ddots & \ddots &  \\
+& & & \frac{\nu^2+\nu}{2} & 1-\nu^2 & \frac{\nu^2-\nu}{2} \\
+\frac{\nu^2-\nu}{2} & & & & \frac{\nu^2+\nu}{2} & 1-\nu^2
+\end{array}) $$
+and followed the scheme $$u^{n+1} = LW u^{n}$$ for $N_t$ time steps.
+
+From there, I performed a refinement study on both upwinding and Lax-Wendroff methods by doubling $N_x$ (and subsequently $N_t$).  The results are tabulated as follows. As we double the number of grid points, we see that for the upwinding method, the error in the 1-norm and 2-norm are reduced by a factor of 2, so upwinding is indeed first-order in the 1-norm and 2-norm.  For the max-norm however, the error is only reduced by a factor of 1.4 ($\approx \sqrt{2}$), so the method is still convergent but less than first-order in the max-norm.
 
 For Lax-Wendroff, we see that doubling the number of grid points reduces the error in the 1-norm and 2-norm by a factor of 4, so the method is indeed second-order in the 1-norm and 2-norm.  For the max-norm, the error is only reduced by a factor of 2.8, so the method is still convergent but somewhere between first and second-order in the max-norm.
 
-\begin{table}[H]
-\caption{Upwinding Refinement Study - Errors and Runtimes}
-\centering\begin{tabular}{||c|ccc|cc||}
-\hline \hline
-    $N_x$ & $\norm{u(x,0)-u(x,1)}_1$ & $\norm{u(x,0)-u(x,1)}_2$ & $\norm{u(x,0)-u(x,1)}_{\infty}$ &   Runtime &   Runtime Ratios \\
-\hline
-    90 &    0.0138114   &    0.0153396   &      0.0216905   &  0.002116 &          0       \\
-   180 &    0.00694327  &    0.00771191  &      0.0109058   &  0.003697 &          1.74716 \\
-   360 &    0.00348112  &    0.00386653  &      0.00546805  &  0.007303 &          1.97539 \\
-   720 &    0.00174294  &    0.00193592  &      0.00273779  &  0.015256 &          2.089   \\
-  1440 &    0.000872067 &    0.000968623 &      0.00136984  &  0.034589 &          2.26724 \\
-  2880 &    0.000436183 &    0.000484477 &      0.000685154 &  0.074314 &          2.14849 \\
-  5760 &    0.000218129 &    0.00024228  &      0.000342636 &  0.24084  &          3.24084 \\
- 11520 &    0.000109074 &    0.00012115  &      0.000171333 &  0.771567 &          3.20365 \\
- 23040 &    5.45392e-05 &    6.05778e-05 &      8.567e-05   &  2.97792  &          3.85957 \\
- 46080 &    2.72702e-05 &    3.02896e-05 &      4.28359e-05 & 11.749    &          3.94537 \\
-\hline \hline
-\end{tabular}
-\end{table}
+% \begin{table}[H]
+% \caption{Upwinding Refinement Study - Errors and Runtimes}
+% \centering\begin{tabular}{||c|ccc|cc||}
+% \hline \hline
+%     $N_x$ & $\norm{u(x,0)-u(x,1)}_1$ & $\norm{u(x,0)-u(x,1)}_2$ & $\norm{u(x,0)-u(x,1)}_{\infty}$ &   Runtime &   Runtime Ratios \\
+% \hline
+%     90 &    0.0138114   &    0.0153396   &      0.0216905   &  0.002116 &          0       \\
+%    180 &    0.00694327  &    0.00771191  &      0.0109058   &  0.003697 &          1.74716 \\
+%    360 &    0.00348112  &    0.00386653  &      0.00546805  &  0.007303 &          1.97539 \\
+%    720 &    0.00174294  &    0.00193592  &      0.00273779  &  0.015256 &          2.089   \\
+%   1440 &    0.000872067 &    0.000968623 &      0.00136984  &  0.034589 &          2.26724 \\
+%   2880 &    0.000436183 &    0.000484477 &      0.000685154 &  0.074314 &          2.14849 \\
+%   5760 &    0.000218129 &    0.00024228  &      0.000342636 &  0.24084  &          3.24084 \\
+%  11520 &    0.000109074 &    0.00012115  &      0.000171333 &  0.771567 &          3.20365 \\
+%  23040 &    5.45392e-05 &    6.05778e-05 &      8.567e-05   &  2.97792  &          3.85957 \\
+%  46080 &    2.72702e-05 &    3.02896e-05 &      4.28359e-05 & 11.749    &          3.94537 \\
+% \hline \hline
+% \end{tabular}
+% \end{table}
 \begin{minipage}{0.5\textwidth}
 \begin{table}[H]
 \caption{Upwinding - 1-Norm Convergence}
@@ -195,25 +220,25 @@ For Lax-Wendroff, we see that doubling the number of grid points reduces the err
 \end{tabular}
 \end{table}
 \end{minipage}
-\begin{table}[H]
-\caption{Lax-Wendroff Refinement Study - Errors and Runtimes}
-\begin{tabular}{||c|ccc|cc||}
-\hline \hline
-    $N_x$ & $\norm{u(x,0)-u(x,1)}_1$ & $\norm{u(x,0)-u(x,1)}_2$ & $\norm{u(x,0)-u(x,1)}_{\infty}$ &   runtime &   runtime ratios \\
-\hline
-    90 &    0.000617121 &    0.000685479 &      0.000969175 &  0.001979 &          0       \\
-   180 &    0.000154332 &    0.000171414 &      0.000242401 &  0.003954 &          1.99798 \\
-   360 &    3.85844e-05 &    4.28562e-05 &      6.06068e-05 &  0.008095 &          2.04729 \\
-   720 &    9.64619e-06 &    1.07142e-05 &      1.51521e-05 &  0.017808 &          2.19988 \\
-  1440 &    2.41155e-06 &    2.67856e-06 &      3.78805e-06 &  0.044824 &          2.51707 \\
-  2880 &    6.02889e-07 &    6.69641e-07 &      9.47015e-07 &  0.106869 &          2.38419 \\
-  5760 &    1.50722e-07 &    1.6741e-07  &      2.36754e-07 &  0.284315 &          2.66041 \\
- 11520 &    3.76805e-08 &    4.18526e-08 &      5.91885e-08 &  0.939381 &          3.30401 \\
- 23040 &    9.42014e-09 &    1.04631e-08 &      1.47971e-08 &  3.94602  &          4.20066 \\
- 46080 &    2.35503e-09 &    2.61579e-09 &      3.69928e-09 & 15.9845   &          4.0508  \\
-\hline \hline
-\end{tabular}
-\end{table}
+% \begin{table}[H]
+% \caption{Lax-Wendroff Refinement Study - Errors and Runtimes}
+% \begin{tabular}{||c|ccc|cc||}
+% \hline \hline
+%     $N_x$ & $\norm{u(x,0)-u(x,1)}_1$ & $\norm{u(x,0)-u(x,1)}_2$ & $\norm{u(x,0)-u(x,1)}_{\infty}$ &   runtime &   runtime ratios \\
+% \hline
+%     90 &    0.000617121 &    0.000685479 &      0.000969175 &  0.001979 &          0       \\
+%    180 &    0.000154332 &    0.000171414 &      0.000242401 &  0.003954 &          1.99798 \\
+%    360 &    3.85844e-05 &    4.28562e-05 &      6.06068e-05 &  0.008095 &          2.04729 \\
+%    720 &    9.64619e-06 &    1.07142e-05 &      1.51521e-05 &  0.017808 &          2.19988 \\
+%   1440 &    2.41155e-06 &    2.67856e-06 &      3.78805e-06 &  0.044824 &          2.51707 \\
+%   2880 &    6.02889e-07 &    6.69641e-07 &      9.47015e-07 &  0.106869 &          2.38419 \\
+%   5760 &    1.50722e-07 &    1.6741e-07  &      2.36754e-07 &  0.284315 &          2.66041 \\
+%  11520 &    3.76805e-08 &    4.18526e-08 &      5.91885e-08 &  0.939381 &          3.30401 \\
+%  23040 &    9.42014e-09 &    1.04631e-08 &      1.47971e-08 &  3.94602  &          4.20066 \\
+%  46080 &    2.35503e-09 &    2.61579e-09 &      3.69928e-09 & 15.9845   &          4.0508  \\
+% \hline \hline
+% \end{tabular}
+% \end{table}
 \begin{minipage}{0.5\textwidth}
 \begin{table}[H]
 \caption{Lax-Wendroff - 1-Norm Convergence}
@@ -506,20 +531,82 @@ $N_x$  & $\norm{u(x,0)-u(x,1)}_2$ &  Ratios \\
  46080 &  57.1154   &          4.81254 \\
 \hline \hline
 \end{tabular}\end{table}\end{minipage}
-
+\newpage
 
 \begin{myprob}{Problem 2}
 For solving the heat equation we frequently use Crank-Nicolson, which is trapezoidal rule time integration with a second-order space discretization.  The analogous scheme for the linear advection equation is
-$$u_{j+1}^{n+1} - u_{j}^{n} + \dfrac{\nu}{4}\qty(u_{j+1}^{n}-u_{j-1}^{n}) + \dfrac{\nu}{4}\qty(u_{j+1}^{n+1}-u_{j-1}^{n+1}) =0,$$
+$$u_{j}^{n+1} - u_{j}^{n} + \dfrac{\nu}{4}\qty(u_{j+1}^{n}-u_{j-1}^{n}) + \dfrac{\nu}{4}\qty(u_{j+1}^{n+1}-u_{j-1}^{n+1}) =0,$$
 where $\nu = a\Delta t/\Delta x$.
 \end{myprob}
 \begin{enumerate}[(a)]
 \item Use von Neumann analysis to show that this scheme is unconditionally stable and that $\norm{u^n}_2 = \norm{u^0}_2$.  This scheme is said to be nondissipative- i.e., there is no amplitude error.  This seems reasonable because this is a property of the PDE.
 
+
+Let $u_j^n = e^{i\xi x_j}$, then $u_j^{n+1} = g(\xi)e^{i\xi x_j}$.
+Then the PDE becomes
+\begin{align*}
+g(\xi)e^{i\xi x_j} + \dfrac{\nu}{4}g(\xi)\qty(e^{i\xi(x_j+\Delta x)}- e^{i\xi(x_j-\Delta x)}) &= e^{i\xi x_j} - \dfrac{\nu}{4}\qty(e^{i\xi(x_j+\Delta x)}- e^{i\xi(x_j-\Delta x)}) \\
+g(\xi) \qty(1 + \dfrac{\nu}{4}\qty(e^{i\xi\Delta x}- e^{-i\xi \Delta x})) &= 1 - \dfrac{\nu}{4}\qty(e^{i\xi\Delta x}-e^{-i\xi\Delta x})\\
+g(\xi) \qty(1+ \dfrac{\nu}{4}i\sin(\xi \Delta x)) &= 1 - \dfrac{\nu}{4} i \sin(\xi\Delta x).
+\end{align*}
+If we let $\theta=\xi \Delta x$, then we can write the amplification factor $g(\theta)$ as
+\begin{align*}
+g(\theta) &= \dfrac{1-\frac{\nu}{2}i\sin(\theta)}{1+\frac{\nu}{2}i\sin(\theta)} \\
+&= \dfrac{\qty(1-\frac{\nu}{2}i\sin(\theta))^2}{\qty(1+\frac{\nu}{2}i\sin(\theta))\qty(1-\frac{\nu}{2}i\sin(\theta))} \\
+&= \dfrac{1-\frac{\nu^2}{4}\sin^2(\theta) - i \nu \sin(\theta)}{1+\frac{\nu^2}{4}\sin^2(\theta)}.
+\end{align*}
+Then we have that
+\begin{align*}
+|g(\theta)| &= \dfrac{\qty(1-\frac{\nu^2}{4}\sin^2(\theta))^2 + \qty(\nu \sin(\theta))^2}{\qty(1+\frac{\nu^2}{4}\sin^2(\theta))^2} \\
+&= \dfrac{1-\frac{\nu^2}{2}\sin^2(\theta) + \frac{\nu^4}{16}\sin^4(\theta) + \nu^2\sin(\theta)}{\qty(1+\frac{\nu^2}{4}\sin^2(\theta))^2} \\
+&= \dfrac{1+\frac{\nu^2}{2}\sin^2(\theta) + \frac{\nu^4}{16}\sin^4(\theta)}{\qty(1+\frac{\nu^2}{4}\sin^2(\theta))^2} \\
+&= \dfrac{\qty(1+\frac{\nu^2}{4}\sin^2(\theta))^2}{\qty(1+\frac{\nu^2}{4}\sin^2(\theta))^2} = 1.
+\end{align*}
+Then the scheme is unconditionally stable because
+$$|g| = 1 \leq 1 + C t  \ \ \text{ for all $t$, for a constant $C$.}$$
+And we have that the scheme is nondissipative since
+$$\norm{u^n}_2 = \norm{g^n u^0}_2 = |g|^n \norm{u^0}_2 = \norm{u^0}_2.$$
+
 \item Solve the advection equation on the periodic domain $[0,1]$ with the initial condition from problem 1(b).  Show the solution and comment on your results.
+
+With the discontinuous initial data, things go very wrong very quickly.  The high frequencies quickly lag far behind, and the numerical solution doesn't even resemble the real solution after only a few time steps.  Notable though is that the amplitude of the solution doesn't grow/shrink much, due to the non-dissipative nature of the scheme.  Following are several plots of the numerical solution using this scheme for $\nu=0.9$, $N_t=100$, and $N_x=90$ ($\Delta x = 1/Nx$, $\Delta t=1/Nt$):
+
+\noindent\begin{figure}[H]
+\includegraphics[scale=0.45]{CN_advection_frames/CN_advection_fig01.png}
+\includegraphics[scale=0.45]{CN_advection_frames/CN_advection_fig03.png}
+\end{figure} 
+\begin{figure}[H]
+\includegraphics[scale=0.45]{CN_advection_frames/CN_advection_fig05.png}
+\includegraphics[scale=0.45]{CN_advection_frames/CN_advection_fig07.png}
+\end{figure} 
+\begin{figure}[H]
+\includegraphics[scale=0.45]{CN_advection_frames/CN_advection_fig09.png}
+\includegraphics[scale=0.45]{CN_advection_frames/CN_advection_fig11.png}
+\end{figure} 
 
 \item Compute the relative phase error as arg($g(\theta)$)/($-\nu\theta$), where $g$ is the amplification factor and $\theta = \xi\Delta x$, and plot it for $\theta\in[0,\pi]$.  How does the relative phase error and lack of amplitude error relate to the numerical solutions you observed in part (b).
 \end{enumerate}
 
+The phase of $g$ is given by
+$$\arg(g(\theta)) = \arctan\qty(\dfrac{\Im(g)}{\Re(g)})= \arctan\qty(\dfrac{-\nu\sin\theta}{1-\frac{\nu^2}{4}\sin^2\theta}) $$
+In the limit of small $\theta$, we take the Taylor expansion of $\arctan$ about $\theta=0$:
+$$\arg(g(\theta)) = \qty(\dfrac{-\nu\sin\theta}{1-\frac{\nu^2}{4}\sin^\theta}) - \qty(\dfrac{-\nu\sin\theta}{1-\frac{\nu^2}{4}\sin^\theta})^3/3 + h.o.t.$$
+And then we use the expansions of $\sin\theta$ and $\frac{1}{1-x}$ about 0 together:
+\begin{align*}
+\arg(g(\theta)) &= -\nu\qty(\theta-\frac{\theta^3}{6}+\dots)\qty(1+\frac{\nu^2}{4}(\theta^2 + \dots)) - \qty(-\nu\qty(\theta-\frac{\theta^3}{6}+\dots)\qty(1+\frac{\nu^2}{4}(\theta^2 + \dots)))^3/3 \\
+&= -\nu \theta + \frac{\nu\theta^3}{6} - \frac{\nu^3\theta^3}{4} + \dots + \dfrac{\nu^3\theta^3}{3} + \dots \\
+&= -\nu \theta + \theta^3\qty(\frac{\nu}{6} - \frac{\nu^3}{4}+\dfrac{\nu^3}{3}) + h.o.t.
+\end{align*}
+Then the relative phase is 
+$$\arg(g(\theta))/(-\nu\theta) = 1 - \theta^2\qty(\dfrac{2+\nu^3}{12}).$$
+The following figure shows a plot of the relative phase for $\nu=0.9$, $\theta \in [0,\pi]$:
+\begin{figure}[H]
+\centering\begin{tikzpicture}
+\begin{axis}[xmin=0,xmax=3.14, ylabel={Relative Phase}, xlabel={$\theta$}, xtick={0, 1.55, 3.14}, xticklabels={0, $\pi/2$, $\pi$}, ytick={1,0,-1}]
+\addplot[domain=0:3.2, dashed] {0};
+\addplot[domain=0:3.14] {1 - (x^2)*(2+0.9^3)/12};
+%\addplot coordinates {(0,0) (10,22) (20,35) (30,42) (40,47) (50,50) (60,51)};
+\end{axis} \end{tikzpicture}\end{figure}
+What we see is that for the higher frequencies, ($\theta >\pi/2$), there is enormous relative phase lag, the highest frequencies being nearly lagging by nearly $200\%$.  The lack of amplitude error in conjunction with this phase lag causes the unphysical behavior we observed in the numerical solution in part b.  In contrast to Upwinding and Lax-Wendroff, in this scheme the amplitudes of the high frequencies aren't damped at all due to the non-dissipative nature of this scheme (as we showed in part a).  Then since the amplitudes are the high frequencies aren't damped, the enormous phase lag completely dominates the numerical solution, and the numerical solution quickly does not even resemble the real solution.
 
 \end{document}

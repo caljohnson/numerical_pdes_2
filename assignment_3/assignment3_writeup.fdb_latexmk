@@ -1,5 +1,6 @@
 # Fdb version 3
-["pdflatex"] 1488588220 "assignment3_writeup.tex" "assignment3_writeup.pdf" "assignment3_writeup" 1488588224
+["pdflatex"] 1488588220 "/Users/carterjohnson/Documents/my_classes/winter_quarter_2017/numeric_pdes/assignment_3/assignment3_writeup.tex" "/Users/carterjohnson/Documents/my_classes/winter_quarter_2017/numeric_pdes/assignment_3/assignment3_writeup.pdf" "assignment3_writeup" 1489101177
+  "/Users/carterjohnson/Documents/my_classes/winter_quarter_2017/numeric_pdes/assignment_3/assignment3_writeup.tex" 1488588236 28428 e4689a914dd5415afe0c8ee60e45ccda ""
   "/usr/local/texlive/2016/texmf-dist/fonts/map/fontname/texfonts.map" 1272929888 3287 e6b82fe08f5336d4d5ebc73fb1152e87 ""
   "/usr/local/texlive/2016/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmbsy6.tfm" 1246382020 1124 14ccf5552bc7f77ca02a8a402bea8bfb ""
   "/usr/local/texlive/2016/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmbsy8.tfm" 1246382020 1120 200be8b775682cdf80acad4be5ef57e4 ""
@@ -187,7 +188,7 @@
   "/usr/local/texlive/2016/texmf.cnf" 1463979140 577 2938757e76f31531e65cc647e3507693 ""
   "assignment3_writeup.aux" 1488588224 1430 c46c4bc34e288c7a4c0f8f01a62a5231 ""
   "assignment3_writeup.out" 1488588220 0 d41d8cd98f00b204e9800998ecf8427e ""
-  "assignment3_writeup.tex" 1488588218 28428 e4689a914dd5415afe0c8ee60e45ccda ""
+  "assignment3_writeup.tex" 1488588236 28428 e4689a914dd5415afe0c8ee60e45ccda ""
   "partb_fast_frames/partb_fast_fig01.png" 1488587255 149587 95f2de3119a31080ba25c48ad2d2a2ee ""
   "partb_fast_frames/partb_fast_fig03.png" 1488587258 153733 f13ca1e063a73f87943cebd85b7d3c15 ""
   "partb_fast_frames/partb_fast_fig05.png" 1488587263 166363 1c5440bb54b4f0f6c1f288437746ee28 ""
@@ -211,7 +212,9 @@
   "partc_fast_frames/partc_fast_fig25.png" 1488587212 159569 a4ac508885daaeea48c22f324ce5e9f2 ""
   "partc_fast_frames/partc_fast_fig27.png" 1488587218 169716 51c0247a74ffa3e229786ab6f27ea6fb ""
   (generated)
-  "assignment3_writeup.out"
-  "assignment3_writeup.log"
+  "/Users/carterjohnson/Documents/my_classes/winter_quarter_2017/numeric_pdes/assignment_3/assignment3_writeup.log"
   "assignment3_writeup.pdf"
+  "/Users/carterjohnson/Documents/my_classes/winter_quarter_2017/numeric_pdes/assignment_3/assignment3_writeup.pdf"
   "assignment3_writeup.aux"
+  "assignment3_writeup.log"
+  "assignment3_writeup.out"
