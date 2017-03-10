@@ -115,8 +115,6 @@ and followed the scheme $$u^{n+1} = LW u^{n}$$ for $N_t$ time steps.
 
 From there, I performed a refinement study on both upwinding and Lax-Wendroff methods by doubling $N_x$ (and subsequently $N_t$).  The results are tabulated as follows. As we double the number of grid points, we see that for the upwinding method, the error in the 1-norm and 2-norm are reduced by a factor of 2, so upwinding is indeed first-order in the 1-norm and 2-norm.  For the max-norm however, the error is only reduced by a factor of 1.4 ($\approx \sqrt{2}$), so the method is still convergent but less than first-order in the max-norm.
 
-For Lax-Wendroff, we see that doubling the number of grid points reduces the error in the 1-norm and 2-norm by a factor of 4, so the method is indeed second-order in the 1-norm and 2-norm.  For the max-norm, the error is only reduced by a factor of 2.8, so the method is still convergent but somewhere between first and second-order in the max-norm.
-
 % \begin{table}[H]
 % \caption{Upwinding Refinement Study - Errors and Runtimes}
 % \centering\begin{tabular}{||c|ccc|cc||}
@@ -217,9 +215,7 @@ For Lax-Wendroff, we see that doubling the number of grid points reduces the err
  23040 &   2.97792  &          3.85957 \\
  46080 &  11.749    &          3.94537 \\
 \hline
-\end{tabular}
-\end{table}
-\end{minipage}
+\end{tabular}\end{table}\end{minipage} \\
 % \begin{table}[H]
 % \caption{Lax-Wendroff Refinement Study - Errors and Runtimes}
 % \begin{tabular}{||c|ccc|cc||}
@@ -239,6 +235,9 @@ For Lax-Wendroff, we see that doubling the number of grid points reduces the err
 % \hline \hline
 % \end{tabular}
 % \end{table}
+
+For Lax-Wendroff, we see that doubling the number of grid points reduces the error in the 1-norm and 2-norm by a factor of 4, so the method is indeed second-order in the 1-norm and 2-norm.  For the max-norm, the error is only reduced by a factor of 2.8, so the method is still convergent but somewhere between first and second-order in the max-norm.
+
 \begin{minipage}{0.5\textwidth}
 \begin{table}[H]
 \caption{Lax-Wendroff - 1-Norm Convergence}
@@ -331,27 +330,25 @@ $$u(x,0) = \begin{cases}1 & \text{ if } |x-1/2|<1/4 \\ 0 & \text{ otherwise } \e
 Again, I started with an initial number of grid points $N_x = 90$ and initial number of time steps $N_t = 100$ so that $$\dfrac{\Delta t}{a\Delta x} = \dfrac{N_x}{N_t} = 0.9.$$
 From there, I performed a refinement study on both upwinding and Lax-Wendroff methods by doubling $N_x$ (and subsequently $N_t$).  The results are tabulated as follows. As we double the number of grid points, we see that for the upwinding method, the errors in the 1-norm is reduced by a factor of 1.4 and the errors in the 2-norm are reduced by a factor of 1.18, so upwinding is less than first-order in the 1-norm and 2-norm.  For the max-norm however, the errors are actually growing, so it seems that the method is not convergent for discontinuous initial data in the max-norm.
 
-For Lax-Wendroff, we see that doubling the number of grid points reduces the error in the 1-norm by a factor of 1.5 and and in the 2-norm by a factor of 1.24, so the method is less than first-order in the 1-norm and 2-norm.  For the max-norm, the error is growing so the method is not convergent for discontinuous initial data in the max-norm.
-
-\begin{table}[H]
-\caption{Upwinding Refinement Study - Errors and Runtimes}
-\centering\begin{tabular}{||c|ccc|cc||}
-\hline \hline
-    $N_x$ & $\norm{u(x,0)-u(x,1)}_1$ & $\norm{u(x,0)-u(x,1)}_2$ & $\norm{u(x,0)-u(x,1)}_{\infty}$ &   Runtime &   Runtime Ratios \\
-\hline
-    90 &     0.0527461  &      0.123893  &         0.45129  &  0.001942 &          0       \\
-   180 &     0.0374545  &      0.104568  &         0.465538 &  0.00373  &          1.9207  \\
-   360 &     0.0265402  &      0.0880948 &         0.475626 &  0.007954 &          2.13244 \\
-   720 &     0.0187865  &      0.074148  &         0.482763 &  0.014647 &          1.84146 \\
-  1440 &     0.0132911  &      0.06238   &         0.487811 &  0.034097 &          2.32792 \\
-  2880 &     0.00940068 &      0.0524674 &         0.491381 &  0.096329 &          2.82515 \\
-  5760 &     0.00664816 &      0.0441248 &         0.493905 &  0.237519 &          2.46571 \\
- 11520 &     0.00470127 &      0.0371066 &         0.49569  &  0.863169 &          3.63411 \\
- 23040 &     0.00332441 &      0.0312037 &         0.496953 &  4.11757  &          4.77029 \\
- 46080 &     0.00235075 &      0.0262395 &         0.497845 & 19.8843   &          4.82914 \\
-\hline \hline
-\end{tabular}
-\end{table}
+% \begin{table}[H]
+% \caption{Upwinding Refinement Study - Errors and Runtimes}
+% \centering\begin{tabular}{||c|ccc|cc||}
+% \hline \hline
+%     $N_x$ & $\norm{u(x,0)-u(x,1)}_1$ & $\norm{u(x,0)-u(x,1)}_2$ & $\norm{u(x,0)-u(x,1)}_{\infty}$ &   Runtime &   Runtime Ratios \\
+% \hline
+%     90 &     0.0527461  &      0.123893  &         0.45129  &  0.001942 &          0       \\
+%    180 &     0.0374545  &      0.104568  &         0.465538 &  0.00373  &          1.9207  \\
+%    360 &     0.0265402  &      0.0880948 &         0.475626 &  0.007954 &          2.13244 \\
+%    720 &     0.0187865  &      0.074148  &         0.482763 &  0.014647 &          1.84146 \\
+%   1440 &     0.0132911  &      0.06238   &         0.487811 &  0.034097 &          2.32792 \\
+%   2880 &     0.00940068 &      0.0524674 &         0.491381 &  0.096329 &          2.82515 \\
+%   5760 &     0.00664816 &      0.0441248 &         0.493905 &  0.237519 &          2.46571 \\
+%  11520 &     0.00470127 &      0.0371066 &         0.49569  &  0.863169 &          3.63411 \\
+%  23040 &     0.00332441 &      0.0312037 &         0.496953 &  4.11757  &          4.77029 \\
+%  46080 &     0.00235075 &      0.0262395 &         0.497845 & 19.8843   &          4.82914 \\
+% \hline \hline
+% \end{tabular}
+% \end{table}
 \begin{minipage}{0.5\textwidth}
 \begin{table}[H]
 \caption{Upwinding - 1-Norm Convergence}
@@ -433,27 +430,30 @@ For Lax-Wendroff, we see that doubling the number of grid points reduces the err
  23040 &   4.11757  &          4.77029 \\
  46080 &  19.8843   &          4.82914 \\
 \hline \hline
-\end{tabular}\end{table}\end{minipage}
+\end{tabular}\end{table}\end{minipage}\\
 
-\begin{table}[H]
-\caption{Lax-Wendroff Refinement Study - Errors and Runtimes}
-\begin{tabular}{||c|ccc|cc||}
-\hline \hline
-    $N_x$ & $\norm{u(x,0)-u(x,1)}_1$ & $\norm{u(x,0)-u(x,1)}_2$ & $\norm{u(x,0)-u(x,1)}_{\infty}$ &   runtime &   runtime ratios \\
-\hline
-    90 &     0.0418176  &      0.106137  &         0.519683 &  0.001815 &          0       \\
-   180 &     0.0275851  &      0.0870176 &         0.553077 &  0.00379  &          2.08815 \\
-   360 &     0.0183735  &      0.0709873 &         0.578605 &  0.008669 &          2.28734 \\
-   720 &     0.0122411  &      0.0577062 &         0.598151 &  0.018017 &          2.07833 \\
-  1440 &     0.00813114 &      0.0467847 &         0.613178 &  0.04204  &          2.33335 \\
-  2880 &     0.00539299 &      0.0378493 &         0.624783 &  0.111989 &          2.66387 \\
-  5760 &     0.003566   &      0.0305659 &         0.633786 &  0.445533 &          3.97836 \\
- 11520 &     0.00235739 &      0.0246465 &         0.640799 &  2.24809  &          5.04583 \\
- 23040 &     0.00155764 &      0.0198469 &         0.646281 & 11.868    &          5.27918 \\
- 46080 &     0.0010277  &      0.0159631 &         0.650578 & 57.1154   &          4.81254 \\
-\hline \hline
-\end{tabular}
-\end{table}
+% \begin{table}[H]
+% \caption{Lax-Wendroff Refinement Study - Errors and Runtimes}
+% \begin{tabular}{||c|ccc|cc||}
+% \hline \hline
+%     $N_x$ & $\norm{u(x,0)-u(x,1)}_1$ & $\norm{u(x,0)-u(x,1)}_2$ & $\norm{u(x,0)-u(x,1)}_{\infty}$ &   runtime &   runtime ratios \\
+% \hline
+%     90 &     0.0418176  &      0.106137  &         0.519683 &  0.001815 &          0       \\
+%    180 &     0.0275851  &      0.0870176 &         0.553077 &  0.00379  &          2.08815 \\
+%    360 &     0.0183735  &      0.0709873 &         0.578605 &  0.008669 &          2.28734 \\
+%    720 &     0.0122411  &      0.0577062 &         0.598151 &  0.018017 &          2.07833 \\
+%   1440 &     0.00813114 &      0.0467847 &         0.613178 &  0.04204  &          2.33335 \\
+%   2880 &     0.00539299 &      0.0378493 &         0.624783 &  0.111989 &          2.66387 \\
+%   5760 &     0.003566   &      0.0305659 &         0.633786 &  0.445533 &          3.97836 \\
+%  11520 &     0.00235739 &      0.0246465 &         0.640799 &  2.24809  &          5.04583 \\
+%  23040 &     0.00155764 &      0.0198469 &         0.646281 & 11.868    &          5.27918 \\
+%  46080 &     0.0010277  &      0.0159631 &         0.650578 & 57.1154   &          4.81254 \\
+% \hline \hline
+% \end{tabular}
+% \end{table}
+
+For Lax-Wendroff, we see that doubling the number of grid points reduces the error in the 1-norm by a factor of 1.5 and and in the 2-norm by a factor of 1.24, so the method is less than first-order in the 1-norm and 2-norm.  For the max-norm, the error is growing so the method is not convergent for discontinuous initial data in the max-norm.
+
 \begin{minipage}{0.5\textwidth}
 \begin{table}[H]
 \caption{Lax-Wendroff - 1-Norm Convergence}
@@ -530,8 +530,8 @@ $N_x$  & $\norm{u(x,0)-u(x,1)}_2$ &  Ratios \\
  23040 &  11.868    &          5.27918 \\
  46080 &  57.1154   &          4.81254 \\
 \hline \hline
-\end{tabular}\end{table}\end{minipage}
-\newpage
+\end{tabular}\end{table}\end{minipage}\\
+
 
 \begin{myprob}{Problem 2}
 For solving the heat equation we frequently use Crank-Nicolson, which is trapezoidal rule time integration with a second-order space discretization.  The analogous scheme for the linear advection equation is
@@ -569,6 +569,17 @@ $$\norm{u^n}_2 = \norm{g^n u^0}_2 = |g|^n \norm{u^0}_2 = \norm{u^0}_2.$$
 
 \item Solve the advection equation on the periodic domain $[0,1]$ with the initial condition from problem 1(b).  Show the solution and comment on your results.
 
+To implement this CN-analogous scheme on the periodic domain, I used the iteration matrix
+$$CN = \qty(\begin{array}{cccccc} 
+1 & \frac{-\nu}{4} & & & &  \frac{\nu}{4} \\
+\frac{\nu}{4} & 1 & \frac{-\nu}{4} & & & \\
+& \ddots & \ddots & \ddots & & \\
+& & \ddots & \ddots & \ddots &  \\
+& & & \frac{\nu}{4} & 1 & \frac{-\nu}{4} \\
+\frac{-\nu}{4} & & & & \frac{\nu}{4} & 1
+\end{array}) $$
+and did the following scheme for $N_t$ time steps $$(CN)^Tu^{n+1} = CN u^{n}.$$ 
+
 With the discontinuous initial data, things go very wrong very quickly.  The high frequencies quickly lag far behind, and the numerical solution doesn't even resemble the real solution after only a few time steps.  Notable though is that the amplitude of the solution doesn't grow/shrink much, due to the non-dissipative nature of the scheme.  Following are several plots of the numerical solution using this scheme for $\nu=0.9$, $N_t=100$, and $N_x=90$ ($\Delta x = 1/Nx$, $\Delta t=1/Nt$):
 
 \noindent\begin{figure}[H]
@@ -583,7 +594,7 @@ With the discontinuous initial data, things go very wrong very quickly.  The hig
 \includegraphics[scale=0.45]{CN_advection_frames/CN_advection_fig09.png}
 \includegraphics[scale=0.45]{CN_advection_frames/CN_advection_fig11.png}
 \end{figure} 
-
+\newpage
 \item Compute the relative phase error as arg($g(\theta)$)/($-\nu\theta$), where $g$ is the amplification factor and $\theta = \xi\Delta x$, and plot it for $\theta\in[0,\pi]$.  How does the relative phase error and lack of amplitude error relate to the numerical solutions you observed in part (b).
 \end{enumerate}
 

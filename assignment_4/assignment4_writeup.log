@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2016.5.22)  9 MAR 2017 15:44
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2016.5.22)  9 MAR 2017 16:56
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -2291,44 +2291,44 @@ File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 LaTeX Font Info:    Try loading font information for U+msb on input line 86.
 (/usr/local/texlive/2016/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-) [1{/usr/local/texlive/2016/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
-
-]
-Overfull \hbox (20.88867pt too wide) in paragraph at lines 139--326
+)
+Overfull \hbox (20.88867pt too wide) in paragraph at lines 137--238
 []$[]$$[]$
  []
 
 
-Overfull \hbox (20.88867pt too wide) in paragraph at lines 139--326
-[]$$[]$
+Overfull \hbox (20.88867pt too wide) in paragraph at lines 137--238
+[]$$[]$ 
  []
 
 
-Overfull \hbox (23.49976pt too wide) in paragraph at lines 139--326
-[]$ $[]$
+Underfull \hbox (badness 10000) in paragraph at lines 137--238
+
+ []
+
+[1{/usr/local/texlive/2016/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
+
+]
+Overfull \hbox (23.49976pt too wide) in paragraph at lines 241--325
+[]$[]$ $[]$
  []
 
 
-Overfull \hbox (23.49976pt too wide) in paragraph at lines 139--326
+Overfull \hbox (23.49976pt too wide) in paragraph at lines 241--325
 []$ $[]$ 
  []
 
 [2]
-Overfull \hbox (49.82323pt too wide) in paragraph at lines 338--354
- [][] 
- []
-
-[3]
-Overfull \hbox (17.62482pt too wide) in paragraph at lines 355--437
+Overfull \hbox (17.62482pt too wide) in paragraph at lines 352--434
 []$[]$$[]$
  []
 
 
-Overfull \hbox (41.66774pt too wide) in paragraph at lines 440--456
-[][] 
+Underfull \hbox (badness 10000) in paragraph at lines 352--434
+
  []
 
-[4]
+[3]
 Overfull \hbox (20.2359pt too wide) in paragraph at lines 457--534
 []$[]$ $[]$
  []
@@ -2338,55 +2338,60 @@ Overfull \hbox (2.61108pt too wide) in paragraph at lines 457--534
 []$ $[]$ 
  []
 
-[5] [6] <CN_advection_frames/CN_advection_fig01.png, id=65, 578.16pt x 433.62pt
+
+Underfull \hbox (badness 10000) in paragraph at lines 457--534
+
+ []
+
+[4] [5] <CN_advection_frames/CN_advection_fig01.png, id=59, 578.16pt x 433.62pt
 >
 File: CN_advection_frames/CN_advection_fig01.png Graphic file (type png)
 <use CN_advection_frames/CN_advection_fig01.png>
 Package pdftex.def Info: CN_advection_frames/CN_advection_fig01.png used on inp
-ut line 575.
+ut line 586.
 (pdftex.def)             Requested size: 260.16959pt x 195.1272pt.
-<CN_advection_frames/CN_advection_fig03.png, id=67, 578.16pt x 433.62pt>
+<CN_advection_frames/CN_advection_fig03.png, id=61, 578.16pt x 433.62pt>
 File: CN_advection_frames/CN_advection_fig03.png Graphic file (type png)
 <use CN_advection_frames/CN_advection_fig03.png>
 Package pdftex.def Info: CN_advection_frames/CN_advection_fig03.png used on inp
-ut line 576.
+ut line 587.
 (pdftex.def)             Requested size: 260.16959pt x 195.1272pt.
 
-Overfull \hbox (39.25342pt too wide) in paragraph at lines 575--577
+Overfull \hbox (39.25342pt too wide) in paragraph at lines 586--588
 [][] [] 
  []
 
-<CN_advection_frames/CN_advection_fig05.png, id=68, 578.16pt x 433.62pt>
+<CN_advection_frames/CN_advection_fig05.png, id=62, 578.16pt x 433.62pt>
 File: CN_advection_frames/CN_advection_fig05.png Graphic file (type png)
 <use CN_advection_frames/CN_advection_fig05.png>
 Package pdftex.def Info: CN_advection_frames/CN_advection_fig05.png used on inp
-ut line 579.
+ut line 590.
 (pdftex.def)             Requested size: 260.16959pt x 195.1272pt.
-<CN_advection_frames/CN_advection_fig07.png, id=69, 578.16pt x 433.62pt>
+<CN_advection_frames/CN_advection_fig07.png, id=63, 578.16pt x 433.62pt>
 File: CN_advection_frames/CN_advection_fig07.png Graphic file (type png)
 <use CN_advection_frames/CN_advection_fig07.png>
 Package pdftex.def Info: CN_advection_frames/CN_advection_fig07.png used on inp
-ut line 580.
+ut line 591.
 (pdftex.def)             Requested size: 260.16959pt x 195.1272pt.
 
-Overfull \hbox (39.25342pt too wide) in paragraph at lines 579--581
+Overfull \hbox (39.25342pt too wide) in paragraph at lines 590--592
 [][] [] 
  []
 
-<CN_advection_frames/CN_advection_fig09.png, id=70, 578.16pt x 433.62pt>
+[6] <CN_advection_frames/CN_advection_fig09.png, id=69, 578.16pt x 433.62pt>
 File: CN_advection_frames/CN_advection_fig09.png Graphic file (type png)
 <use CN_advection_frames/CN_advection_fig09.png>
 Package pdftex.def Info: CN_advection_frames/CN_advection_fig09.png used on inp
-ut line 583.
+ut line 594.
 (pdftex.def)             Requested size: 260.16959pt x 195.1272pt.
-<CN_advection_frames/CN_advection_fig11.png, id=71, 578.16pt x 433.62pt>
+<CN_advection_frames/CN_advection_fig11.png, id=70, 578.16pt x 433.62pt>
 File: CN_advection_frames/CN_advection_fig11.png Graphic file (type png)
 <use CN_advection_frames/CN_advection_fig11.png>
 Package pdftex.def Info: CN_advection_frames/CN_advection_fig11.png used on inp
-ut line 584.
+ut line 595.
 (pdftex.def)             Requested size: 260.16959pt x 195.1272pt.
 
-Overfull \hbox (39.25342pt too wide) in paragraph at lines 583--585
+Overfull \hbox (39.25342pt too wide) in paragraph at lines 594--596
 [][] [] 
  []
 
@@ -2396,30 +2401,31 @@ Documents/my_classes/winter_quarter_2017/numeric_pdes/assignment_4/CN_advection
 _frames/CN_advection_fig03.png> </Users/carterjohnson/Documents/my_classes/wint
 er_quarter_2017/numeric_pdes/assignment_4/CN_advection_frames/CN_advection_fig0
 5.png> </Users/carterjohnson/Documents/my_classes/winter_quarter_2017/numeric_p
-des/assignment_4/CN_advection_frames/CN_advection_fig07.png>]
-Overfull \hbox (25.41554pt too wide) in paragraph at lines 599--599
+des/assignment_4/CN_advection_frames/CN_advection_fig07.png> </Users/carterjohn
+son/Documents/my_classes/winter_quarter_2017/numeric_pdes/assignment_4/CN_advec
+tion_frames/CN_advection_fig09.png> </Users/carterjohnson/Documents/my_classes/
+winter_quarter_2017/numeric_pdes/assignment_4/CN_advection_frames/CN_advection_
+fig11.png>]
+Overfull \hbox (25.41554pt too wide) in paragraph at lines 610--610
 [] 
  []
 
-[8 </Users/carterjohnson/Documents/my_classes/winter_quarter_2017/numeric_pdes/
-assignment_4/CN_advection_frames/CN_advection_fig09.png> </Users/carterjohnson/
-Documents/my_classes/winter_quarter_2017/numeric_pdes/assignment_4/CN_advection
-_frames/CN_advection_fig11.png>] [9]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 612.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 612.
+[8] [9]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 623.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 623.
 
 (/Users/carterjohnson/Documents/my_classes/winter_quarter_2017/numeric_pdes/ass
 ignment_4/assignment4_writeup.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 612.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 612.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 623.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 623.
 Package rerunfilecheck Info: File `assignment4_writeup.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 612.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 623.
  ) 
 Here is how much of TeX's memory you used:
- 35766 strings out of 493014
- 820415 string characters out of 6133351
- 970153 words of memory out of 5000000
+ 35764 strings out of 493014
+ 820399 string characters out of 6133351
+ 971153 words of memory out of 5000000
  38746 multiletter control sequences out of 15000+600000
  14222 words of font info for 55 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -2437,10 +2443,10 @@ xlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texl
 ive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/local/texli
 ve/2016/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb>
 Output written on /Users/carterjohnson/Documents/my_classes/winter_quarter_2017
-/numeric_pdes/assignment_4/assignment4_writeup.pdf (9 pages, 333090 bytes).
+/numeric_pdes/assignment_4/assignment4_writeup.pdf (9 pages, 332177 bytes).
 PDF statistics:
- 141 PDF objects out of 1000 (max. 8388607)
- 104 compressed objects within 2 object streams
- 33 named destinations out of 1000 (max. 500000)
+ 139 PDF objects out of 1000 (max. 8388607)
+ 102 compressed objects within 2 object streams
+ 31 named destinations out of 1000 (max. 500000)
  43 words of extra memory for PDF output out of 10000 (max. 10000000)
 

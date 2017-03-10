@@ -1,7 +1,7 @@
 # Fdb version 3
-["pdflatex"] 1489103055 "/Users/carterjohnson/Documents/my_classes/winter_quarter_2017/numeric_pdes/assignment_4/assignment4_writeup.tex" "/Users/carterjohnson/Documents/my_classes/winter_quarter_2017/numeric_pdes/assignment_4/assignment4_writeup.pdf" "assignment4_writeup" 1489103058
-  "/Users/carterjohnson/Documents/my_classes/winter_quarter_2017/numeric_pdes/assignment_4/assignment4_writeup.aux" 1489103058 2915 6e92b6ef99cb17973b4d8a27e3f9c5e9 ""
-  "/Users/carterjohnson/Documents/my_classes/winter_quarter_2017/numeric_pdes/assignment_4/assignment4_writeup.tex" 1489103050 27701 f0e05e466bd06c7d99ceee41ad65f497 ""
+["pdflatex"] 1489107395 "/Users/carterjohnson/Documents/my_classes/winter_quarter_2017/numeric_pdes/assignment_4/assignment4_writeup.tex" "/Users/carterjohnson/Documents/my_classes/winter_quarter_2017/numeric_pdes/assignment_4/assignment4_writeup.pdf" "assignment4_writeup" 1489107398
+  "/Users/carterjohnson/Documents/my_classes/winter_quarter_2017/numeric_pdes/assignment_4/assignment4_writeup.aux" 1489107397 2642 67ec0f757a153e7eaa1ed8ae7db53a04 ""
+  "/Users/carterjohnson/Documents/my_classes/winter_quarter_2017/numeric_pdes/assignment_4/assignment4_writeup.tex" 1489107394 28250 f63ffa3996baa1fa85fab11bb898ad8e ""
   "/usr/local/texlive/2016/texmf-dist/fonts/map/fontname/texfonts.map" 1272929888 3287 e6b82fe08f5336d4d5ebc73fb1152e87 ""
   "/usr/local/texlive/2016/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/usr/local/texlive/2016/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1246382020 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -226,13 +226,13 @@
   "CN_advection_frames/CN_advection_fig07.png" 1489100889 36465 5479e28f4c952657b6b8c61ec2ac0625 ""
   "CN_advection_frames/CN_advection_fig09.png" 1489100903 36927 3ad1beb2af32d4ec05b462aaac6d6971 ""
   "CN_advection_frames/CN_advection_fig11.png" 1489100916 37137 17f0e78dbd85790e7751ac08963aa7b8 ""
-  "assignment4_writeup.aux" 1489103058 2915 6e92b6ef99cb17973b4d8a27e3f9c5e9 ""
-  "assignment4_writeup.out" 1489103057 0 d41d8cd98f00b204e9800998ecf8427e ""
-  "assignment4_writeup.tex" 1489103050 27701 f0e05e466bd06c7d99ceee41ad65f497 ""
+  "assignment4_writeup.aux" 1489107397 2642 67ec0f757a153e7eaa1ed8ae7db53a04 ""
+  "assignment4_writeup.out" 1489107396 0 d41d8cd98f00b204e9800998ecf8427e ""
+  "assignment4_writeup.tex" 1489107394 28250 f63ffa3996baa1fa85fab11bb898ad8e ""
   (generated)
+  "assignment4_writeup.log"
+  "assignment4_writeup.out"
   "/Users/carterjohnson/Documents/my_classes/winter_quarter_2017/numeric_pdes/assignment_4/assignment4_writeup.pdf"
   "assignment4_writeup.pdf"
-  "/Users/carterjohnson/Documents/my_classes/winter_quarter_2017/numeric_pdes/assignment_4/assignment4_writeup.log"
   "assignment4_writeup.aux"
-  "assignment4_writeup.out"
-  "assignment4_writeup.log"
+  "/Users/carterjohnson/Documents/my_classes/winter_quarter_2017/numeric_pdes/assignment_4/assignment4_writeup.log"
