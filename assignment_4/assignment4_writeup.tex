@@ -600,25 +600,30 @@ With the discontinuous initial data, things go very wrong very quickly.  The hig
 
 The phase of $g$ is given by
 $$\arg(g(\theta)) = \arctan\qty(\dfrac{\Im(g)}{\Re(g)})= \arctan\qty(\dfrac{-\nu\sin\theta}{1-\frac{\nu^2}{4}\sin^2\theta}) $$
-In the limit of small $\theta$, we take the Taylor expansion of $\arctan$ about $\theta=0$:
-$$\arg(g(\theta)) = \qty(\dfrac{-\nu\sin\theta}{1-\frac{\nu^2}{4}\sin^2\theta}) - \qty(\dfrac{-\nu\sin\theta}{1-\frac{\nu^2}{4}\sin^2\theta})^3/3 + h.o.t.$$
-And then we use the expansions of $\sin\theta$ and $\frac{1}{1-x}$ about 0 together:
-\begin{align*}
-\arg(g(\theta)) &= -\nu\qty(\theta-\frac{\theta^3}{6}+\dots)\qty(1+\frac{\nu^2}{4}(\theta^2 + \dots)) - \qty(-\nu\qty(\theta-\frac{\theta^3}{6}+\dots)\qty(1+\frac{\nu^2}{4}(\theta^2 + \dots)))^3/3 \\
-&= -\nu \theta + \frac{\nu\theta^3}{6} - \frac{\nu^3\theta^3}{4} + \dots + \dfrac{\nu^3\theta^3}{3} + \dots \\
-&= -\nu \theta + \theta^3\qty(\frac{\nu}{6} - \frac{\nu^3}{4}+\dfrac{\nu^3}{3}) + h.o.t.
-\end{align*}
-Then the relative phase is 
-$$\arg(g(\theta))/(-\nu\theta) = 1 - \theta^2\qty(\dfrac{2+\nu^2}{12}).$$
+% In the limit of small $\theta$, we take the Taylor expansion of $\arctan$ about $\theta=0$:
+% $$\arg(g(\theta)) = \qty(\dfrac{-\nu\sin\theta}{1-\frac{\nu^2}{4}\sin^2\theta}) - \qty(\dfrac{-\nu\sin\theta}{1-\frac{\nu^2}{4}\sin^2\theta})^3/3 + h.o.t.$$
+% And then we use the expansions of $\sin\theta$ and $\frac{1}{1-x}$ about 0 together:
+% \begin{align*}
+% \arg(g(\theta)) &= -\nu\qty(\theta-\frac{\theta^3}{6}+\dots)\qty(1+\frac{\nu^2}{4}(\theta^2 + \dots)) - \qty(-\nu\qty(\theta-\frac{\theta^3}{6}+\dots)\qty(1+\frac{\nu^2}{4}(\theta^2 + \dots)))^3/3 \\
+% &= -\nu \theta + \frac{\nu\theta^3}{6} - \frac{\nu^3\theta^3}{4} + \dots + \dfrac{\nu^3\theta^3}{3} + \dots \\
+% &= -\nu \theta + \theta^3\qty(\frac{\nu}{6} - \frac{\nu^3}{4}+\dfrac{\nu^3}{3}) + h.o.t.
+% \end{align*}
+% Then the relative phase is 
+% $$\arg(g(\theta))/(-\nu\theta) = 1 - \theta^2\qty(\dfrac{2+\nu^2}{12}).$$
+Then the relative phase of $g$ is given by
+$$\arg(g(\theta))/(-v\theta) = \arctan\qty(\dfrac{\Im(g)}{\Re(g)})= \arctan\qty(\dfrac{-\nu\sin\theta}{1-\frac{\nu^2}{4}\sin^2\theta})/(-v\theta).$$
 The following figure shows a plot of the relative phase for $\nu=0.9$, $\theta \in [0,\pi]$:
 \begin{figure}[H]
-\centering\begin{tikzpicture}
-\begin{axis}[xmin=0,xmax=3.14, ylabel={Relative Phase}, xlabel={$\theta$}, xtick={0, 1.55, 3.14}, xticklabels={0, $\pi/2$, $\pi$}, ytick={1,0,-1}]
-\addplot[domain=0:3.2, dashed] {0};
-\addplot[domain=0:3.14] {1 - (x^2)*(2+0.9^2)/12};
-%\addplot coordinates {(0,0) (10,22) (20,35) (30,42) (40,47) (50,50) (60,51)};
-\end{axis} \end{tikzpicture}\end{figure}
-What we see is that for the higher frequencies, ($\theta >\pi/2$), there is enormous relative phase lag, the highest frequencies being nearly lagging by nearly $200\%$.  The lack of amplitude error in conjunction with this phase lag causes the unphysical behavior we observed in the numerical solution in part b.  In contrast to Upwinding and Lax-Wendroff, in this scheme the amplitudes of the high frequencies aren't damped at all due to the non-dissipative nature of this scheme (as we showed in part a).  Then since the amplitudes are the high frequencies aren't damped, the enormous phase lag completely dominates the numerical solution, and the numerical solution quickly does not even resemble the real solution.\\
+\centering\includegraphics{relphase.png}
+\end{figure}
+% \begin{figure}[H]
+% \centering\begin{tikzpicture}
+% \begin{axis}[xmin=0,xmax=3.14, ylabel={Relative Phase}, xlabel={$\theta$}, xtick={0, 1.55, 3.14}, xticklabels={0, $\pi/2$, $\pi$}, ytick={1,0,-1}]
+% \addplot[domain=0:3.2, dashed] {0};
+% \addplot[domain=0:3.14] {1 - (x^2)*(2+0.9^2)/12};
+% %\addplot[domain=0:3.14] {rad(atan(-0.9*sin(x)/(1-(0.9^2/4)*(sin(x))^2)))/(-0.9*x)};
+% \end{axis} \end{tikzpicture}\end{figure}
+What we see is that for most frequencies we have relative phase lag since $\arg(g(\theta))/(-v\theta)<1$ for most $\theta$. The higher the frequency, the higher the relative phase lag, and the highest frequencies are almost completely stationary standing waves.  The lack of amplitude error in conjunction with this phase lag causes the unphysical behavior we observed in the numerical solution in part b.  In contrast to Upwinding and Lax-Wendroff, in this scheme the amplitudes of the high frequencies aren't damped at all due to the non-dissipative nature of this scheme (as we showed in part a).  Then since the amplitudes are the high frequencies aren't damped, the enormous phase lag completely dominates the numerical solution, and the numerical solution quickly does not even resemble the real solution.\\
 
 The Python code I used for number 1 is the following:
 
