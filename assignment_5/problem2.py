@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 import scipy.sparse as sparse
 import scipy.sparse.linalg
 from flux_fns import make_flux_function, make_flux_limiter
+from tabulate import tabulate
 			
 def high_res_method(u0, flux, delT, delX,Tf, plots_on):
 	#High res methods on [0,1] w/ ghost cell periodic BCs
@@ -57,7 +58,7 @@ def high_res_method(u0, flux, delT, delX,Tf, plots_on):
 
 	return u_old
 
-if __name__ == '__main__':
+def main():
 	#system parameters
 	a=1
 	Tf=5
@@ -77,15 +78,9 @@ if __name__ == '__main__':
 	#decide whether to plot during simulation
 	plots_on = 0
 
-	#create flux limiter fn phi
-	n = 4 #0 Up, 1 LW, 2 BW, 3 minmod, 4 superbee, 5 MC, 6 van Leer
-	phi = make_flux_limiter(n)
-
-	#create numerical flux function
-	flux = make_flux_function(a,delT,delX,phi)
-
+	#IC choice
+	IC = 2
 	#create initial condition - 0 = wave packet, 1=smooth,low freq, 2=step function
-	IC = 0
 	X = [delX*(j-0.5) for j in range(1,Nx+1)]
 	if IC ==0:
 		u0 = np.asarray([cos(16*pi*x)*exp(-50*(x-0.5)**2) for x in X])
@@ -96,15 +91,50 @@ if __name__ == '__main__':
 		for j in range(Nx):
 			if abs(X[j]-0.5)<=1/4:
 				u0[j]=1
+	
+	final = np.zeros((7, Nx))
 
-	final = high_res_method(u0,flux, delT,delX,Tf,plots_on)
+	#loop over flux limiters
+	for n in range(7):
+		#create flux limiter fn phi
+		#0 Up, 1 LW, 2 BW, 3 minmod, 4 superbee, 5 MC, 6 van Leer
+		phi = make_flux_limiter(n)
+		
+		#create numerical flux function
+		flux = make_flux_function(a,delT,delX,phi)
+
+		final[n] = high_res_method(u0,flux, delT,delX,Tf,plots_on)
+
+	#Compare with analytic solution
 	plt.figure(2)
-	# plt.axis([0, Nx, -1, 1])
-	plt.plot(X, u0, "g")
-	plt.plot(X,final, "b")
+	plt.plot(X, u0)
+
+	#norm-errors
+	errors_norm1 = np.zeros(7)
+	errors_norm2 = np.zeros(7)
+	errors_normmax = np.zeros(7)
+	for n in range(7):
+		plt.plot(X,final[n])
+		#compute norm errors
+		error = u0-final[n]
+		errors_norm1[n] = delX*sum(abs(error))
+		errors_norm2[n] = (delX*sum(error**2))**(1/2)
+		errors_normmax[n] = max(abs(error))
+	#display errors table
+	table = [[i, errors_norm1[i], errors_norm2[i], errors_normmax[i]] for i in range(7)]
+	print(tabulate(table, headers=["Method", "1-norm error", "2-norm error", "max-norm error"], tablefmt="latex"))
+	
 	#plt.axhline(y=.5, color='r')
 	plt.text(2,1.8,'t=5')
-	plt.title("Analytic vs Numeric")
+	plt.title("Comparison of Flux Limiters")
+	# plt.legend((analytic, numeric[0], numeric[1],numeric[2],numeric[3],numeric[4],numeric[5],numeric[6]),('Analytic', 'Upwinding', 'LW', 'BW', 'minmod', 'Superbee', 'MC', 'van Leer'), 'upper right')
+	if IC==1:
+		plt.legend(('Analytic', 'Upwinding', 'LW', 'BW', 'minmod', 'Superbee', 'MC', 'van Leer'), loc='lower right')
+	else:
+		plt.legend(('Analytic', 'Upwinding', 'LW', 'BW', 'minmod', 'Superbee', 'MC', 'van Leer'), loc='upper right')
+	plt.text(2,1.8,'t=5')
 	plt.show()
 
 
+if __name__ == '__main__':
+	main()
