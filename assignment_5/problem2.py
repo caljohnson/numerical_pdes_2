@@ -30,11 +30,12 @@ def high_res_method(u0, flux, delT, delX,Tf, plots_on):
 	#do Nt = Tf/delT time steps
 	Nt = int(Tf/delT)
 	for t in range(1,Nt+1):
-		#compute ghost cell components using periodic BCs
-		left_ghosts = np.r_[u_old[-2],u_old[-1]]
-		right_ghosts = np.r_[u_old[0],u_old[1]]
-		#add ghost cell components
-		u_full = np.r_[left_ghosts, u_old, right_ghosts]
+		# #compute ghost cell components using periodic BCs
+		# left_ghosts = np.r_[u_old[-2],u_old[-1]]
+		# right_ghosts = np.r_[u_old[0],u_old[1]]
+		# #add ghost cell components
+		# u_full = np.r_[left_ghosts, u_old, right_ghosts]
+		u_full = np.pad(u_old, (2,2), "wrap")
 
 		#compute flux vectors F_j+1/2, F_j-1/2
 		F = flux(u_full)
@@ -77,7 +78,7 @@ if __name__ == '__main__':
 	plots_on = 0
 
 	#create flux limiter fn phi
-	n = 5 #0 Up, 1 LW, 2 BW, 3 minmod, 4 superbee, 5 MC, 6 van Leer
+	n = 4 #0 Up, 1 LW, 2 BW, 3 minmod, 4 superbee, 5 MC, 6 van Leer
 	phi = make_flux_limiter(n)
 
 	#create numerical flux function

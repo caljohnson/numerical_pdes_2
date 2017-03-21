@@ -113,7 +113,7 @@ if __name__ == '__main__':
 	LW2 = LW_matrix(Nx+2,nu2)
 
 	#create initial condition - 0 = Square Pulses, 1= Gaussians, 2=sin/cos waves
-	IC = 1
+	IC = 3
 	if IC ==0:
 		p0=np.zeros(Nx)
 		u0=np.zeros(Nx)
@@ -129,8 +129,7 @@ if __name__ == '__main__':
 		u0 = [cos(8*pi*x) for x in X]
 	if IC==3:
 		p0 = np.asarray([cos(16*pi*x)*exp(-50*(x-0.5)**2) for x in X])	
-		u0 = np.asarray([cos(16*pi*x)*exp(-50*(x-0.5)**2) for x in X])	
-
+		u0 = np.asarray([-cos(16*pi*x)*exp(-50*(x-0.5)**2) for x in X])
 
 	final = acoustic_LW(u0,p0,LW1,LW2,Nt,K,r)
 

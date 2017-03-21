@@ -92,6 +92,25 @@ where $u$ is the velocity and $p$ is the pressure, $\rho$ is the density, and $K
 \begin{enumerate}[(a)]
 \item Show that this system is hyperbolic and find the wave speeds.
 
+With $$\vec{v} = \qty(\begin{array}{c} p \\ u \end{array}),$$
+the system is $$\vec{v}_t + A\vec{v}_x = 0,$$
+with $$A = \qty(\begin{array}{cc} 0 & K \\ 1/\rho & 0 \end{array}).$$
+The eigenvalues of $A$ are $\lambda_{1,2}=\pm \sqrt{K/\rho}$ with corresponding eigenvectors $$\vec{s}_1 = \qty(\begin{array}{c} \sqrt{K\rho} \\ 1 \end{array}),$$
+and $$\vec{s}_2 = \qty(\begin{array}{c} \sqrt{K\rho} \\ -1 \end{array}).$$
+Since $K, \rho >0,$ the eigenvalues are both real and the matrix $A$ is diagonalizable
+$$ A = W\Lambda W^{-1},$$
+where $$W^{-1} = \qty(\begin{array}{cc} \vec{s_1} & \vec{s_2} \end{array}) = \qty(\begin{array}{cc} \sqrt{K\rho} & \sqrt{K\rho} \\ 1 & -1 \end{array}),$$
+$$ \Lambda = \qty(\begin{array}{cc} \sqrt{K/\rho} & 0 \\ 0 & -\sqrt{K/\rho} \end{array}),$$
+and $$ W = \qty(\begin{array}{cc} \frac{1}{2\sqrt{K\rho}} & \frac{1}{2} \\ \frac{1}{2\sqrt{K\rho}} & -\frac{1}{2} \end{array}).$$
+Since $A$ has real eigenvalues and is diagonalizable, this system is hyperbolic.  The wave speeds are the eigenvalues, $\pm\sqrt{K/\rho}$, as the system separates into two separate advection equations with the change of variables $\vec{s} = W^{-1}\vec{v}:$
+\begin{align*}
+\vec{v}_t + A \vec{v}_x &= 0 \\
+ \vec{v}_t + W\Lambda W^{-1} \vec{v}_x &= 0 \\
+ W^{-1}\vec{v}_t + \Lambda W^{-1} \vec{v}_x &= 0 \\
+\vec{s}_t + \Lambda \vec{s}_x &= 0 \implies
+\begin{cases}
+s^1_t + \qty(\sqrt{K/\rho}) s^1_x &= 0 \\ 
+s^2_t - \qty(\sqrt{K/\rho})s^2_x &= 0.\end{cases}\end{align*}
 \item Write a program to solve this system using Lax-Wendroff in original variables on (0, 1) using a cell centered grid $x_j = (j - 1/2)\Delta x $ for $j = 1,\dots, N$. Write the code to use ghost cells, so that different boundary conditions can be changed by simply changing the values in the ghost cells. Ghost cells are cells outside the domain whose values can be set at the beginning of a time step so that code for updating cells adjacent to the boundary is identical to the code for interior cells.
 
 Set the ghost cells at the left by 
@@ -102,9 +121,17 @@ $$p_{N+1}^n = \frac{1}{2}\qty(p_N^n + u_N^n \sqrt{K\rho})$$
 $$u_{N+1}^n = \frac{1}{2} \qty(\dfrac{p_N^n}{\sqrt{K\rho}} + u_N^n). $$
 Run simulations with different initial conditions. Explain what happens at the left and right boundaries.
 
-\item Give a physical interpretation and a mathematical explanation of these boundary conditions.
-\end{enumerate}
+I wrote code that takes $p,u$ data and transforms them into the eigenvector coordinates $s^1, s^2$.  I use Lax-Wendroff on the eigenvector coordinates separately using the corresponding advection speeds $\pm\sqrt{K/\rho}$.  In the scheme loop, I convert the eigenvector coordinate data back to $p,u$ data to set the ghost cells according to the above.  I then pad the current $s^1, s^2$ arrays with the corresponding transformed ghost cell data, and then compute the next $s^1, s^2$ iterates by multiplying by the correct LW matrix, and dropping the ghost cell values from the arrays.  Every step, I also convert back to $p,u$ to plot.
 
+At the left boundary, no flux of ``stuff'' is allowed, i.e., the pressure flux is 0 across the boundary since $p_0^n = p_1^n$, and the velocity is reversed at the boundary since the ``stuff'' is bouncing back.
+
+At the right boundary, stuff is squeezing out the end somehow.  According to the plots, stuff is let out, since the pressure and velocity are lost across the right boundary.  But the stuff doesnt just flow out unrestricted, as the pressure and velocity plots don't just escape out to the right entirely.
+
+\item Give a physical interpretation and a mathematical explanation of these boundary conditions.
+
+I think we're looking at some sort of flute-like device, with the left boundary capped so nothing can escape, and the right end with a small hole so some amount of stuff, but not all, can escape out the side. 
+\end{enumerate}
+\newpage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% P2
 \begin{myprob}{Problem 2}
