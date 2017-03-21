@@ -1,0 +1,139 @@
+\documentclass[12pt]{article}
+\textwidth=17cm \oddsidemargin=-0.9cm \evensidemargin=-0.9cm
+\textheight=23.7cm \topmargin=-1.7cm
+\headheight=14.5pt
+
+\usepackage{amssymb, amsmath, amsfonts}
+\usepackage{moreverb}
+\usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage{graphics}
+\usepackage{color}
+\usepackage{array}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{textcomp}
+\usepackage{alltt}
+\usepackage{physics}
+\usepackage{nicefrac}
+\usepackage{mathtools}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.13}
+\usetikzlibrary{positioning}
+\usetikzlibrary{arrows}
+\usepackage{bigints}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsthm}
+\usepackage{fancyhdr}
+\usepackage[makeroom]{cancel}
+\pagestyle{fancy}
+\allowdisplaybreaks
+
+\newcommand{\E}{\varepsilon}
+
+\newcommand{\suchthat}{\, \mid \,}
+\newcommand{\ol}[1]{\overline{#1}}
+\newcommand{\bbar}[1]{\overline{#1}}
+\newcommand{\inpd}[1]{{\left< \, #1 \, \right>}}
+\renewcommand{\theenumi}{\alph{enumi}}
+\newcommand\Wider[2][3em]{%
+\makebox[\linewidth][c]{%
+  \begin{minipage}{\dimexpr\textwidth+#1\relax}
+  \raggedright#2
+  \end{minipage}%
+  }%
+}
+
+\def\R{\mathbb{R}}
+\def\C{\mathbb{C}}
+\def\H{\mathcal{H}}
+\DeclareMathOperator*{\esssup}{\text{ess~sup}}
+\newcommand{\resolv}[1]{\rho(#1)}
+\newcommand{\spec}[1]{\sigma(#1)}
+\newcommand{\iffR}{\noindent \underline{$\Longrightarrow$:} }
+\newcommand{\iffL}{\noindent \underline{$\Longleftarrow$:} }
+\newcommand{\lightning}{\textbf{\Huge \Lightning}}
+\newcommand{\spt}[1]{\text{spt}(#1)}
+\def\ran{\text{ ran}}
+   
+\newenvironment{myprob}[1]
+    {%before text commands
+    %{\Huge \_ \_ \_ \_ \_ \_ \_ \_ \_ \_ \_ \_ \_ \_ \_ \_ \_ \_ } \\
+    \noindent{\Huge$\ulcorner$}\textbf{#1.}\begin{em}
+    }
+    { 
+    %after text commands
+    \end{em} \\ \hphantom{l} \hfill {\Huge$\lrcorner$} }
+%	{\noindent \rule{7.5cm}{2pt} \textgoth{#1} \rule{8.cm}{2pt} \begin{em}}
+%	{\end{em}\\ \vspace{0.1pt}\noindent \rule{\textwidth}{2pt}}
+%
+\setcounter{section}{-1}
+
+
+
+
+\begin{document}
+\lhead{MATH228B}
+\chead{Carter Johnson - Homework 05}
+\rhead{\today}
+
+{\let\newpage\relax} 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% P1
+\begin{myprob}{Problem 1}
+In one spatial dimension the linearized equations of acoustics (sound waves) are
+$$p_t + K u_x = 0 $$
+$$\rho u_t + p_x =0,$$
+where $u$ is the velocity and $p$ is the pressure, $\rho$ is the density, and $K$ is the bulk modulus.
+\end{myprob}
+\begin{enumerate}[(a)]
+\item Show that this system is hyperbolic and find the wave speeds.
+
+\item Write a program to solve this system using Lax-Wendroff in original variables on (0, 1) using a cell centered grid $x_j = (j - 1/2)\Delta x $ for $j = 1,\dots, N$. Write the code to use ghost cells, so that different boundary conditions can be changed by simply changing the values in the ghost cells. Ghost cells are cells outside the domain whose values can be set at the beginning of a time step so that code for updating cells adjacent to the boundary is identical to the code for interior cells.
+
+Set the ghost cells at the left by 
+$$p_0^n = p_1^n $$
+$$u_0^n = -u_1^n,$$
+and set the ghost cells on the right by
+$$p_{N+1}^n = \frac{1}{2}\qty(p_N^n + u_N^n \sqrt{K\rho})$$
+$$u_{N+1}^n = \frac{1}{2} \qty(\dfrac{p_N^n}{\sqrt{K\rho}} + u_N^n). $$
+Run simulations with different initial conditions. Explain what happens at the left and right boundaries.
+
+\item Give a physical interpretation and a mathematical explanation of these boundary conditions.
+\end{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% P2
+\begin{myprob}{Problem 2}
+Write a program to solve the linear advection equation,
+$$u_t + a u_x = 0,$$
+on the unit interval using a finite volume method of the form
+$$u_j^{n+1} = u_j^n - \dfrac{\Delta t}{\Delta x}\qty(F_{j+1/2} - F_{j-1/2}). $$
+Use the numerical flux function
+$$F_{j-1/2} = F^{up}_{j-1/2} + \dfrac{|a|}{2}\qty(1-\qty|\dfrac{a\Delta t}{\Delta x}|)\delta_{j-1/2},$$
+where $F^{up}_{j-1/2}$ is the upwinding flux,
+$$F^{up}_{j-1/2} = \begin{cases}a u_{j-1}, & \text{ if } a>0 \\ 
+					a u_{j}, & \text{ if } a<0, \end{cases}$$
+and $\delta_{j-1/2}$ is the limited difference.  Let $\Delta u_{j-1/2}=u_j - u_{j-1}$ denote the jump in $u$ across the edge at $x_{j-1/2}$.  The limited difference is 
+$$\delta_{j-1/2} \phi(\theta_{j-1/2})\Delta u_{j-1/2}, $$ 
+where $$\theta_{j-1/2} = \dfrac{\Delta u_{J_{up}-1/2}}{\Delta u_{j-1/2}}, $$
+and $$J_{up} = \begin{cases} j-1, & \text{ if } a>0 \\
+							 j+1, & \text{ if } a<0 . \end{cases} $$
+Note that you will need two ghost cells on each end of the domain. Write your program so that you may choose from the different limiter functions.
+
+Solve the advection equation with $a = 1$ with periodic boundary conditions for the different initial conditions listed below until time $t = 5$ at Courant number $0.9$.
+\begin{enumerate}[(a)]
+\item Wave packet: \ \ \ \ \ \ \ \ \ \ \  \ \ \ \ $u(x,0) = \cos(16\pi x)\exp(-50(x-0.5)^2).$
+\item Smooth, low frequency: \  \ \ $u(x,0) = \sin(2\pi x)\sin(4 \pi x).$
+\item Step function: \ \ \  \ \ \ \ \ \ \  \ \ \ \  $u(x,0) = \begin{cases} 1 & \text{ if } |x-1/2|<1/4 \\ 0 & \text{ otherwise.} \end{cases}$
+\end{enumerate}
+Compare the results with the exact solution, and comment on the solutions generated by the different methods. How do the different high-resolution methods perform in the different tests? What high-resolution method would you choose to use in practice?
+\end{myprob}
+
+\begin{verbatim}
+code go here
+\end{verbatim}
+\end{document}
