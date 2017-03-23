@@ -99,9 +99,9 @@ The eigenvalues of $A$ are $\lambda_{1,2}=\pm \sqrt{K/\rho}$ with corresponding 
 and $$\vec{s}_2 = \qty(\begin{array}{c} \sqrt{K\rho} \\ -1 \end{array}).$$
 Since $K, \rho >0,$ the eigenvalues are both real and the matrix $A$ is diagonalizable
 $$ A = W\Lambda W^{-1},$$
-where $$W^{-1} = \qty(\begin{array}{cc} \vec{s_1} & \vec{s_2} \end{array}) = \qty(\begin{array}{cc} \sqrt{K\rho} & \sqrt{K\rho} \\ 1 & -1 \end{array}),$$
+where $$W = \qty(\begin{array}{cc} \vec{s_1} & \vec{s_2} \end{array}) = \qty(\begin{array}{cc} \sqrt{K\rho} & \sqrt{K\rho} \\ 1 & -1 \end{array}),$$
 $$ \Lambda = \qty(\begin{array}{cc} \sqrt{K/\rho} & 0 \\ 0 & -\sqrt{K/\rho} \end{array}),$$
-and $$ W = \qty(\begin{array}{cc} \frac{1}{2\sqrt{K\rho}} & \frac{1}{2} \\ \frac{1}{2\sqrt{K\rho}} & -\frac{1}{2} \end{array}).$$
+and $$ W^{-1} = \qty(\begin{array}{cc} \frac{1}{2\sqrt{K\rho}} & \frac{1}{2} \\ \frac{1}{2\sqrt{K\rho}} & -\frac{1}{2} \end{array}).$$
 Since $A$ has real eigenvalues and is diagonalizable, this system is hyperbolic.  The wave speeds are the eigenvalues, $\pm\sqrt{K/\rho}$, as the system separates into two separate advection equations with the change of variables $\vec{s} = W^{-1}\vec{v}:$
 \begin{align*}
 \vec{v}_t + A \vec{v}_x &= 0 \\
@@ -123,33 +123,68 @@ $$u_{N+1}^n = \frac{1}{2} \qty(\dfrac{p_N^n}{\sqrt{K\rho}} + u_N^n). $$
 
 I wrote code that takes $p,u$ data and transforms them into the eigenvector coordinates $s^1, s^2$ via the transformation 
 $$\qty(\begin{array}{c} s^1 \\ s^2 \end{array}) = \vec{s} = W^{-1}\vec{v} = W^{-1} \qty(\begin{array}{c} p \\ u \end{array}).$$  
-I use Lax-Wendroff on the eigenvector coordinates separately using the corresponding advection speeds $\pm\sqrt{K/\rho}$.  In the scheme loop, I convert the eigenvector coordinate data back to $p,u$ data to set the ghost cells according to the above.  I then pad the current $s^1, s^2$ arrays with the corresponding transformed ghost cell data, and then compute the next $s^1, s^2$ iterates by multiplying each by a separate LW matrix, and dropping the ghost cell values from the arrays.  I use the standard LW matrix with $\nu = \nicefrac{\pm\sqrt{K/\rho} \Delta t}{\Delta x}$ for $s^1, s^2$ respectively. Every step, I also convert back to $p,u$ to plot.
+I use Lax-Wendroff on the eigenvector coordinates separately using the corresponding advection speeds $\pm\sqrt{K/\rho}$.  In the scheme loop, I compute the ghost cells directly in terms of the eigenvector coordinates (see part c). I then pad the current $s^1, s^2$ arrays with the corresponding transformed ghost cell data, and then compute the next $s^1, s^2$ iterates by multiplying each by a separate LW matrix, and dropping the ghost cell values from the arrays.  I use the standard LW matrix with $\nu = \nicefrac{\pm\sqrt{K/\rho} \Delta t}{\Delta x}$ for $s^1, s^2$ respectively. Every step, I also convert back to $p,u$ to plot.
 
-I ran the simulation for $K=1,$ $\rho=0.9$, $\Delta x = 3^{-6}$, $\Delta t = 0.9 \Delta x / \sqrt{K \rho}$ so that $\nu = 0.9$ and the solutions behaved physically. With the initial conditions $$p(x,0) = \sin(2\pi x)\sin(4 \pi x),$$
-$$u(x,0) = \sin(2\pi x)\sin(4 \pi x),$$
-the behavior at the boundary became apparent.  This set of initial data is nice because most of the time, it effectively matched with one of the eigenvectors.  Then we can see the how the data is carried by the right-moving eigenvector into the right boundary and then is carried by the left-moving eigenvector into the left boundary.  At the left boundary, the data is reflected back completely, but at the right boundary, it is only reflected back partially.  At the right boundary, the same waveform is reflected, but the amplitude is reduced greatly.  The following figures (and attached GIF) show this.
+I ran the simulation for $K=1,$ $\rho=0.9$, $\Delta x = 3^{-6}$, $\Delta t = 0.9 \Delta x / \sqrt{K/ \rho}$ so that $\nu = 0.9$ and the solutions behaved physically. With the initial conditions
+$$p(x,0) = \cos(16\pi x)\exp(-50(x-0.5)^2),$$
+$$u(x,0) = -\cos(16\pi x)\exp(-50(x-0.5)^2),$$
+the behavior at the boundaries became apparent.  This set of initial data is nice because most of the time, it effectively matched with one of the eigenvectors.  Then we can see the how the data is carried by the left-moving eigenvector into the left boundary and then is carried by the right-moving eigenvector into the right boundary.  At the left boundary, the data is reflected back completely, but at the right boundary it escapes.  This is demonstrated in Figures 1 and 2 (and the attached GIF).
+
 \begin{figure}[H]
-\centering\includegraphics[scale=0.4]{acoustic_eqn_frames/acoustic_eqn_fig05.png}
-\centering\includegraphics[scale=0.4]{acoustic_eqn_frames/acoustic_eqn_fig10.png}
-\centering\includegraphics[scale=0.4]{acoustic_eqn_frames/acoustic_eqn_fig15.png}
-\caption{Numerical solution for $K=1,$ $\rho=0.9$, $\Delta x = 3^{-6}$, $\Delta t = 0.9 \Delta x / \sqrt{K \rho}$, $p(x,0) = \sin(2\pi x)\sin(4 \pi x),$
-$u(x,0) = \sin(2\pi x)\sin(4 \pi x),$.  Top Left 4: $t=0.23$. Top Right 4: $t=0.52$. Bottom 4: $t=0.81$. Top rows: Eigenvector coordinates $s^1$ (right-moving), $s^2$ (left-moving).  Bottom rows: Original coordinates $u,$ $p$.  Shows reflection of data off of right boundary, note the amplitude loss from the original $s^1$ and the reflection, $s^2$.  The data has a peak amplitude of 1.5 in $s^1$ in the first plot, and is reduced to a peak amplitude of 0.04 in $s^2$ in the last plot, but note that the waveform is just a reflection of the original.}
+\centering\includegraphics[scale=0.4]{acoustic_wavepacket_frames/acoustic_eqn_fig01.png}
+\centering\includegraphics[scale=0.4]{acoustic_wavepacket_frames/acoustic_eqn_fig05.png}
+\centering\includegraphics[scale=0.4]{acoustic_wavepacket_frames/acoustic_eqn_fig10.png}
+\centering\includegraphics[scale=0.4]{acoustic_wavepacket_frames/acoustic_eqn_fig15.png}
+\caption{Numerical solution for $K=1,$ $\rho=0.9$, $\Delta x = 3^{-6}$, $\Delta t = 0.9 \Delta x / \sqrt{K \rho}$, $p(x,0) = -u(x,0)= \cos(16\pi x)\exp(-50(x-0.5)^2),$Top Left Plots: $t=0$. Top Right Plots: $t=0.23$. Bottom Left Plots: $t=0.52$. Bottom Right Plots: $t=0.81$. Top rows: Eigenvector coordinates $s^1$ (right-moving), $s^2$ (left-moving).  Bottom rows: Original coordinates $u,$ $p$. Shows reflection of data off of left boundary, note the amplitude conservation from the original $s^2$ and the reflection, $s^1$. The amplitude stays at a peak of 1.0 in both $s^2$ and the reflection $s^1$, and the waveform is reflected exactly.}
+ % Shows reflection of data off of right boundary, note the amplitude loss from the original $s^1$ and the reflection, $s^2$.  The data has a peak amplitude of 1.5 in $s^1$ in the first plot, and is reduced to a peak amplitude of 0.04 in $s^2$ in the last plot, but note that the waveform is just a reflection of the original.}
 \end{figure}
 \begin{figure}[H]
-
-\centering\includegraphics[scale=0.4]{acoustic_eqn_frames/acoustic_eqn_fig20.png}
-\centering\includegraphics[scale=0.4]{acoustic_eqn_frames/acoustic_eqn_fig25.png}
-\centering\includegraphics[scale=0.4]{acoustic_eqn_frames/acoustic_eqn_fig30.png}
-\caption{Numerical solution for $K=1,$ $\rho=0.9$, $\Delta x = 3^{-6}$, $\Delta t = 0.9 \Delta x / \sqrt{K \rho}$, $p(x,0) = \sin(2\pi x)\sin(4 \pi x),$
-$u(x,0) = \sin(2\pi x)\sin(4 \pi x),$.  Top Left 4: $t=1.11$. Top Right 4: $t=1.40$. Bottom 4: $t=1.69$.  Top rows: Eigenvector coordinates $s^1$ (right-moving), $s^2$ (left-moving).  Bottom rows: Original coordinates $u,$ $p$.  Shows reflection of data off of left boundary, note the amplitude conservation from the original $s^2$ and the reflection, $s^1$. The amplitude stays at a peak of 0.04 in both $s^2$ and the reflection $s^1$, and the waveform is just reflected.}
+\centering\includegraphics[scale=0.4]{acoustic_wavepacket_frames/acoustic_eqn_fig15.png}
+\centering\includegraphics[scale=0.4]{acoustic_wavepacket_frames/acoustic_eqn_fig20.png}
+\centering\includegraphics[scale=0.4]{acoustic_wavepacket_frames/acoustic_eqn_fig25.png}
+\centering\includegraphics[scale=0.4]{acoustic_wavepacket_frames/acoustic_eqn_fig30.png}
+\caption{Numerical solution for $K=1,$ $\rho=0.9$, $\Delta x = 3^{-6}$, $\Delta t = 0.9 \Delta x / \sqrt{K \rho}$, $p(x,0) = -u(x,0)= \cos(16\pi x)\exp(-50(x-0.5)^2)$.  Top Left Plots: $t=0.81$. Top Right Plots: $t=1.11$. Bottom Left Plots: $t=1.40$. Bottom Right Plots: $t=1.69$.  Top rows: Eigenvector coordinates $s^1$ (right-moving), $s^2$ (left-moving).  Bottom rows: Original coordinates $u,$ $p$. Shows escape of data out of right boundary. }
+% Shows reflection of data off of left boundary, note the amplitude conservation from the original $s^2$ and the reflection, $s^1$. The amplitude stays at a peak of 0.04 in both $s^2$ and the reflection $s^1$, and the waveform is just reflected.}
 \end{figure}
 
+
+I also ran the simulation for the same parameters and the initial conditions
+$$p(x,0) = \sin(2\pi x)\sin(4 \pi x),$$
+$$u(x,0) = -\sin(2\pi x)\sin(4 \pi x).$$
+With this initial data, we again see the same behavior.  The data is carried to the left by the left-moving eigenvector $s^2$, and then is reflected back off the left boundary and carried out the right boundary by the right-moving eigenvector $s^1$. This is demonstrated in Figure 3.
+
+\begin{figure}[H]
+\centering\includegraphics[scale=0.4]{frame1.png}
+\centering\includegraphics[scale=0.4]{frame1_5.png}
+% \centering\includegraphics[scale=0.4]{frame1_7.png}
+% \centering\includegraphics[scale=0.4]{frame2.png}
+\centering\includegraphics[scale=0.4]{frame3.png}
+\centering\includegraphics[scale=0.4]{frame4.png}
+\centering\includegraphics[scale=0.4]{frame5.png}
+\centering\includegraphics[scale=0.4]{frame6.png}
+\caption{Numerical solution for $K=1,$ $\rho=0.9$, $\Delta x = 3^{-6}$, $\Delta t = 0.9 \Delta x / \sqrt{K \rho}$, $p(x,0) = -u(x,0)= \sin(2\pi x)\sin(4 \pi x)$.  Top rows: Eigenvector coordinates $s^1$ (right-moving), $s^2$ (left-moving).  Bottom rows: Original coordinates $u,$ $p$. Shows reflection of data off of left boundary and escape of data out of right boundary.}
+\end{figure}
+\newpage
 
 \item \emph{Give a physical interpretation and a mathematical explanation of these boundary conditions.}
-
-
-At the left boundary, no flux of ``stuff'' is allowed, i.e., the pressure flux is 0 across the boundary since $p_0^n = p_1^n$, and the velocity is reversed at the boundary since the ``stuff'' is bouncing back.  At the right boundary, a good amount of ``stuff'' is squeezing out the end somehow, but there is also a reflection of a small portion of stuff, so that the waveform is reflected but the amplitudes reduced.   I think we're looking at some sort of flute-like device, with the left boundary capped so nothing can escape, and the right end with a partially capped so that most of the ``stuff'' escapes, but a small amount is reflected back for a kind of resonant effect.
 \end{enumerate}
+
+At the left boundary, no flux of ``stuff'' is allowed, and we see the data being bounced off the boundary.  We have that the pressure flux is 0 across the boundary since $p_0^n = p_1^n$, and the velocity is reversed at the boundary ($u_0^n = -u_1^n$) to account for reversal of direction of the ``stuff'' bouncing back off the boundary.  At the right boundary, the ``stuff'' is allowed to escape.
+ % a good amount of ``stuff'' is squeezing out the end somehow, but there is also a reflection of a small portion of stuff, so that the waveform is reflected but the amplitudes reduced.   I think we're looking at some sort of flute-like device, with the left boundary capped so nothing can escape, and the right end with a partially capped so that most of the ``stuff'' escapes, but a small amount is reflected back for a kind of resonant effect.
+
+ If we convert the boundary conditions into the boundaries for the eigenvectors, the mathematical reason for this behavior becomes apparent.
+ We can represent the boundary conditions by
+ $$\qty(\begin{array}{c} p \\ u \end{array})_{0}^n = Q_L \qty(\begin{array}{c} p \\ u \end{array})_{1}^n = \qty(\begin{array}{cc} 1 & 0 \\ 0 & -1 \end{array})\qty(\begin{array}{c} p \\ u \end{array})_{1}^n = \qty(\begin{array}{c} p \\ -u \end{array})_{0}^n,$$
+ and 
+  $$\qty(\begin{array}{c} p \\ u \end{array})_{N+1}^n = Q_R \qty(\begin{array}{c} p \\ u \end{array})_{N}^n = \dfrac{1}{2}\qty(\begin{array}{cc} 1 & \sqrt{K\rho} \\ \nicefrac{1}{\sqrt{K\rho}} & 1 \end{array})\qty(\begin{array}{c} p \\ u \end{array})_{N}^n.$$
+  Then in eigenvector coordinates, since $\vec{s} = W^{-1}\vec{v}$ and $W\vec{s}=\vec{v}$, we have the left boundary condition
+  $$\vec{s}_0^n = W^{-1}Q_LW\vec{s}_1^n =\qty(\begin{array}{cc} 0 & 1 \\  1  & 0\end{array}) \vec{s}_1^n = \qty(\begin{array}{c} (s^2)^n_1 \\ (s^1)^n_1 \end{array}).$$
+  Thus at the left boundary, all of the data in the eigenvectors $s^1$ and $s^2$ are switched, just as we saw in the simulation.  There is no flux at this boundary since the stuff leaving the unit interval (being carried by the left-moving eigenvector) is matched equally by stuff entering the unit interval (being carried by the right-moving eigenvector).
+
+  Similarly, the right boundary condition in eigenvector coordinates is
+  $$\vec{s}_{N+1}^n = W^{-1}Q_RW\vec{s}_N^n =\qty(\begin{array}{cc} 1 & 0 \\  0  & 0\end{array}) \vec{s}_N^n = \qty(\begin{array}{c} (s^1)^n_N \\ 0 \end{array}).$$
+  Thus there is only outward flux at this boundary.  Stuff is carried out of the unit interval by the right-moving eigenvector $s^1$, but nothing is being carried back into the unit interval by the left-moving eigenvector $s^2$.  As we saw in the simulation, this allows for data to escape out the right boundary.
+
 \newpage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% P2
@@ -181,11 +216,11 @@ Compare the results with the exact solution, and comment on the solutions genera
 
 I implemented the above finite volume high-resolution methods with variable flux limiter functions.  I used a small time step of $\Delta t = 0.01$ so that the program took an integer number of iterations, $500$ ($5/\Delta t$).  I then used $450$ cell-centered grid points, so that $\nu=a N_x / N_t = 0.9$, and so that the numerical solution could capture the sharp curves at a decent resolution.  Plots of the solutions, for the different flux limiters, against the analytic solution are shown below.  Also given are tables for the 1-norm, 2-norm, and max-norm errors of the various methods (error as compared to the analytic solution).
 
-Figure 3 and Table 3 show the performance of the various methods against the analytic solution for the wave packet initial data.  MC has the smallest error in the 1-norm, 2-norm, and max-norm, so it performs the best on the initial data.  Visually, it doesn't seem to perform much better than the rest, only Upwinding stands out as visibly innacurate.  The wave packet initial data, being smooth and full of various frequencies, is best handled by the middle-of-the-road flux limiter, the MC method.
+Figure 4 and Table 1 show the performance of the various methods against the analytic solution for the wave packet initial data.  MC has the smallest error in the 1-norm, 2-norm, and max-norm, so it performs the best on the initial data.  Visually, it doesn't seem to perform much better than the rest, only Upwinding stands out as visibly innacurate.  The wave packet initial data, being smooth and full of various frequencies, is best handled by the middle-of-the-road flux limiter, the MC method.
 
-Figure 4 and Table 4 show the performance of the various methods against the analytic solution for the smooth, low frequency initial data.  MC again has the smallest error in the 1-norm, 2-norm, but Beam-Warming performs better in the max-norm. The other methods (Upwinding aside) have normed errors close to MC's, so MC isn't quite miles ahead of the others.  Visually, it doesn't seem to perform much better than the rest, only Upwinding stands out as visibly innacurate.  The smooth, low frequency initial data is handled almost equally by all but the first-order method.  This isn't surprising, as the smooth, low frequency structure lends itself to easy representation by these 2nd-order methods.
+Figure 5 and Table 2 show the performance of the various methods against the analytic solution for the smooth, low frequency initial data.  MC again has the smallest error in the 1-norm, 2-norm, but Beam-Warming performs better in the max-norm. The other methods (Upwinding aside) have normed errors close to MC's, so MC isn't quite miles ahead of the others.  Visually, it doesn't seem to perform much better than the rest, only Upwinding stands out as visibly innacurate.  The smooth, low frequency initial data is handled almost equally by all but the first-order method.  This isn't surprising, as the smooth, low frequency structure lends itself to easy representation by these 2nd-order methods.
 
-Figure 5 and Table 5 show the performance of the various methods against the analytic solution for the step function initial data.  Superbee has the smallest error in the 1-norm, 2-norm, and max-norm, so it performs by far the best on the initial data.  The difference by which superbee outperforms MC and van Leer here is much more than the amount MC by which outperformed the superbee and van Leer on the other two examples. Visually, it outperforms most of the other methods. LW and BW display high-frequency-phase-lag-induced oscillations near the discontinuities, and Upwinding, minmod, MC, and van Leer show more diffusion than superbee.  The step function initial data, being sharp and discontinuous, is best handled by the most sharpening flux limiter, the Superbee method.
+Figure 6 and Table 3 show the performance of the various methods against the analytic solution for the step function initial data.  Superbee has the smallest error in the 1-norm, 2-norm, and max-norm, so it performs by far the best on the initial data.  The difference by which superbee outperforms MC and van Leer here is much more than the amount MC by which outperformed the superbee and van Leer on the other two examples. Visually, it outperforms most of the other methods. LW and BW display high-frequency-phase-lag-induced oscillations near the discontinuities, and Upwinding, minmod, MC, and van Leer show more diffusion than superbee.  The step function initial data, being sharp and discontinuous, is best handled by the most sharpening flux limiter, the Superbee method.
 
 Were I to pick a high-resolution to use in practice, I would go with MC, as it seems the most accurate on general smooth initial data.  However, if I had some insight into my problem and I knew to expect sharp or discontinuous data, I would pick Superbee, as it vastly outperforms MC on that type of data.
 
@@ -264,12 +299,12 @@ def make_diag_fns(K,r):
     #puts p and u into diagonalized e-vector coordinates s1, s2
     #accepts p and u as row vectors and stacks them in a matrix
     v = np.asarray([p,u])
-    Winv = np.asarray([[sqrt(K*r), sqrt(K*r)],[1,-1]])
+    Winv= np.asarray([[1/(2*sqrt(K*r)), 1/2],[1/(2*sqrt(K*r)),-1/2]])
     return Winv.dot(v)
 
   def undiagonalize(s):
     #puts e-vector coordinates s1, s2 into original p,u
-    W = np.asarray([[1/(2*sqrt(K*r)), 1/2],[1/(2*sqrt(K*r)),-1/2]])
+    W = np.asarray([[sqrt(K*r), sqrt(K*r)],[1,-1]])
     return W.dot(s)
 
   return diagonalize, undiagonalize
@@ -296,40 +331,30 @@ def acoustic_LW(u0,p0, LW1, LW2, Nt,K,r):
   #with time step delT up to time Tf with number of steps Nt=Tf/delT
   #using scheme matrices LW1(delX, nu1), LW2(delX, nu2)
 
+  #make diagonalize, undiagonalize functions using K, r
   diagonalize, undiagonalize = make_diag_fns(K,r)
-  #start iteration with initial given u0,p0
-  #diagonalize
+
+  #start iteration with initial given u0,p0 and diagonalize into s1,s2
   s_old = diagonalize(p0,u0)
 
-  #setup plots
-  plt.axis([0, LW1.shape[0]-2, -2, 2])
-  plt.ion()
-  frame_no=0
   #do Nt = Tf/delT time steps
   for t in range(Nt):
     #compute ghost cell components
-    [p1, u1] = undiagonalize(s_old[:,0])
-    # print(p1,u1)
-    left_ghost = diagonalize(p1,-u1)
-    # print(left_ghost)
-    [pN,uN] = undiagonalize(s_old[:,-1])
-    right_ghost = diagonalize((1/2)*(pN + uN*sqrt(K*r)),
-                  (1/2)*(pN/sqrt(K*r) + uN))
-    # print(right_ghost)
+    left_ghost = [s_old[1,0], s_old[0,0]]
+    right_ghost = [s_old[0,-1], 0]
+    
     #add ghost cell components
-    # print("s=",s_old)
     s_old = np.c_[left_ghost, s_old, right_ghost]
-    # print("s=",s_old)
+    
     #advance s w/ LW scheme separately
     s1_old = np.transpose(s_old[0,:])
     s1 = LW1.dot(s1_old)
-    # print("s1=",s1)
+    
     s2_old = np.transpose(s_old[1,:])
     s2 = LW2.dot(s2_old)
-    # print("s2=",s2)
+    
     #recombine & remove ghost cell components
     s_next = np.r_[[s1[1:-1]],[s2[1:-1]]]
-    # print("s=",s_next)
 
     #update s_old
     s_old = s_next+0
@@ -338,28 +363,15 @@ def acoustic_LW(u0,p0, LW1, LW2, Nt,K,r):
     if t%50==0:
       [p,u]=undiagonalize(s_old)
       plt.subplot(221); plt.plot(s_old[0]) ;plt.ylabel("s1")
-      # plt.axis([0, LW1.shape[0]-2, -2, 2])
       plt.text(0,0,'t=%.4s' % (t*delT))
-      plt.subplot(222); plt.plot(s_old[1]); plt.ylabel("s2")
-      # plt.axis([0, LW1.shape[0]-2, -2, 2])
-      # plt.text(0,0, 'total pressure= %.4s' % (sum(p)))
-      plt.subplot(223); plt.plot(u); plt.ylabel("u")
-      # plt.axis([0, LW1.shape[0]-2, -2, 2])
-      plt.subplot(224); plt.plot(p); plt.ylabel("p")
-      # plt.axis([0, LW1.shape[0]-2, -2, 2])
-      # plt.text(200,20, 'total velocity= %.4s' % (sum(u)))
-      # plt.show(); plt.pause(0.5);
-      frame_no=frame_no+1
-      if frame_no<10:
-        filename='acoustic_eqn_fig0'+str(frame_no)+'.png'
-      else:
-        filename='acoustic_eqn_fig'+str(frame_no)+'.png'
-      savefig(filename)
-      plt.close()
+      plt.subplot(222); plt.plot(s_old[1]); plt.ylabel("s2")      
+      plt.subplot(223); plt.plot(u); plt.ylabel("u")      
+      plt.subplot(224); plt.plot(p); plt.ylabel("p")    
+      plt.show(); plt.pause(0.5); plot.close()
 
   return undiagonalize(s_next)
 
-if __name__ == '__main__':
+def main():
   #system parameters
   K = 1
   r = 0.9
@@ -368,42 +380,36 @@ if __name__ == '__main__':
   delX = 3**(-6)
   #get time step
   nu1 = 0.9
-  #delT = 2**(-10)
   delT = nu1*delX/sqrt(K*r)
+  Tf = 5 #final time
+
   #get grid points for level h
   Nx = int(round(1/delX))
-  Nt = 5*int(round(1/delT))
+  Nt = Tf*int(round(1/delT))
   X = [delX*(j-0.5) for j in range(1,Nx+1)]
 
   #compute advection/wave speeds
   nu1 = sqrt(K*r)*delT/delX
-  print(nu1)
   nu2 = -nu1
+
   #make LW matrices
   LW1 = LW_matrix(Nx+2,nu1)
   LW2 = LW_matrix(Nx+2,nu2)
 
-  #create initial condition - 0 = Square Pulses, 1= Gaussians, 
+  #create initial condition
   #2=smooth, low freq, 3=wavepacket
   IC = 2
-  if IC ==0:
-    p0=np.zeros(Nx)
-    u0=np.zeros(Nx)
-    for j in range(Nx):
-      if abs(X[j]-0.5)<=1/4:
-        u0[j]=1
-        p0[j]=1
-  if IC == 1:
-    p0 = [exp(-100*(x-0.3)**2) for x in X]
-    u0 = [exp(-100*(x-0.8)**2) for x in X]
   if IC==2:
     p0 = [sin(2*pi*x)*sin(4*pi*x) for x in X]
-    u0 = [sin(2*pi*x)*sin(4*pi*x) for x in X]
+    u0 = [-sin(2*pi*x)*sin(4*pi*x) for x in X]
   if IC==3:
     p0 = np.asarray([cos(16*pi*x)*exp(-50*(x-0.5)**2) for x in X])  
     u0 = np.asarray([-cos(16*pi*x)*exp(-50*(x-0.5)**2) for x in X])
 
   final = acoustic_LW(u0,p0,LW1,LW2,Nt,K,r)
+
+if __name__==  `__main__':
+  main()
 
 \end{verbatim}
 
@@ -418,9 +424,9 @@ def make_flux_function(a, delT, delX, phi):
     #compute numerical flux function F_j-1/2 for j=1 to N-1
     Nx = u.shape[0]
     tol = 1e-10
-    # print(Nx)
+    
     F = np.zeros(Nx-3)
-    # print(F.shape[0])
+    
     for j in range(2,Nx-1):
       #F_j-1/2 = Fup_j-1/2 + |a|/2*(1-|a delT/delX| )*delta_j-1/2
       #with delta_j-1/2 = phi(theta_j-1/2)*(u_j-u_j-1)
@@ -441,7 +447,6 @@ def make_flux_function(a, delT, delX, phi):
         theta = (u[J_up] - u[J_up-1])/denom
         delta = phi(theta)*denom
       #compute F_j-1/2
-      # print(j-2)
       F[j-2] = flux_up + abs(a)/2*(1-abs(a*delT/delX))*delta
     return F
 
@@ -486,18 +491,10 @@ def high_res_method(u0, flux, delT, delX,Tf, plots_on):
   #start iteration with initial given u0
   u_old = u0
 
-  #setup plots
-  # plt.figure(1)
-  # plt.axis([0, u0.shape[0], -2, 2])
-  # plt.ion()
   #do Nt = Tf/delT time steps
   Nt = int(Tf/delT)
   for t in range(1,Nt+1):
-    # #compute ghost cell components using periodic BCs
-    # left_ghosts = np.r_[u_old[-2],u_old[-1]]
-    # right_ghosts = np.r_[u_old[0],u_old[1]]
-    # #add ghost cell components
-    # u_full = np.r_[left_ghosts, u_old, right_ghosts]
+    #compute and add ghost cell components using periodic BCs
     u_full = np.pad(u_old, (2,2), "wrap")
 
     #compute flux vectors F_j+1/2, F_j-1/2
@@ -511,7 +508,7 @@ def high_res_method(u0, flux, delT, delX,Tf, plots_on):
     #update s_old
     u_old = u_next+0
 
-    #plot s, p and u
+    #plot u
     if t%20==0 and plots_on==1:
       plt.plot(u_old); plt.ylabel("u")
       plt.axis([0, u0.shape[0], -1, 2])

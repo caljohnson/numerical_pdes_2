@@ -56,13 +56,15 @@ def acoustic_LW(u0,p0, LW1, LW2, Nt,K,r):
 	#do Nt = Tf/delT time steps
 	for t in range(Nt):
 		#compute ghost cell components
-		[p1, u1] = undiagonalize(s_old[:,0])
-		# print(p1,u1)
-		left_ghost = diagonalize(p1,-u1)
-		# print(left_ghost)
-		[pN,uN] = undiagonalize(s_old[:,-1])
-		right_ghost = diagonalize((1/2)*(pN + uN*sqrt(K*r)),(1/2)*(pN/sqrt(K*r) + uN))
-		# print(right_ghost)
+		left_ghost = [s_old[1,0], s_old[0,0]]
+		right_ghost = [s_old[0,-1], 0]
+		# [p1, u1] = undiagonalize(s_old[:,0])
+		# # print(p1,u1)
+		# left_ghost = diagonalize(p1,-u1)
+		# # print(left_ghost)
+		# [pN,uN] = undiagonalize(s_old[:,-1])
+		# right_ghost = diagonalize((1/2)*(pN + uN*sqrt(K*r)),(1/2)*(pN/sqrt(K*r) + uN))
+		# # print(right_ghost)
 		#add ghost cell components
 		# print("s=",s_old)
 		s_old = np.c_[left_ghost, s_old, right_ghost]
@@ -85,23 +87,23 @@ def acoustic_LW(u0,p0, LW1, LW2, Nt,K,r):
 		if t%50==0:
 			[p,u]=undiagonalize(s_old)
 			plt.subplot(221); plt.plot(s_old[0]) ;plt.ylabel("s1")
-			# plt.axis([0, LW1.shape[0]-2, -2, 2])
+			plt.axis([0, LW1.shape[0]-2, -2, 2])
 			plt.text(0,0,'t=%.4s' % (t*delT))
 			plt.subplot(222); plt.plot(s_old[1]); plt.ylabel("s2")
-			# plt.axis([0, LW1.shape[0]-2, -2, 2])
+			plt.axis([0, LW1.shape[0]-2, -2, 2])
 			# plt.text(0,0, 'total pressure= %.4s' % (sum(p)))
 			plt.subplot(223); plt.plot(u); plt.ylabel("u")
-			# plt.axis([0, LW1.shape[0]-2, -2, 2])
+			plt.axis([0, LW1.shape[0]-2, -2, 2])
 			plt.subplot(224); plt.plot(p); plt.ylabel("p")
-			# plt.axis([0, LW1.shape[0]-2, -2, 2])
+			plt.axis([0, LW1.shape[0]-2, -2, 2])
 			# plt.text(200,20, 'total velocity= %.4s' % (sum(u)))
-			# plt.show(); plt.pause(0.5);
-			frame_no=frame_no+1
-			if frame_no<10:
-				filename='acoustic_eqn_fig0'+str(frame_no)+'.png'
-			else:
-				filename='acoustic_eqn_fig'+str(frame_no)+'.png'
-			savefig(filename)
+			plt.show(); plt.pause(5);
+			# frame_no=frame_no+1
+			# if frame_no<10:
+			# 	filename='acoustic_eqn_fig0'+str(frame_no)+'.png'
+			# else:
+			# 	filename='acoustic_eqn_fig'+str(frame_no)+'.png'
+			# savefig(filename)
 			plt.close()
 
 	return undiagonalize(s_next)
@@ -119,7 +121,7 @@ if __name__ == '__main__':
 	delT = nu1*delX/sqrt(K/r)
 	#get grid points for level h
 	Nx = int(round(1/delX))
-	Nt = 5*int(round(1/delT))
+	Nt = 2*int(round(1/delT))
 	X = [delX*(j-0.5) for j in range(1,Nx+1)]
 
 	#compute advection/wave speeds
@@ -145,10 +147,13 @@ if __name__ == '__main__':
 		u0 = [exp(-100*(x-0.8)**2) for x in X]
 	if IC==2:
 		p0 = [sin(2*pi*x)*sin(4*pi*x) for x in X]
-		u0 = [sin(2*pi*x)*sin(4*pi*x) for x in X]
+		u0 = [-sin(2*pi*x)*sin(4*pi*x) for x in X]
 	if IC==3:
 		p0 = np.asarray([cos(16*pi*x)*exp(-50*(x-0.5)**2) for x in X])	
 		u0 = np.asarray([-cos(16*pi*x)*exp(-50*(x-0.5)**2) for x in X])
+	if IC==4:
+		p0 = [sin(2*pi*x)*sin(4*pi*x) for x in X]
+		u0 = [cos(2*pi*x)*cos(4*pi*x) for x in X]	
 
 	final = acoustic_LW(u0,p0,LW1,LW2,Nt,K,r)
 

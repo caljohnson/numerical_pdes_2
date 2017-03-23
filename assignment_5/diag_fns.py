@@ -19,12 +19,12 @@ def make_diag_fns(K,r):
 		#puts p and u into diagonalized e-vector coordinates s1, s2
 		#accepts p and u as row vectors and stacks them in a matrix
 		v = np.asarray([p,u])
-		Winv = np.asarray([[sqrt(K*r), sqrt(K*r)],[1,-1]])
+		Winv = np.asarray([[1/(2*sqrt(K*r)), 1/2],[1/(2*sqrt(K*r)),-1/2]])
 		return Winv.dot(v)
 
 	def undiagonalize(s):
 		#puts e-vector coordinates s1, s2 into original p,u
-		W = np.asarray([[1/(2*sqrt(K*r)), 1/2],[1/(2*sqrt(K*r)),-1/2]])
+		W = np.asarray([[sqrt(K*r), sqrt(K*r)],[1,-1]])
 		return W.dot(s)
 
 	return diagonalize, undiagonalize
